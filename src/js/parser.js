@@ -317,24 +317,24 @@ goog.scope(
              * 
              * @param {Array.<string>} stack 
              * @param {htmlparser.typedef.Handler} handler 
-             * @param {string} html 
+             * @param {string} html "</" で始まる HTML 文字列
              * @return {number} -1:exit parsing, 0:error, 4~:success
              */
             function parseEndTag( stack, handler, html, isXML ){
-                var phase = 0,
+                var phase = 1,
                     l     = html.length,
-                    i     = 0,
+                    i     = 2,
                     tagName, chr, start;
             
                 while( i < l && phase !== 4 ){
                     chr = html.charAt( i );
                     switch( phase ){
-                        case 0 :
+                        /* case 0 :
                             if( html.substr( i, 2 ) === '</' ){
                                 phase = 1;
                                 ++i; // 
                             };
-                            break;
+                            break; */
                         case 1 : // タグ名の開始を待つ
                             if( isAlphabet( chr ) ){
                                 phase = 2;
@@ -402,7 +402,7 @@ goog.scope(
              * @param {Array.<string>} stack 
              * @param {string} lastTagName 
              * @param {htmlparser.typedef.Handler} handler 
-             * @param {string} html 
+             * @param {string} html "<" で始まる HTML 文字列
              * @return {number} -1:exit parsing, 0:error, 3~:success
              */
             function parseStartTag( stack, lastTagName, handler, html, isXML ){
@@ -421,10 +421,18 @@ goog.scope(
                               ? value.split( '"' ).join( '\\"' ).split( '\\\\"' ).join( '\\"' )
                               : value;
                 };
+                function isEmpty(){
+                    empty = html.substr( i, 2 ) === '/>';
 
-                var phase     = 0,
+                    if( empty ){
+                        ++i;
+                    };
+                    return empty;
+                };
+
+                var phase     = 1,
                     l         = html.length,
-                    i         = 0,
+                    i         = 1,
                     attrs     = [],
                     attrIndex = -1,
                     empty     = false,
@@ -433,66 +441,72 @@ goog.scope(
                 while( i < l && phase < 9 ){
                     chr = html.charAt( i );
                     switch( phase ){
-                        case 0 :
+                        /* case 0 :
                             chr === '<' && ( phase = 1 );
-                            break;
+                            break; */
                         case 1 : // タグ名の開始を待つ
-                            (isAlphabet( chr ) ) && ( phase = 2 && ( start = i ) );
+                            if( isAlphabet( chr ) ){
+                                phase = 2, start = i;
+                            };
                             break;
                         case 2 : // タグ名の終わりの空白文字を待つ
-                            ( isWhitespace( chr ) ) ?
-                                ( phase = 3 && ( tagName = html.substring( start, i ) ) ) :
-                            ( chr === '>' || ( empty = html.substr( i, 2 ) === '/>' ) ) &&
-                                ( ( tagName = html.substring( start, i ) ) && ( phase = 9 ) );
+                            if( isWhitespace( chr ) ){
+                                phase = 3, tagName = html.substring( start, i );
+                            } else if( chr === '>' || isEmpty() ){
+                                phase = 9, tagName = html.substring( start, i );
+                            };
                             break;
                         case 3 : // 属性名の開始を待つ
-                            (isAlphabet( chr ) ) ?
-                                ( phase = 4 && ( start = i ) ) :
-                            ( chr === '>' || ( empty = html.substr( i, 2 ) === '/>' ) ) &&
-                                ( phase = 9 );
+                            if( isAlphabet( chr ) ){
+                                phase = 4, start = i;
+                            } else if( chr === '>' || isEmpty() ){
+                                phase = 9;
+                            };
                             break;
                         case 4 : // 属性名の終わりを待つ
-                            chr === '=' ?
-                                ( ( phase = 6 ) && ( attrName = html.substring( start, i ) ) ) :
-                            ( isWhitespace( chr ) ) ?
-                                ( ( phase = 5 ) && ( attrName = html.substring( start, i ) ) ) :
-                            ( chr === '>' || ( empty = html.substr( i, 2 ) === '/>' ) ) &&
-                                ( ( phase = 9 ) && saveAttr( html.substring( start, i ) ) );
+                            if( chr === '=' ){
+                                phase = 6, attrName = html.substring( start, i );
+                            } else if( isWhitespace( chr ) ){
+                                phase = 5, attrName = html.substring( start, i );
+                            } else if( chr === '>' || isEmpty() ){
+                                phase = 9, saveAttr( html.substring( start, i ) );
+                            };
                             break;
-                        case 5 : // 属性の = または次の属性または htmlタグの閉じ
-                            !( isWhitespace( chr ) ) &&// ie4 未対応の属性には cite = http:// となる
-                            //    1 :
-                            (isAlphabet( chr ) ) ?
-                                ( ( phase = 3 ) && saveAttr( attrName ) && ( start = i ) ) : // <textarea readonly>
-                            chr === '=' ?
-                                ( phase = 6 ) :
-                            ( chr === '>' || ( empty = html.substr( i, 2 ) === '/>' ) ) &&
-                                ( ( phase = 9 ) && saveAttr( attrName ) );
+                        case 5 : // 属性名に続く = または次の属性または htmlタグの閉じ
+                            if( isAlphabet( chr ) ){
+                                phase = 4, saveAttr( attrName ), start = i; // <textarea readonly>
+                            } else if( chr === '=' ){
+                                phase = 6;
+                            } else if( chr === '>' || isEmpty() ){
+                                phase = 9, saveAttr( attrName );
+                            };
                             break;
                         case 6 : // 属性値の開始 quot を待つ
-                            ( chr === '"' || chr === "'" ) ?
-                                ( ( phase = 7 ) && ( quot = chr ) && ( start = i + 1 ) ):
-                            !( isWhitespace( chr ) ) &&
-                                ( ( phase = 8 ) && ( start = i ) ); // no quot
+                            if( chr === '"' || chr === "'" ){
+                                phase = 7, quot = chr, start = i + 1;
+                            } else if( !isWhitespace( chr ) ){
+                                phase = 8, start = i; // no quot
+                            };
                             break;
                         case 7 : //属性値の閉じ quot を待つ
-                            !escape && ( chr === quot ) && ( phase = 3 ) && saveAttr( attrName, html.substring( start, i ) );
+                            if( !escape && chr === quot ){
+                                phase = 3, saveAttr( attrName, html.substring( start, i ) );
+                            };
                             break;
                         case 8 : //閉じ quot のない属性の値
-                            ( isWhitespace( chr ) ) ?
-                                ( ( phase = 3 ) && saveAttr( attrName, html.substring( start, i ) ) ) :
-                            ( chr === '>' ) ?
-                                ( ( phase = 9 ) && saveAttr( attrName, html.substring( start, i ) ) ) :
-                            !escape && !ATTR_VAL_IS_URI[ attrName ] && ( empty = html.substr( i, 2 ) === '/>' ) && // attr の val が uri で / で終わりかつ、未対応属性の場合
-                                ( ( phase = 9 ) && saveAttr( attrName, html.substring( start, i ) ) );
+                            if( isWhitespace( chr ) ){
+                                phase = 3, saveAttr( attrName, html.substring( start, i ) );
+                            } else if( chr === '>' ){
+                                phase = 9, saveAttr( attrName, html.substring( start, i ) );
+                            } else if( !escape && !ATTR_VAL_IS_URI[ attrName ] && isEmpty() ){// attr の val が uri で / で終わりかつ、未対応属性の場合
+                                phase = 9, saveAttr( attrName, html.substring( start, i ) );
+                            };
                             break;
                     };
                     escape = chr === '\\' && !escape; // \\\\ is not escape for "
                     ++i;
                 };
                 if( phase === 9 ){
-                    if( empty ) ++i;
-
                     tagUpper = tagName.toUpperCase();
 
                     if( !X_HTMLParser_skipFixNesting && TAGS_BLOCK[ tagUpper ] ){
@@ -512,7 +526,9 @@ goog.scope(
                     };
 
                     empty = empty || TAGS_EMPTY[ tagUpper ];
-                    !empty && ( stack[ stack.length ] = isXML ? tagName : tagUpper );
+                    if( !empty ){
+                        stack[ stack.length ] = isXML ? tagName : tagUpper;
+                    };
             
                     if( handler.onParseStartTag( isXML ? tagName : tagUpper, attrs, empty, i ) === false && htmlparser.DEFINE.exitParsing ){
                         return EXIT_PARSING;
