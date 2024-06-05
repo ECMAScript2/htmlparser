@@ -253,7 +253,7 @@ goog.scope(
                         };
                     // start tag
                     } else if( html.indexOf( '<' ) === 0 ){
-                        nextIndex = parseStartTag( stack, lastTagName, handler, html );
+                        nextIndex = parseStartTag( stack, lastTagName, handler, html, isXML, false );
 
                         if( nextIndex === EXIT_PARSING && htmlparser.DEFINE.exitParsing ){
                             return;
@@ -318,6 +318,7 @@ goog.scope(
              * @param {Array.<string>} stack 
              * @param {htmlparser.typedef.Handler} handler 
              * @param {string} html "</" で始まる HTML 文字列
+             * @param {boolean} isXML
              * @return {number} -1:exit parsing, 0:error, 4~:success
              */
             function parseEndTag( stack, handler, html, isXML ){
@@ -403,9 +404,11 @@ goog.scope(
              * @param {string} lastTagName 
              * @param {htmlparser.typedef.Handler} handler 
              * @param {string} html "<" で始まる HTML 文字列
+             * @param {boolean} isXML
+             * @param {boolean} skipFixNesting
              * @return {number} -1:exit parsing, 0:error, 3~:success
              */
-            function parseStartTag( stack, lastTagName, handler, html, isXML ){
+            function parseStartTag( stack, lastTagName, handler, html, isXML, skipFixNesting ){
                 /**
                  * 
                  * @param {string} _name 
@@ -509,7 +512,7 @@ goog.scope(
                 if( phase === 9 ){
                     tagUpper = tagName.toUpperCase();
 
-                    if( !X_HTMLParser_skipFixNesting && TAGS_BLOCK[ tagUpper ] ){
+                    if( !skipFixNesting && TAGS_BLOCK[ tagUpper ] ){
                         while( lastTagName && TAGS_INLINE[ isXML ? lastTagName.toUpperCase() : lastTagName ] ){
                             if( closeTag( stack, handler, lastTagName ) && htmlparser.DEFINE.exitParsing ){
                                 return EXIT_PARSING;
