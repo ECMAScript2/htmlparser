@@ -1,11 +1,16 @@
 {
   "name": "es2-html-parser",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "RegExp free HTML parser",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "itozyun <itozyun@gmail.com> (https://outcloud.blogspot.com/)",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "google-closure-compiler": "^20240317.0.0",
+    "es2-postprocessor": "^0.13.1",
+    "gulp": "^5.0.0"
+  }
 }

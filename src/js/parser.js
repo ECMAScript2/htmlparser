@@ -8,6 +8,7 @@
 goog.provide( 'htmlparser' );
 goog.provide( 'htmlparser.exec' );
 goog.provide( 'htmlparser.typedef.Handler' );
+goog.provide( 'htmlparser.DEFINE' );
 
 /** @const */
 var htmlparser = {};
@@ -17,7 +18,7 @@ htmlparser.DEFINE.useXML  = goog.define( 'htmlparser.DEFINE.useXML' , false );
 /** @define {boolean} */
 htmlparser.DEFINE.useLazy = goog.define( 'htmlparser.DEFINE.useLazy', false );
 /** @define {boolean} */
-htmlparser.DEFINE.exitParsing = goog.define( 'htmlparser.DEFINE.exitParsing', true );
+htmlparser.DEFINE.parsingStop = goog.define( 'htmlparser.DEFINE.parsingStop', true );
 /** @define {boolean} */
 htmlparser.DEFINE.parseProcessingInstruction = goog.define( 'htmlparser.DEFINE.parseProcessingInstruction', false );
 
@@ -30,9 +31,9 @@ htmlparser.DEFINE.parseProcessingInstruction = goog.define( 'htmlparser.DEFINE.p
  *   onParseEndTag                : function(string):boolean,
  *   onParseText                  : function(string),
  *   onParseComment               : function(string),
- *   onParseProcessingInstruction : (funciton(string) | void),
+ *   onParseProcessingInstruction : (function(string) | void),
  *   onParseProgress              : (function(number, !Function, !Arguments) | void),
- *   onComplete                   : (funciton() | void)
+ *   onComplete                   : (function() | void)
  * }}
  */
 htmlparser.typedef.Handler;
@@ -49,24 +50,6 @@ var _CHAR_KINDS = {
 
 goog.scope(
     function(){
-        /**
-         * @const {Object.<string, number>} */
-        var CHARS = (function(){
-            var chars = 'abcdefghijklmnopqrstuvwxyz! \t\r\n\f\b',
-                ret   = {}, i;
-
-            for( i = 26; i; ){
-                ret[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_LOWERCASE_ALPHABETS;
-            };
-            for( i = 27, chars = chars.toUpperCase(); i; ){
-                ret[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_UPPERCASE_OR_EXCLAMATION_MARK;
-            };
-            for( i = 33; 27 < i; ){
-                ret[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_WHITESPACE;
-            };
-            return ret;
-        })();
-
         /**
          * Empty Elements - HTML 4.01
          * @const {Object.<string, boolena>} */
@@ -165,8 +148,26 @@ goog.scope(
             selected : true
         };
 
+        /**
+         * @const {Object.<string, number>} */
+        var CHARS = (function(){
+            var chars = 'abcdefghijklmnopqrstuvwxyz! \t\r\n\f\b',
+                ret   = {}, i;
+
+            for( i = 26; i; ){
+                ret[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_LOWERCASE_ALPHABETS;
+            };
+            for( i = 27, chars = chars.toUpperCase(); i; ){
+                ret[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_UPPERCASE_OR_EXCLAMATION_MARK;
+            };
+            for( i = 33; 27 < i; ){
+                ret[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_WHITESPACE;
+            };
+            return ret;
+        })();
+
         /** @const {number} */
-        var EXIT_PARSING = -1;
+        var PARSING_STOP = 1;
 
         /**
          * 
@@ -216,7 +217,7 @@ goog.scope(
                         html  = html.substring( index );
                         nextIndex = parseEndTag( stack, handler, html );
 
-                        if( nextIndex === EXIT_PARSING && htmlparser.DEFINE.exitParsing ){
+                        if( nextIndex === PARSING_STOP && htmlparser.DEFINE.parsingStop ){
                             return;
                         } else if( nextIndex ){
                             html = html.substring( nextIndex );
@@ -243,7 +244,7 @@ goog.scope(
                     if( html.indexOf( '</' ) === 0 ){
                         nextIndex = parseEndTag( stack, handler, html );
 
-                        if( nextIndex === EXIT_PARSING && htmlparser.DEFINE.exitParsing ){
+                        if( nextIndex === PARSING_STOP && htmlparser.DEFINE.parsingStop ){
                             return;
                         } else if( nextIndex ){
                             html = html.substring( nextIndex );
@@ -255,7 +256,7 @@ goog.scope(
                     } else if( html.indexOf( '<' ) === 0 ){
                         nextIndex = parseStartTag( stack, lastTagName, handler, html, isXML, false );
 
-                        if( nextIndex === EXIT_PARSING && htmlparser.DEFINE.exitParsing ){
+                        if( nextIndex === PARSING_STOP && htmlparser.DEFINE.parsingStop ){
                             return;
                         } else if( nextIndex ){
                             html = html.substring( nextIndex );
@@ -319,7 +320,7 @@ goog.scope(
              * @param {htmlparser.typedef.Handler} handler 
              * @param {string} html "</" で始まる HTML 文字列
              * @param {boolean} isXML
-             * @return {number} -1:exit parsing, 0:error, 4~:success
+             * @return {number} 0:error, 1:Parsing Stop, 4~:success
              */
             function parseEndTag( stack, handler, html, isXML ){
                 var phase = 1,
@@ -361,19 +362,18 @@ goog.scope(
                     ++i;
                 };
                 if( phase === 4 ){
-                    if( closeTag( stack, handler, isXML ? tagName : tagName.toUpperCase() ) && htmlparser.DEFINE.exitParsing ){
-                        return EXIT_PARSING;
+                    if( closeTag( stack, handler, isXML ? tagName : tagName.toUpperCase() ) && htmlparser.DEFINE.parsingStop ){
+                        return PARSING_STOP;
                     };
                     return i;
                 };
                 return 0; // error!
             };
             /**
-             * 
+             * If return true:Parsing Stop
              * @param {Array.<string>} stack 
              * @param {htmlparser.typedef.Handler} handler 
              * @param {string} tagName 
-             * @return {boolean | void} true:exit parsing
              */
             function closeTag( stack, handler, tagName ){
                 var pos = 0, i = stack.length;
@@ -390,7 +390,7 @@ goog.scope(
                 if( 0 <= pos ){
                     // Close all the open elements, up the stack
                     for( ; pos < i; ){
-                        if( handler.onParseEndTag( stack[ --i ] ) === false && htmlparser.DEFINE.exitParsing ){
+                        if( handler.onParseEndTag( stack[ --i ] ) === false && htmlparser.DEFINE.parsingStop ){
                             return true;
                         };
                     };
@@ -406,7 +406,7 @@ goog.scope(
              * @param {string} html "<" で始まる HTML 文字列
              * @param {boolean} isXML
              * @param {boolean} skipFixNesting
-             * @return {number} -1:exit parsing, 0:error, 3~:success
+             * @return {number} 0:error, 1:Parsing Stop, 3~:success
              */
             function parseStartTag( stack, lastTagName, handler, html, isXML, skipFixNesting ){
                 /**
@@ -514,8 +514,8 @@ goog.scope(
 
                     if( !skipFixNesting && TAGS_BLOCK[ tagUpper ] ){
                         while( lastTagName && TAGS_INLINE[ isXML ? lastTagName.toUpperCase() : lastTagName ] ){
-                            if( closeTag( stack, handler, lastTagName ) && htmlparser.DEFINE.exitParsing ){
-                                return EXIT_PARSING;
+                            if( closeTag( stack, handler, lastTagName ) && htmlparser.DEFINE.parsingStop ){
+                                return PARSING_STOP;
                             };
                             lastTagName = stack[ stack.length - 1 ];
                         };
@@ -523,8 +523,8 @@ goog.scope(
                     if( lastTagName && TAGS_CLOSE_SELF[ tagUpper ] &&
                         ( lastTagName === tagName || ( TAGS_SIBLING[ tagUpper ] && TAGS_SIBLING[ tagUpper ][ isXML ? lastTagName.toUpperCase() : lastTagName ] ) )
                     ){
-                        if( closeTag( stack, handler, lastTagName ) && htmlparser.DEFINE.exitParsing ){
-                            return EXIT_PARSING;
+                        if( closeTag( stack, handler, lastTagName ) && htmlparser.DEFINE.parsingStop ){
+                            return PARSING_STOP;
                         };
                     };
 
@@ -533,8 +533,8 @@ goog.scope(
                         stack[ stack.length ] = isXML ? tagName : tagUpper;
                     };
             
-                    if( handler.onParseStartTag( isXML ? tagName : tagUpper, attrs, empty, i ) === false && htmlparser.DEFINE.exitParsing ){
-                        return EXIT_PARSING;
+                    if( handler.onParseStartTag( isXML ? tagName : tagUpper, attrs, empty, i ) === false && htmlparser.DEFINE.parsingStop ){
+                        return PARSING_STOP;
                     };
                     return i;
                 };
