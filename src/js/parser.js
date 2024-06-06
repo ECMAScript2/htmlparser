@@ -16,11 +16,15 @@ var htmlparser = {};
 /** @define {boolean} */
 htmlparser.DEFINE.useXML  = goog.define( 'htmlparser.DEFINE.useXML' , false );
 /** @define {boolean} */
+htmlparser.DEFINE.useDocTypeNode  = goog.define( 'htmlparser.DEFINE.useDocTypeNode' , false );
+/** @define {boolean} */
+htmlparser.DEFINE.useProcessingInstruction = goog.define( 'htmlparser.DEFINE.useProcessingInstruction', false );
+/** @define {boolean} */
 htmlparser.DEFINE.useLazy = goog.define( 'htmlparser.DEFINE.useLazy', false );
 /** @define {boolean} */
 htmlparser.DEFINE.parsingStop = goog.define( 'htmlparser.DEFINE.parsingStop', true );
 /** @define {boolean} */
-htmlparser.DEFINE.parseProcessingInstruction = goog.define( 'htmlparser.DEFINE.parseProcessingInstruction', false );
+htmlparser.DEFINE.useCDATASection = goog.define( 'htmlparser.DEFINE.useCDATASection', true );
 
 /**
  * @typedef {{
@@ -104,6 +108,7 @@ goog.scope(
          * Elements that you can,' intentionally,' leave open (and which close themselves)
          * @const {Object.<string, Object.<string, boolean>>} */
         var TAGS_SIBLING = {
+            HEAD     : { BODY    : true },
             TH       : { TD      : true },
             TD       : { TH      : true },
             DT       : { DD      : true },
@@ -151,16 +156,16 @@ goog.scope(
         /**
          * @const {Object.<string, number>} */
         var CHARS = (function(){
-            var chars = 'abcdefghijklmnopqrstuvwxyz! \t\r\n\f\b',
+            var chars = 'abcdefghijklmnopqrstuvwxyz \t\r\n\f\b',
                 ret   = {}, i;
 
             for( i = 26; i; ){
                 ret[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_LOWERCASE_ALPHABETS;
             };
-            for( i = 27, chars = chars.toUpperCase(); i; ){
+            for( i = 26, chars = chars.toUpperCase(); i; ){
                 ret[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_UPPERCASE_OR_EXCLAMATION_MARK;
             };
-            for( i = 33; 27 < i; ){
+            for( i = 32; 26 < i; ){
                 ret[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_WHITESPACE;
             };
             return ret;
@@ -225,9 +230,42 @@ goog.scope(
                             handler.onParseText( html );
                             html = '';
                         };
-                    } else {
+                    } else if( lastTagUpperCased === 'PLAINTEXT' ){
                         handler.onParseText( html );
                         html = '';
+                    } else {
+                        handler.onParseError( html );
+                        return;
+                    };
+                // DocType
+                } else if( html.indexOf( '<!DOCTYPE ' ) === 0 && htmlparser.DEFINE.useDocTypeNode ){
+                    index = html.indexOf( '>' );
+                    if( index !== -1 ){
+                        handler.onParseDocType( html.substring( 10, index ) );
+                        html = html.substring( index + 1 );
+                    } else {
+                        handler.onParseError( html );
+                        return;
+                    };
+                // ProcessingInstruction
+                } else if( html.indexOf( '<?' ) === 0 && ( htmlparser.DEFINE.useProcessingInstruction || isXML ) ){
+                    index = html.indexOf( '?>' );
+                    if( index !== -1 ){
+                        handler.onParseProcessingInstruction( html.substring( 2, index ) );
+                        html = html.substring( index + 2 );
+                    } else {
+                        handler.onParseError( html );
+                        return;
+                    };
+                // CDATASection
+                } else if( html.indexOf( '<![CDATA[' ) === 0 && htmlparser.DEFINE.useCDATASection ){
+                    index = html.indexOf( ']]>' );
+                    if( index !== -1 ){
+                        handler.onParseCDATASection( html.substring( 9, index ) );
+                        html = html.substring( index + 3 );
+                    } else {
+                        handler.onParseError( html );
+                        return;
                     };
                 // Comment
                 } else if( html.indexOf( '<!--' ) === 0 ){

@@ -32,6 +32,7 @@ var __avoidRenamingTagNamesAndAttributes__ = {
     OPTIONS  : true, P  : true, TBODY : true, TD : true,
     TFOOT    : true, TH : true, THEAD : true, TR : true
     ,
+    HEAD     : { BODY    : true },
     TH       : { TD      : true },
     TD       : { TH      : true },
     DT       : { DD      : true },

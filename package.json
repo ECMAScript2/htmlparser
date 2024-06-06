@@ -4,7 +4,7 @@
   "description": "RegExp free HTML parser",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "make": "gulp dist"
   },
   "author": "itozyun <itozyun@gmail.com> (https://outcloud.blogspot.com/)",
   "license": "MIT",

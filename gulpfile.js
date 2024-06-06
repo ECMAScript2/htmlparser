@@ -28,12 +28,14 @@ gulp.task( 'dist', gulp.series(
                         entry_point       : 'goog:example',
                         externs           : [ externsJs ],
                         compilation_level : 'ADVANCED',
-                        define            : [
+                        define            : [ /*
                             'htmlparser.DEFINE.useXML=' + minify,
+                            'htmlparser.DEFINE.useDocTypeNode=' + minify,
                             'htmlparser.DEFINE.useLazy=' + minify,
                             'htmlparser.DEFINE.parsingStop=' + minify,
-                            'htmlparser.DEFINE.parseProcessingInstruction=' + minify
-                        ],
+                            'htmlparser.DEFINE.useCDATASection=' + minify,
+                            'htmlparser.DEFINE.useProcessingInstruction=' + minify
+                        */ ],
                         warning_level     : 'VERBOSE',
                         language_in       : 'ECMASCRIPT3',
                         language_out      : 'ECMASCRIPT3',

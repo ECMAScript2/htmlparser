@@ -14,24 +14,17 @@ function HTMLtoXML( html ){
                 results = msg;
             },
             onParseStartTag : function( tag, attrs, empty, myIndex ){
-                if( tag === '![CDATA[]]' ){
-                    results += '<![CDATA[\n]]>';
-                    return;
-                };
-                results += "<" + tag;
+                results += '<' + tag;
         
-                for( var i = 0, attr; i < attrs.length; ++i ){
+                for( var i = 0, attr, val; i < attrs.length; ++i ){
                     attr = attrs[ i ];
-                    results += " " + attr[ 0 ] + '="' + ( attr[ 1 ] || attr[ 0 ] ) + '"';
+                    val  = attr[ 1 ];
+                    results += ' ' + attr[ 0 ] + ( val ? '="' + val + '"' : '' );
                 };
-                results += ( empty ? "/" : '' ) + ">";
+                results += ( empty ? '/' : '' ) + '>';
             },
             onParseEndTag : function( tag ){
-                if( tag === '![CDATA[]]' ){
-                    
-                } else {
-                    results += "</" + tag + ">";
-                };
+                results += '</' + tag + '>';
             },
             onParseText : function( text ){
                 // text = X.String.cleanupWhiteSpace( text );
@@ -41,8 +34,11 @@ function HTMLtoXML( html ){
                     results += text;
                 };
             },
-            onParseComment : function( text ){
-                //results += "<!--" + text + "-->";
+            onParseComment : function( comment ){
+                //results += '<!--' + comment + '-->';
+            },
+            onParseCDATASection : function( data ){
+                //results += '<![CDATA[' + data + ']]>';
             }
         })
     );
