@@ -14,29 +14,31 @@ goog.provide( 'htmlparser.DEFINE' );
 var htmlparser = {};
 
 /** @define {boolean} */
-htmlparser.DEFINE.useXML  = goog.define( 'htmlparser.DEFINE.useXML' , false );
+htmlparser.DEFINE.useXML                   = goog.define( 'htmlparser.DEFINE.useXML' , false );
 /** @define {boolean} */
-htmlparser.DEFINE.useDocTypeNode  = goog.define( 'htmlparser.DEFINE.useDocTypeNode' , false );
+htmlparser.DEFINE.useDocTypeNode           = goog.define( 'htmlparser.DEFINE.useDocTypeNode' , false );
 /** @define {boolean} */
 htmlparser.DEFINE.useProcessingInstruction = goog.define( 'htmlparser.DEFINE.useProcessingInstruction', false );
 /** @define {boolean} */
-htmlparser.DEFINE.useLazy = goog.define( 'htmlparser.DEFINE.useLazy', false );
+htmlparser.DEFINE.useLazy                  = goog.define( 'htmlparser.DEFINE.useLazy', false );
 /** @define {boolean} */
-htmlparser.DEFINE.parsingStop = goog.define( 'htmlparser.DEFINE.parsingStop', true );
+htmlparser.DEFINE.parsingStop              = goog.define( 'htmlparser.DEFINE.parsingStop', true );
 /** @define {boolean} */
-htmlparser.DEFINE.useCDATASection = goog.define( 'htmlparser.DEFINE.useCDATASection', true );
+htmlparser.DEFINE.useCDATASection          = goog.define( 'htmlparser.DEFINE.useCDATASection', true );
 
 /**
  * @typedef {{
  *   isXML                        : (boolean | void),
  *   intervalMs                   : (number | void),
- *   onParseError                 : function(string),
- *   onParseStartTag              : function(string, !Array.<string>, boolean, number):boolean,
- *   onParseEndTag                : function(string):boolean,
+ *   onParseError                 : (function(string) | void),
+ *   onParseDocType               : (function(string) | void),
+ *   onParseStartTag              : function(string, !Array.<string>, boolean, number):(boolean | void),
+ *   onParseEndTag                : function(string):(boolean | void),
  *   onParseText                  : function(string),
  *   onParseComment               : function(string),
+ *   onParseCDATASection          : (function(string) | void),
  *   onParseProcessingInstruction : (function(string) | void),
- *   onParseProgress              : (function(number, !Function, !Arguments) | void),
+ *   onParseProgress              : (function(number, !Function, !Array) | void),
  *   onComplete                   : (function() | void)
  * }}
  */
@@ -56,7 +58,7 @@ goog.scope(
     function(){
         /**
          * Empty Elements - HTML 4.01
-         * @const {Object.<string, boolena>} */
+         * @const {Object.<string, boolean>} */
         var TAGS_EMPTY = {
             AREA  : true, BASE    : true, BASEFONT : true, BR   : true,
             COL   : true, FRAME   : true, HR       : true, IMG  : true,
@@ -66,7 +68,7 @@ goog.scope(
 
         /**
          * Block Elements - HTML 4.01
-         * @const {Object.<string, boolena>} */
+         * @const {Object.<string, boolean>} */
         var TAGS_BLOCK = {
             ADDRESS : true, APPLET   : true, BLOCKQUOTE : true, BUTTON   : true,
             CENTER  : true, DD       : true, DEL        : true, DIR      : true,
@@ -81,7 +83,7 @@ goog.scope(
 
         /**
          * Inline Elements - HTML 4.01
-         * @const {Object.<string, boolena>} */
+         * @const {Object.<string, boolean>} */
         var TAGS_INLINE = {
             /*A:true,*/      ABBR     : true, ACRONYM : true, APPLET : true,
             B        : true, BASEFONT : true, BDO     : true, BIG    : true,
@@ -97,7 +99,7 @@ goog.scope(
 
         /**
          * Elements that you can,' intentionally,' leave open (and which close themselves)
-         * @const {Object.<string, boolena>} */
+         * @const {Object.<string, boolean>} */
         var TAGS_CLOSE_SELF = {
             COLGROUP : true, DD : true, DT    : true, LI : true,
             OPTIONS  : true, P  : true, TBODY : true, TD : true,
@@ -134,8 +136,8 @@ goog.scope(
         };
 
         /**
-         * Special Elements (can contain anything)
-         * @const {Object.<string, boolena>} */
+         * 
+         * @const {Object.<string, boolean>} */
         var ATTR_VAL_IS_URI = {
             action   : true, archive  : true, background : true, cite : true,
             classid  : true, codebase : true, data       : true, href : true,
@@ -145,7 +147,7 @@ goog.scope(
 
         /**
          * 
-         * @const {Object.<string, boolena>} */
+         * @const {Object.<string, boolean>} */
         var ATTR_IS_NO_VAL = {
             checked  : true, compact  : true, declare  : true, defer    : true,
             disabled : true, ismap    : true, multiple : true, nohref   : true,
@@ -155,21 +157,20 @@ goog.scope(
 
         /**
          * @const {Object.<string, number>} */
-        var CHARS = (function(){
-            var chars = 'abcdefghijklmnopqrstuvwxyz \t\r\n\f\b',
-                ret   = {}, i;
+        var CHARS = {};
+            (function(){
+                var chars = 'abcdefghijklmnopqrstuvwxyz \t\r\n\f\b', i;
 
-            for( i = 26; i; ){
-                ret[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_LOWERCASE_ALPHABETS;
-            };
-            for( i = 26, chars = chars.toUpperCase(); i; ){
-                ret[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_UPPERCASE_OR_EXCLAMATION_MARK;
-            };
-            for( i = 32; 26 < i; ){
-                ret[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_WHITESPACE;
-            };
-            return ret;
-        })();
+                for( i = 26; i; ){
+                    CHARS[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_LOWERCASE_ALPHABETS;
+                };
+                for( i = 26, chars = chars.toUpperCase(); i; ){
+                    CHARS[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_UPPERCASE_OR_EXCLAMATION_MARK;
+                };
+                for( i = 32; 26 < i; ){
+                    CHARS[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_WHITESPACE;
+                };
+            })();
 
         /** @const {number} */
         var PARSING_STOP = 1;
@@ -220,7 +221,7 @@ goog.scope(
                             handler.onParseText( html.substring( 0, index ) );
                         };
                         html  = html.substring( index );
-                        nextIndex = parseEndTag( stack, handler, html );
+                        nextIndex = parseEndTag( stack, handler, html, isXML );
 
                         if( nextIndex === PARSING_STOP && htmlparser.DEFINE.parsingStop ){
                             return;
@@ -274,13 +275,13 @@ goog.scope(
                         handler.onParseComment( html.substring( 4, index ) );
                         html = html.substring( index + 3 );
                     } else {
-                        handler.onParseComment( html.substring( 4 ), true );
+                        handler.onParseComment( html.substring( 4 ) );
                         html = '';
                     };
                 } else {
                     // end tag
                     if( html.indexOf( '</' ) === 0 ){
-                        nextIndex = parseEndTag( stack, handler, html );
+                        nextIndex = parseEndTag( stack, handler, html, isXML );
 
                         if( nextIndex === PARSING_STOP && htmlparser.DEFINE.parsingStop ){
                             return;
@@ -340,14 +341,14 @@ goog.scope(
             };
             /**
              * @param {string} chr 
-             * @return {boolean}
+             * @return {number}
              */
             function isWhitespace( chr ){
                 return CHARS[ chr ] & _CHAR_KINDS.IS_WHITESPACE;
             };
             /**
              * @param {string} chr 
-             * @return {boolean}
+             * @return {number}
              */
             function isAlphabet( chr ){
                 return CHARS[ chr ] & ( _CHAR_KINDS.IS_UPPERCASE_OR_EXCLAMATION_MARK + _CHAR_KINDS.IS_LOWERCASE_ALPHABETS );
@@ -365,7 +366,7 @@ goog.scope(
                     l     = html.length,
                     i     = 2,
                     tagName, chr, start;
-            
+
                 while( i < l && phase !== 4 ){
                     chr = html.charAt( i );
                     switch( phase ){
@@ -388,7 +389,7 @@ goog.scope(
                                 phase = 4;
                             };
                             if( phase !== 2 ){
-                                tagName = html.substring( start, i );
+                                tagName = html.substring( /** @type {number} */ (start), i );
                             };
                             break;
                         case 3 : // タグの終了を待つ
@@ -400,6 +401,7 @@ goog.scope(
                     ++i;
                 };
                 if( phase === 4 ){
+                    tagName = /** @type {string} */ (tagName);
                     if( closeTag( stack, handler, isXML ? tagName : tagName.toUpperCase() ) && htmlparser.DEFINE.parsingStop ){
                         return PARSING_STOP;
                     };
@@ -411,7 +413,7 @@ goog.scope(
              * If return true:Parsing Stop
              * @param {Array.<string>} stack 
              * @param {htmlparser.typedef.Handler} handler 
-             * @param {string} tagName 
+             * @param {string=} tagName 
              */
             function closeTag( stack, handler, tagName ){
                 var pos = 0, i = stack.length;
@@ -443,10 +445,10 @@ goog.scope(
              * @param {htmlparser.typedef.Handler} handler 
              * @param {string} html "<" で始まる HTML 文字列
              * @param {boolean} isXML
-             * @param {boolean} skipFixNesting
+             * @param {boolean} skipNestedCorrections
              * @return {number} 0:error, 1:Parsing Stop, 3~:success
              */
-            function parseStartTag( stack, lastTagName, handler, html, isXML, skipFixNesting ){
+            function parseStartTag( stack, lastTagName, handler, html, isXML, skipNestedCorrections ){
                 /**
                  * 
                  * @param {string} _name 
@@ -454,9 +456,9 @@ goog.scope(
                  */
                 function saveAttr( _name, opt_value ){
                     var name  = _name.toLowerCase();
-                    var value = ATTR_IS_NO_VAL[ name ] ? name : ( opt_value || '' );
+                    var value = ATTR_IS_NO_VAL[ name ] ? _name : ( opt_value || '' );
 
-                    attrs[ ++attrIndex ] = name;
+                    attrs[ ++attrIndex ] = _name;
                     attrs[ ++attrIndex ] =
                         value.indexOf( '"' ) !== -1
                               ? value.split( '"' ).join( '\\"' ).split( '\\\\"' ).join( '\\"' )
@@ -510,16 +512,16 @@ goog.scope(
                             } else if( isWhitespace( chr ) ){
                                 phase = 5, attrName = html.substring( start, i );
                             } else if( chr === '>' || isEmpty() ){
-                                phase = 9, saveAttr( html.substring( start, i ) );
+                                phase = 9, saveAttr( /** @type {string} */ (html.substring( start, i )) );
                             };
                             break;
                         case 5 : // 属性名に続く = または次の属性または htmlタグの閉じ
                             if( isAlphabet( chr ) ){
-                                phase = 4, saveAttr( attrName ), start = i; // <textarea readonly>
+                                phase = 4, saveAttr( /** @type {string} */ (attrName) ), start = i; // <textarea readonly>
                             } else if( chr === '=' ){
                                 phase = 6;
                             } else if( chr === '>' || isEmpty() ){
-                                phase = 9, saveAttr( attrName );
+                                phase = 9, saveAttr( /** @type {string} */ (attrName) );
                             };
                             break;
                         case 6 : // 属性値の開始 quot を待つ
@@ -531,16 +533,16 @@ goog.scope(
                             break;
                         case 7 : //属性値の閉じ quot を待つ
                             if( !escape && chr === quot ){
-                                phase = 3, saveAttr( attrName, html.substring( start, i ) );
+                                phase = 3, saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
                             };
                             break;
                         case 8 : //閉じ quot のない属性の値
                             if( isWhitespace( chr ) ){
-                                phase = 3, saveAttr( attrName, html.substring( start, i ) );
+                                phase = 3, saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
                             } else if( chr === '>' ){
-                                phase = 9, saveAttr( attrName, html.substring( start, i ) );
-                            } else if( !escape && !ATTR_VAL_IS_URI[ attrName ] && isEmpty() ){// attr の val が uri で / で終わりかつ、未対応属性の場合
-                                phase = 9, saveAttr( attrName, html.substring( start, i ) );
+                                phase = 9, saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
+                            } else if( !escape && !ATTR_VAL_IS_URI[ /** @type {string} */ (attrName) ] && isEmpty() ){// attr の val が uri で / で終わりかつ、未対応属性の場合
+                                phase = 9, saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
                             };
                             break;
                     };
@@ -550,7 +552,7 @@ goog.scope(
                 if( phase === 9 ){
                     tagUpper = tagName.toUpperCase();
 
-                    if( !skipFixNesting && TAGS_BLOCK[ tagUpper ] ){
+                    if( !skipNestedCorrections && TAGS_BLOCK[ tagUpper ] ){
                         while( lastTagName && TAGS_INLINE[ isXML ? lastTagName.toUpperCase() : lastTagName ] ){
                             if( closeTag( stack, handler, lastTagName ) && htmlparser.DEFINE.parsingStop ){
                                 return PARSING_STOP;

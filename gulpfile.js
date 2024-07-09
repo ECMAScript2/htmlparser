@@ -7,7 +7,7 @@ const pkg             = require('./package.json'),
       moduleName      = pkg.name,
       tempJsName      = 'temp.js',
       tempDir         = require('os').tmpdir() + '/' + moduleName,
-      globalVariables = 'parseFloat',
+      globalVariables = 'Date',
       copyright       = moduleName + '@' + pkg.version + '\n' +
                        '(c) 2024-' + (new Date).getFullYear() + ' ' + pkg.author + '(' + pkg.homepage + '), ' + pkg.license + '.';
 
@@ -24,8 +24,53 @@ gulp.task( 'dist', gulp.series(
             ).pipe(
                 ClosureCompiler(
                     {
+                        externs           : [
+                            //'./node_modules/@externs/nodejs/v8/nodejs.js',
+                            //'./node_modules/@externs/nodejs/v8/global.js',
+                            //'./node_modules/@externs/nodejs/v8/fs.js',
+                            //'./node_modules/@externs/nodejs/v8/http.js',
+                            //'./node_modules/@externs/nodejs/v8/https.js',
+                            //'./node_modules/@externs/nodejs/v8/net.js',
+                            //'./node_modules/@externs/nodejs/v8/events.js',
+                            //'./node_modules/@externs/nodejs/v8/global/buffer.js',
+                            //'./node_modules/@externs/nodejs/v8/stream.js',
+                            //'./node_modules/@externs/nodejs/v8/zlib.js',
+                            //'./node_modules/@externs/nodejs/v8/path.js',
+                        ],
+                        // env               : 'CUSTOM',
                         dependency_mode  : 'PRUNE',
-                        entry_point       : 'goog:example',
+                        entry_point       : 'goog:example.node',
+                        externs           : [ externsJs ],
+                        compilation_level : 'ADVANCED',
+                        define            : [ /*
+                            'htmlparser.DEFINE.useXML=' + minify,
+                            'htmlparser.DEFINE.useDocTypeNode=' + minify,
+                            'htmlparser.DEFINE.useLazy=' + minify,
+                            'htmlparser.DEFINE.parsingStop=' + minify,
+                            'htmlparser.DEFINE.useCDATASection=' + minify,
+                            'htmlparser.DEFINE.useProcessingInstruction=' + minify
+                        */ ],
+                        warning_level     : 'VERBOSE',
+                        language_in       : 'ECMASCRIPT6',
+                        language_out      : 'ECMASCRIPT6',
+                        formatting        : 'PRETTY_PRINT',
+                        js_output_file    : 'index.js',
+                        output_wrapper    : '\/* ' + copyright + ' *\/\n' + '%output%'
+                    }
+                )
+            ).pipe(
+                gulp.dest( outputDir )
+            );
+    },
+    function(){
+        return gulp
+            .src(
+                [ './src/closure-primitives/base.js', './src/js/**/*.js' ]
+            ).pipe(
+                ClosureCompiler(
+                    {
+                        dependency_mode  : 'PRUNE',
+                        entry_point       : 'goog:example.browser',
                         externs           : [ externsJs ],
                         compilation_level : 'ADVANCED',
                         define            : [ /*
@@ -43,6 +88,12 @@ gulp.task( 'dist', gulp.series(
                             '(function(window, ' + globalVariables + '){\n' +
                                 '%output%\n' +
                             '})(this, ' + globalVariables + ');'
+                    }
+                )
+            ).pipe(
+                postProcessor.gulp(
+                    {
+                        hoist : true
                     }
                 )
             ).pipe(
