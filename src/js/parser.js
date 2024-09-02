@@ -533,23 +533,27 @@ goog.scope(
                             } else if( !isWhitespace( chr ) ){
                                 phase = 8, start = i; // no quot
                             };
+                            escape = false;
                             break;
                         case 7 : //属性値の閉じ quot を待つ
                             if( !escape && chr === quot ){
                                 phase = 2, saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
                             };
+                            escape = chr === '\\' && !escape; // \\\\ is not escape for "
                             break;
                         case 8 : //閉じ quot のない属性の値
                             if( isWhitespace( chr ) ){
-                                phase = 2, saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
+                                phase = 2;
                             } else if( chr === '>' ){
-                                phase = 9, saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
-                            } else if( !escape && !ATTR_VAL_IS_URI[ /** @type {string} */ (attrName) ] && isEmpty() ){// attr の val が uri で / で終わりかつ、未対応属性の場合
-                                phase = 9, saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
+                                phase = 9;
+                            } else if( !ATTR_VAL_IS_URI[ /** @type {string} */ (attrName) ] && isEmpty() ){// attr の val が uri で / で終わりかつ、未対応属性の場合
+                                phase = 9;
+                            };
+                            if( phase !== 8 ){
+                                saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
                             };
                             break;
                     };
-                    escape = chr === '\\' && !escape; // \\\\ is not escape for "
                     ++i;
                 };
                 if( phase === 9 ){
