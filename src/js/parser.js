@@ -222,7 +222,7 @@ goog.scope(
                         if( index ){
                             handler.onParseText( html.substring( 0, index ) );
                         };
-                        html  = html.substring( index );
+                        html = html.substring( index );
                         nextIndex = parseEndTag( stack, handler, html, isXML );
 
                         if( nextIndex === PARSING_STOP && htmlparser.DEFINE.parsingStop ){
@@ -511,8 +511,8 @@ goog.scope(
                                 } else {
                                     phase = 9;
                                 };
-                                break;
                             };
+                            break;
                         case 4 : // 属性名の終わりを待つ
                             if( chr === '=' ){
                                 phase = 6, attrName = html.substring( start, i );
