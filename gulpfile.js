@@ -45,10 +45,11 @@ gulp.task( 'dist', gulp.series(
                         define            : [ /*
                             'htmlparser.DEFINE.useXML=' + minify,
                             'htmlparser.DEFINE.useDocTypeNode=' + minify,
+                            'htmlparser.DEFINE.useProcessingInstruction=' + minify,
                             'htmlparser.DEFINE.useLazy=' + minify,
                             'htmlparser.DEFINE.parsingStop=' + minify,
                             'htmlparser.DEFINE.useCDATASection=' + minify,
-                            'htmlparser.DEFINE.useProcessingInstruction=' + minify
+                            'htmlparser.DEFINE.attributePrefixSymbol=":"'
                         */ ],
                         warning_level     : 'VERBOSE',
                         language_in       : 'ECMASCRIPT6',
@@ -76,10 +77,11 @@ gulp.task( 'dist', gulp.series(
                         define            : [ /*
                             'htmlparser.DEFINE.useXML=' + minify,
                             'htmlparser.DEFINE.useDocTypeNode=' + minify,
+                            'htmlparser.DEFINE.useProcessingInstruction=' + minify,
                             'htmlparser.DEFINE.useLazy=' + minify,
                             'htmlparser.DEFINE.parsingStop=' + minify,
                             'htmlparser.DEFINE.useCDATASection=' + minify,
-                            'htmlparser.DEFINE.useProcessingInstruction=' + minify
+                            'htmlparser.DEFINE.attributePrefixSymbol=":"'
                         */ ],
                         warning_level     : 'VERBOSE',
                         language_in       : 'ECMASCRIPT3',

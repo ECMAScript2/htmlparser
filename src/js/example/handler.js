@@ -16,7 +16,7 @@ htmlparser.example.handler =
             for( var i = 0, attr, val; i < attrs.length; ++i ){
                 attr = attrs[ i ];
                 val  = attr[ 1 ];
-                this._result += ' ' + attr[ 0 ] + ( val ? '="' + val + '"' : '' );
+                this._result += ' ' + attr[ 0 ] + ( val !== true ? '="' + val.split( '"' ).join( '\\"' ).split( '\\\\"' ).join( '\\"' ) + '"' : '' );
             };
             this._result += ( empty ? '/' : '' ) + '>';
         },

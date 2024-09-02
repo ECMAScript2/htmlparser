@@ -34,7 +34,7 @@ htmlparser.DEFINE.attributePrefixSymbol    = goog.define( 'htmlparser.DEFINE.att
  *   intervalMs                   : (number | void),
  *   onParseError                 : (function(string) | void),
  *   onParseDocType               : (function(string) | void),
- *   onParseStartTag              : function(string, !Array.<string>, boolean, number):(boolean | void),
+ *   onParseStartTag              : function(string, !Array.<string | boolean>, boolean, number):(boolean | void),
  *   onParseEndTag                : function(string):(boolean | void),
  *   onParseText                  : function(string),
  *   onParseComment               : function(string),
@@ -450,15 +450,9 @@ goog.scope(
                  * @param {string} _name 
                  * @param {string=} opt_value 
                  */
-                function saveAttr( _name, opt_value ){
-                    var name  = _name.toLowerCase();
-                    var value = ATTR_IS_NO_VAL[ name ] ? _name : ( opt_value || '' );
-
-                    attrs[ ++attrIndex ] = _name;
-                    attrs[ ++attrIndex ] =
-                        value.indexOf( '"' ) !== -1
-                              ? value.split( '"' ).join( '\\"' ).split( '\\\\"' ).join( '\\"' )
-                              : value;
+                function saveAttr( name, opt_value ){
+                    attrs[ ++attrIndex ] = name;
+                    attrs[ ++attrIndex ] = ATTR_IS_NO_VAL[ name.toLowerCase() ] ? true : ( opt_value || '' );
                 };
                 function isEmpty(){
                     empty = html.substr( i, 2 ) === '/>';
