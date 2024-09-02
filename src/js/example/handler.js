@@ -13,9 +13,9 @@ htmlparser.example.handler =
         onParseStartTag : function( tag, attrs, empty, myIndex ){
             this._result += '<' + tag;
 
-            for( var i = 0, attr, val; i < attrs.length; ++i ){
+            for( var i = 0, attr, val; i < attrs.length; i += 2 ){
                 attr = attrs[ i ];
-                val  = attr[ 1 ];
+                val  = attrs[ i + 1 ];
                 this._result += ' ' + attr[ 0 ] + ( val !== true ? '="' + val.split( '"' ).join( '\\"' ).split( '\\\\"' ).join( '\\"' ) + '"' : '' );
             };
             this._result += ( empty ? '/' : '' ) + '>';
