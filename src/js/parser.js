@@ -25,6 +25,8 @@ htmlparser.DEFINE.useLazy                  = goog.define( 'htmlparser.DEFINE.use
 htmlparser.DEFINE.parsingStop              = goog.define( 'htmlparser.DEFINE.parsingStop', true );
 /** @define {boolean} */
 htmlparser.DEFINE.useCDATASection          = goog.define( 'htmlparser.DEFINE.useCDATASection', true );
+/** @define {string} */
+htmlparser.DEFINE.attributePrefixSymbol    = goog.define( 'htmlparser.DEFINE.attributePrefixSymbol', '' );
 
 /**
  * @typedef {{
@@ -49,9 +51,9 @@ htmlparser.typedef.Handler;
  * @enum {number}
  */
 var _CHAR_KINDS = {
-    IS_UPPERCASE_OR_EXCLAMATION_MARK : 1,
-    IS_LOWERCASE_ALPHABETS           : 2,
-    IS_WHITESPACE                    : 4
+    IS_UPPERCASE_ALPHABETS : 1,
+    IS_LOWERCASE_ALPHABETS : 2,
+    IS_WHITESPACE          : 4
 };
 
 goog.scope(
@@ -165,7 +167,7 @@ goog.scope(
                     CHARS[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_LOWERCASE_ALPHABETS;
                 };
                 for( i = 26, chars = chars.toUpperCase(); i; ){
-                    CHARS[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_UPPERCASE_OR_EXCLAMATION_MARK;
+                    CHARS[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_UPPERCASE_ALPHABETS;
                 };
                 for( i = 32; 26 < i; ){
                     CHARS[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_WHITESPACE;
@@ -239,7 +241,7 @@ goog.scope(
                         return;
                     };
                 // DocType
-                } else if( html.indexOf( '<!DOCTYPE ' ) === 0 && htmlparser.DEFINE.useDocTypeNode ){
+                } else if( htmlparser.DEFINE.useDocTypeNode && html.indexOf( '<!DOCTYPE ' ) === 0 ){
                     index = html.indexOf( '>' );
                     if( index !== -1 ){
                         handler.onParseDocType( html.substring( 10, index ) );
@@ -249,7 +251,7 @@ goog.scope(
                         return;
                     };
                 // ProcessingInstruction
-                } else if( html.indexOf( '<?' ) === 0 && ( htmlparser.DEFINE.useProcessingInstruction || isXML ) ){
+                } else if( ( htmlparser.DEFINE.useProcessingInstruction || isXML ) && html.indexOf( '<?' ) === 0 ){
                     index = html.indexOf( '?>' );
                     if( index !== -1 ){
                         handler.onParseProcessingInstruction( html.substring( 2, index ) );
@@ -259,7 +261,7 @@ goog.scope(
                         return;
                     };
                 // CDATASection
-                } else if( html.indexOf( '<![CDATA[' ) === 0 && htmlparser.DEFINE.useCDATASection ){
+                } else if( htmlparser.DEFINE.useCDATASection && html.indexOf( '<![CDATA[' ) === 0 ){
                     index = html.indexOf( ']]>' );
                     if( index !== -1 ){
                         handler.onParseCDATASection( html.substring( 9, index ) );
@@ -283,7 +285,7 @@ goog.scope(
                     if( html.indexOf( '</' ) === 0 ){
                         nextIndex = parseEndTag( stack, handler, html, isXML );
 
-                        if( nextIndex === PARSING_STOP && htmlparser.DEFINE.parsingStop ){
+                        if( htmlparser.DEFINE.parsingStop && nextIndex === PARSING_STOP ){
                             return;
                         } else if( nextIndex ){
                             html = html.substring( nextIndex );
@@ -295,7 +297,7 @@ goog.scope(
                     } else if( html.indexOf( '<' ) === 0 ){
                         nextIndex = parseStartTag( stack, lastTagName, handler, html, isXML, false );
 
-                        if( nextIndex === PARSING_STOP && htmlparser.DEFINE.parsingStop ){
+                        if( htmlparser.DEFINE.parsingStop && nextIndex === PARSING_STOP ){
                             return;
                         } else if( nextIndex ){
                             html = html.substring( nextIndex );
@@ -351,7 +353,7 @@ goog.scope(
              * @return {number}
              */
             function isAlphabet( chr ){
-                return CHARS[ chr ] & ( _CHAR_KINDS.IS_UPPERCASE_OR_EXCLAMATION_MARK + _CHAR_KINDS.IS_LOWERCASE_ALPHABETS );
+                return CHARS[ chr ] & ( _CHAR_KINDS.IS_UPPERCASE_ALPHABETS + _CHAR_KINDS.IS_LOWERCASE_ALPHABETS );
             };
             /**
              * 
@@ -362,45 +364,39 @@ goog.scope(
              * @return {number} 0:error, 1:Parsing Stop, 4~:success
              */
             function parseEndTag( stack, handler, html, isXML ){
-                var phase = 1,
+                var phase = 0,
                     l     = html.length,
                     i     = 2,
                     tagName, chr, start;
 
-                while( i < l && phase !== 4 ){
+                while( i < l && phase !== 3 ){
                     chr = html.charAt( i );
                     switch( phase ){
-                        /* case 0 :
-                            if( html.substr( i, 2 ) === '</' ){
-                                phase = 1;
-                                ++i; // 
-                            };
-                            break; */
-                        case 1 : // タグ名の開始を待つ
+                        case 0 : // タグ名の開始を待つ
                             if( isAlphabet( chr ) ){
-                                phase = 2;
+                                phase = 1;
                                 start = i;
                             };
                             break;
-                        case 2 : // タグ名の終わりの空白文字を待つ
+                        case 1 : // タグ名の終わりの空白文字を待つ
                             if( isWhitespace( chr ) ){
-                                phase = 3;
+                                phase = 2;
                             } else if( chr === '>' ){
-                                phase = 4;
+                                phase = 3;
                             };
-                            if( phase !== 2 ){
+                            if( phase !== 1 ){
                                 tagName = html.substring( /** @type {number} */ (start), i );
                             };
                             break;
-                        case 3 : // タグの終了を待つ
+                        case 2 : // タグの終了を待つ
                             if( chr === '>' ){
-                                phase = 4;
+                                phase = 3;
                             };
                             break;
                     };
                     ++i;
                 };
-                if( phase === 4 ){
+                if( phase === 3 ){
                     tagName = /** @type {string} */ (tagName);
                     if( closeTag( stack, handler, isXML ? tagName : tagName.toUpperCase() ) && htmlparser.DEFINE.parsingStop ){
                         return PARSING_STOP;
@@ -472,8 +468,11 @@ goog.scope(
                     };
                     return empty;
                 };
+                function isAttributePrefixSymbol(){
+                    return htmlparser.DEFINE.attributePrefixSymbol && chr === htmlparser.DEFINE.attributePrefixSymbol;
+                };
 
-                var phase     = 1,
+                var phase     = 0,
                     l         = html.length,
                     i         = 1,
                     attrs     = [],
@@ -484,28 +483,36 @@ goog.scope(
                 while( i < l && phase < 9 ){
                     chr = html.charAt( i );
                     switch( phase ){
-                        /* case 0 :
-                            chr === '<' && ( phase = 1 );
-                            break; */
-                        case 1 : // タグ名の開始を待つ
+                        case 0 : // タグ名の開始を待つ
                             if( isAlphabet( chr ) ){
-                                phase = 2, start = i;
+                                phase = 1, start = i;
                             };
                             break;
-                        case 2 : // タグ名の終わりの空白文字を待つ
+                        case 1 : // タグ名の終わりの空白文字を待つ
                             if( isWhitespace( chr ) ){
-                                phase = 3, tagName = html.substring( start, i );
+                                phase = 2, tagName = html.substring( start, i );
                             } else if( chr === '>' || isEmpty() ){
                                 phase = 9, tagName = html.substring( start, i );
                             };
                             break;
-                        case 3 : // 属性名の開始を待つ
-                            if( isAlphabet( chr ) ){
+                        case 2 : // 属性名の開始を待つ
+                            if( isAttributePrefixSymbol() ){
+                                phase = 3, start = i;
+                            } else if( isAlphabet( chr ) ){
                                 phase = 4, start = i;
                             } else if( chr === '>' || isEmpty() ){
                                 phase = 9;
                             };
                             break;
+                        case 3 : // 属性の接頭の記号に続くアルファベットを待つ
+                            if( htmlparser.DEFINE.attributePrefixSymbol ){
+                                if( isAlphabet( chr ) ){
+                                    phase = 4;
+                                } else {
+                                    phase = 9;
+                                };
+                                break;
+                            };
                         case 4 : // 属性名の終わりを待つ
                             if( chr === '=' ){
                                 phase = 6, attrName = html.substring( start, i );
@@ -515,8 +522,10 @@ goog.scope(
                                 phase = 9, saveAttr( /** @type {string} */ (html.substring( start, i )) );
                             };
                             break;
-                        case 5 : // 属性名に続く = または次の属性または htmlタグの閉じ
-                            if( isAlphabet( chr ) ){
+                        case 5 : // 属性名に続くスペースの次に続くものは？
+                            if( isAttributePrefixSymbol() ){
+                                phase = 3, saveAttr( /** @type {string} */ (attrName) ), start = i;
+                            } else if( isAlphabet( chr ) ){
                                 phase = 4, saveAttr( /** @type {string} */ (attrName) ), start = i; // <textarea readonly>
                             } else if( chr === '=' ){
                                 phase = 6;
@@ -533,12 +542,12 @@ goog.scope(
                             break;
                         case 7 : //属性値の閉じ quot を待つ
                             if( !escape && chr === quot ){
-                                phase = 3, saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
+                                phase = 2, saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
                             };
                             break;
                         case 8 : //閉じ quot のない属性の値
                             if( isWhitespace( chr ) ){
-                                phase = 3, saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
+                                phase = 2, saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
                             } else if( chr === '>' ){
                                 phase = 9, saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
                             } else if( !escape && !ATTR_VAL_IS_URI[ /** @type {string} */ (attrName) ] && isEmpty() ){// attr の val が uri で / で終わりかつ、未対応属性の場合
