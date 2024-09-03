@@ -307,13 +307,15 @@ goog.scope(
                         };
                     };
 
-                    index = html.indexOf( '<' );
-                    if( index === -1 ){
-                        handler.onParseText( html );
-                        html = '';
-                    } else if( index ){
-                        handler.onParseText( html.substring( 0, index ) );
-                        html = html.substring( index );
+                    if( html ){
+                        index = html.indexOf( '<' );
+                        if( index === -1 ){
+                            handler.onParseText( html );
+                            html = '';
+                        } else if( index ){
+                            handler.onParseText( html.substring( 0, index ) );
+                            html = html.substring( index );
+                        };
                     };
                 };
 
@@ -426,7 +428,7 @@ goog.scope(
                 if( 0 <= pos ){
                     // Close all the open elements, up the stack
                     for( ; pos < i; ){
-                        if( handler.onParseEndTag( stack[ --i ] ) === false && htmlparser.DEFINE.parsingStop ){
+                        if( handler.onParseEndTag( stack[ --i ] ) === true && htmlparser.DEFINE.parsingStop ){
                             return true;
                         };
                     };
@@ -447,7 +449,7 @@ goog.scope(
             function parseStartTag( stack, lastTagName, handler, html, isXML, skipNestedCorrections ){
                 /**
                  * 
-                 * @param {string} _name 
+                 * @param {string} name 
                  * @param {string=} opt_value 
                  */
                 function saveAttr( name, opt_value ){
@@ -579,8 +581,8 @@ goog.scope(
                     if( !empty ){
                         stack[ stack.length ] = isXML ? tagName : tagUpper;
                     };
-            
-                    if( handler.onParseStartTag( isXML ? tagName : tagUpper, attrs, empty, i ) === false && htmlparser.DEFINE.parsingStop ){
+
+                    if( handler.onParseStartTag( isXML ? tagName : tagUpper, attrs, empty, i ) === true && htmlparser.DEFINE.parsingStop ){
                         return PARSING_STOP;
                     };
                     return i;

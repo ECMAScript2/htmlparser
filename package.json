@@ -4,7 +4,13 @@
   "description": "RegExp free HTML parser",
   "main": "index.js",
   "scripts": {
-    "make": "gulp dist"
+    "make": "gulp dist",
+    "test": "ava"
+  },
+  "ava": {
+    "files": [
+      "test/**/*"
+    ]
   },
   "author": "itozyun <itozyun@gmail.com> (https://outcloud.blogspot.com/)",
   "license": "MIT",
@@ -13,5 +19,8 @@
     "es2-postprocessor": "^0.13.1",
     "google-closure-compiler": "^20240317.0.0",
     "gulp": "^5.0.0"
+  },
+  "dependencies": {
+    "ava": "^6.1.3"
   }
 }
