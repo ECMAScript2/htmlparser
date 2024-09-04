@@ -3,7 +3,7 @@ const pkg             = require('./package.json'),
       ClosureCompiler = require('google-closure-compiler').gulp(),
       postProcessor   = require( 'es2-postprocessor' );
       fs              = require('fs'),
-      externsJs       = './src/js-externs/externs.js',
+      externsJs       = './src/js/closure-compiler-externs.js',
       moduleName      = pkg.name,
       tempJsName      = 'temp.js',
       tempDir         = require('os').tmpdir() + '/' + moduleName,
@@ -38,9 +38,8 @@ gulp.task( 'dist', gulp.series(
                             //'./node_modules/@externs/nodejs/v8/path.js',
                         ],
                         // env               : 'CUSTOM',
-                        dependency_mode  : 'PRUNE',
+                        dependency_mode   : 'PRUNE',
                         entry_point       : 'goog:example.node',
-                        externs           : [ externsJs ],
                         compilation_level : 'ADVANCED',
                         define            : [
                             'htmlparser.DEFINE.useXML=' + true,
@@ -70,9 +69,8 @@ gulp.task( 'dist', gulp.series(
             ).pipe(
                 ClosureCompiler(
                     {
-                        dependency_mode  : 'PRUNE',
+                        dependency_mode   : 'PRUNE',
                         entry_point       : 'goog:example.browser',
-                        externs           : [ externsJs ],
                         compilation_level : 'ADVANCED',
                         define            : [
                             'htmlparser.DEFINE.useXML=' + true,

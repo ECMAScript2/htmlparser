@@ -84,35 +84,40 @@ goog.scope(
             DIV     : true, DL       : true, DT         : true, FIELDSET : true,
             FORM    : true, FRAMESET : true, HR         : true, IFRAME   : true,
             INS     : true, ISINDEX  : true, LI         : true, MAP      : true,
-            MENU    : true, NOFRAMES : true, NOSCRIPT   : true, OBJECT   : true,
-            OL      : true, P        : true, PRE        : true, SCRIPT   : true,
-            TABLE   : true, TBODY    : true, TD         : true, TFOOT    : true,
-            TH      : true, THEAD    : true, TR         : true, UL       : true
+            MARQUEE : true, MENU     : true, NOFRAMES   : true, NOSCRIPT : true,
+            OBJECT  : true, OL       : true, P          : true, PRE      : true,
+            SCRIPT  : true, TABLE    : true, TBODY      : true, TD       : true,
+            TFOOT   : true, TH       : true, THEAD      : true, TR       : true,
+            UL      : true
         };
 
         /**
          * Inline Elements - HTML 4.01
          * @const {Object.<string, boolean>} */
         var TAGS_INLINE = {
-            /*A:true,*/      ABBR     : true, ACRONYM : true, APPLET : true,
-            B        : true, BASEFONT : true, BDO     : true, BIG    : true,
-            BR       : true, BUTTON   : true, CITE    : true, CODE   : true,
-            DEL      : true, DFN      : true, EM      : true, FONT   : true,
-            I        : true, IFRAME   : true, IMG     : true, INPUT  : true,
-            INS      : true, KBD      : true, LABEL   : true, MAP    : true,
-            OBJECT   : true, Q        : true, S       : true, SAMP   : true,
-            SCRIPT   : true, SELECT   : true, SMALL   : true, SPAN   : true,
-            STRIKE   : true, STRONG   : true, SUB     : true, SUP    : true,
-            TEXTAREA : true, TT       : true, U       : true, VAR    : true
+            /*A:true,*/      
+            ABBR     : true, ACRONYM  : true, APPLET   : true, B        : true,
+            BASEFONT : true, BDO      : true, BIG      : true, BR       : true,
+            BUTTON   : true, CITE     : true, CODE     : true, DEL      : true,
+            DFN      : true, EM       : true, FONT     : true, I        : true,
+            IFRAME   : true, IMG      : true, INPUT    : true, INS      : true,
+            KBD      : true, LABEL    : true, MAP      : true, NOBR     : true,
+            OBJECT   : true, Q        : true, RB       : true, RP       : true,
+            RT       : true, RTC      : true, RUBY     : true, S        : true,
+            SAMP     : true, SCRIPT   : true, SELECT   : true, SMALL    : true,
+            SPAN     : true, STRIKE   : true, STRONG   : true, SUB      : true,
+            SUP      : true, TEXTAREA : true, TT       : true, U        : true,
+            VAR      : true, WBR      : true
         };
 
         /**
          * Elements that you can,' intentionally,' leave open (and which close themselves)
          * @const {Object.<string, boolean>} */
         var TAGS_CLOSE_SELF = {
-            COLGROUP : true, DD : true, DT    : true, LI : true,
-            OPTIONS  : true, P  : true, TBODY : true, TD : true,
-            TFOOT    : true, TH : true, THEAD : true, TR : true
+            CAPTION  : true, COLGROUP : true, DD       : true, DT : true,
+            LI       : true, OPTION   : true, OPTGROUP : true, P  : true,
+            TBODY    : true, TD       : true, TFOOT    : true, TH : true,
+            THEAD    : true, TR       : true, RP       : true, RT : true
         };
 
         /**
@@ -134,7 +139,10 @@ goog.scope(
              *   > また、HTML5 では、<tfoot> と <tbody> の順番はどちらでもよいことになりました。
              */
             TFOOT    : { CAPTION : true, COLGROUP : true, THEAD : true, TBODY : true },
-            TBODY    : { CAPTION : true, COLGROUP : true, THEAD : true, TFOOT : true }
+            TBODY    : { CAPTION : true, COLGROUP : true, THEAD : true, TFOOT : true },
+            RB       : { RP      : true, RT       : true },
+            RP       : { RB      : true, RT       : true },
+            RT       : { RB      : true, RP       : true }
         };
 
         /**

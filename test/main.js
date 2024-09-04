@@ -345,3 +345,14 @@ test('<p>',
         );
     }
 );
+
+test('<ruby>',
+    (t) => {
+        t.deepEqual(
+            parser(
+                "<ruby>漢<rp>(<rt>kan<rp>)</rp>字<rp>(<rt>ji<rp>)</ruby>"
+            ),
+            [ 11, [ 'RUBY', '漢', [ 'RP', '(' ], [ 'RT', 'kan' ], [ 'RP', ')' ], '字', [ 'RP', '(' ], [ 'RT', 'ji' ], [ 'RP', ')' ] ] ]
+        );
+    }
+);
