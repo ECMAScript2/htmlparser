@@ -26,36 +26,33 @@ var __avoidRenamingTagNamesAndAttributes__ = [
     {
         ABBR     : true, ACRONYM  : true, APPLET   : true, B        : true,
         BASEFONT : true, BDO      : true, BIG      : true, BR       : true,
-        BUTTON   : true, CITE     : true, CODE     : true, DEL      : true,
-        DFN      : true, EM       : true, FONT     : true, I        : true,
-        IFRAME   : true, IMG      : true, INPUT    : true, INS      : true,
-        KBD      : true, LABEL    : true, MAP      : true, NOBR     : true,
-        OBJECT   : true, Q        : true, RB       : true, RP       : true,
-        RT       : true, RTC      : true, RUBY     : true, S        : true,
-        SAMP     : true, SCRIPT   : true, SELECT   : true, SMALL    : true,
-        SPAN     : true, STRIKE   : true, STRONG   : true, SUB      : true,
-        SUP      : true, TEXTAREA : true, TT       : true, U        : true,
-        VAR      : true, WBR      : true
+        BUTTON   : true, CAPTION  : true, CITE     : true, CODE     : true,
+        DEL      : true, DFN      : true, EM       : true, FONT     : true,
+        I        : true, IFRAME   : true, IMG      : true, INPUT    : true,
+        INS      : true, KBD      : true, LABEL    : true, MAP      : true,
+        NOBR     : true, OBJECT   : true, Q        : true, RB       : true,
+        RBC      : true, RP       : true, RT       : true, RTC      : true,
+        RUBY     : true, S        : true, SAMP     : true, SCRIPT   : true,
+        SELECT   : true, SMALL    : true, SPAN     : true, STRIKE   : true,
+        STRONG   : true, SUB      : true, SUP      : true, TEXTAREA : true,
+        TT       : true, U        : true, VAR      : true, WBR      : true
     },
     {
-        CAPTION  : true, COLGROUP : true, DD       : true, DT : true,
-        LI       : true, OPTION   : true, OPTGROUP : true, P  : true,
-        TBODY    : true, TD       : true, TFOOT    : true, TH : true,
-        THEAD    : true, TR       : true, RP       : true, RT : true
-    },
-    {
-        HEAD     : { BODY    : true },
-        TH       : { TD      : true },
-        TD       : { TH      : true },
-        DT       : { DD      : true },
-        DD       : { DT      : true },
-        COLGROUP : { CAPTION : true },
-        THEAD    : { CAPTION : true, COLGROUP : true },
-        TFOOT    : { CAPTION : true, COLGROUP : true, THEAD : true, TBODY : true },
-        TBODY    : { CAPTION : true, COLGROUP : true, THEAD : true, TFOOT : true },
-        RB       : { RP      : true, RT       : true },
-        RP       : { RB      : true, RT       : true },
-        RT       : { RB      : true, RP       : true }
+        HEAD     : { BODY     : true },
+        LI       : { LI       : true },
+        OPTION   : { OPTION   : true },
+        P        : { P        : true },
+        OPTGROUP : { OPTGROUP : true },
+
+        DT       : { DT : true, DD : true },
+
+        CAPTION  : { CAPTION : true, COLGROUP : true, THEAD : true, TBODY : true, TFOOT : true, TR : true },
+        THEAD    : { CAPTION : true, COLGROUP : true, THEAD : true, TBODY : true, TFOOT : true },
+
+        TR       : { THEAD : true, TBODY : true, TFOOT : true, TR : true },
+        TH       : { THEAD : true, TBODY : true, TFOOT : true, TR : true, TD : true, TH : true },
+        RB       : { RBC   : true, RTC   : true, RB    : true, RP : true, RT : true },
+        RBC      : { RBC   : true, RTC   : true }
     },
     {
         SCRIPT : true, STYLE : true, PLAINTEXT : true, XMP : true, TEXTAREA : true

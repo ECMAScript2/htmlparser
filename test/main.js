@@ -354,5 +354,48 @@ test('<ruby>',
             ),
             [ 11, [ 'RUBY', '漢', [ 'RP', '(' ], [ 'RT', 'kan' ], [ 'RP', ')' ], '字', [ 'RP', '(' ], [ 'RT', 'ji' ], [ 'RP', ')' ] ] ]
         );
+        t.deepEqual(
+            parser(
+                "<ruby><rb>漢<rp>(<rt>kan<rp>)<rb>字<rp>(<rt>ji<rp>)</ruby>"
+            ),
+            [ 11, [ 'RUBY', [ 'RB', '漢' ], [ 'RP', '(' ], [ 'RT', 'kan' ], [ 'RP', ')' ], [ 'RB', '字' ], [ 'RP', '(' ], [ 'RT', 'ji' ], [ 'RP', ')' ] ] ]
+        );
+        t.deepEqual(
+            parser(
+                "<ruby><rbc><rb>馬<rp>(<rt>mǎ<rp>)<rb>來<rp>(<rt>lái<rp>)<rb>西<rp>(<rt>xī<rp>)<rb>亞<rp>(<rt>yà<rp>)<rtc><rp>(<rt>Malaysia<rp>)</ruby>"
+            ),
+            [ 11, [ 'RUBY',
+                      [ 'RBC', [ 'RB', '馬' ], [ 'RP', '(' ], [ 'RT', 'mǎ' ], [ 'RP', ')' ], 
+                               [ 'RB', '來' ], [ 'RP', '(' ], [ 'RT', 'lái' ], [ 'RP', ')' ], 
+                               [ 'RB', '西' ], [ 'RP', '(' ], [ 'RT', 'xī'  ], [ 'RP', ')' ], 
+                               [ 'RB', '亞' ], [ 'RP', '(' ], [ 'RT', 'yà'  ], [ 'RP', ')' ]
+                      ],
+                      [ 'RTC', [ 'RP', '(' ], [ 'RT', 'Malaysia' ], [ 'RP', ')' ] ]
+                  ]
+            ]
+        );
+    }
+);
+
+test('<table>',
+    (t) => {
+        t.deepEqual(
+            parser(
+                "<table><tr><th>1<td>2<td>3<th>4</table>"
+            ),
+            [ 11, [ 'TABLE', [ 'TR', [ 'TH', '1' ], [ 'TD', '2' ], [ 'TD', '3' ], [ 'TH', '4' ] ] ] ]
+        );
+        t.deepEqual(
+            parser(
+                "<table><caption>aaa<tr><th>1<td>2<td>3<th>4</table>"
+            ),
+            [ 11, [ 'TABLE', [ 'CAPTION', 'aaa' ], [ 'TR', [ 'TH', '1' ], [ 'TD', '2' ], [ 'TD', '3' ], [ 'TH', '4' ] ] ] ]
+        );
+        t.deepEqual(
+            parser(
+                "<table><thead><tr><th>1<td>2<td>3<th>4<tbody><tr><th>1<td>2<td>3<th>4<tr></table>"
+            ),
+            [ 11, [ 'TABLE', [ 'THEAD', [ 'TR', [ 'TH', '1' ], [ 'TD', '2' ], [ 'TD', '3' ], [ 'TH', '4' ] ] ], [ 'TBODY', [ 'TR', [ 'TH', '1' ], [ 'TD', '2' ], [ 'TD', '3' ], [ 'TH', '4' ] ], [ 'TR' ] ] ] ]
+        );
     }
 );

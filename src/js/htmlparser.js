@@ -98,56 +98,57 @@ goog.scope(
             /*A:true,*/      
             ABBR     : true, ACRONYM  : true, APPLET   : true, B        : true,
             BASEFONT : true, BDO      : true, BIG      : true, BR       : true,
-            BUTTON   : true, CITE     : true, CODE     : true, DEL      : true,
-            DFN      : true, EM       : true, FONT     : true, I        : true,
-            IFRAME   : true, IMG      : true, INPUT    : true, INS      : true,
-            KBD      : true, LABEL    : true, MAP      : true, NOBR     : true,
-            OBJECT   : true, Q        : true, RB       : true, RP       : true,
-            RT       : true, RTC      : true, RUBY     : true, S        : true,
-            SAMP     : true, SCRIPT   : true, SELECT   : true, SMALL    : true,
-            SPAN     : true, STRIKE   : true, STRONG   : true, SUB      : true,
-            SUP      : true, TEXTAREA : true, TT       : true, U        : true,
-            VAR      : true, WBR      : true
+            BUTTON   : true, CAPTION  : true, CITE     : true, CODE     : true,
+            DEL      : true, DFN      : true, EM       : true, FONT     : true,
+            I        : true, IFRAME   : true, IMG      : true, INPUT    : true,
+            INS      : true, KBD      : true, LABEL    : true, MAP      : true,
+            NOBR     : true, OBJECT   : true, Q        : true, RB       : true,
+            RBC      : true, RP       : true, RT       : true, RTC      : true,
+            RUBY     : true, S        : true, SAMP     : true, SCRIPT   : true,
+            SELECT   : true, SMALL    : true, SPAN     : true, STRIKE   : true,
+            STRONG   : true, SUB      : true, SUP      : true, TEXTAREA : true,
+            TT       : true, U        : true, VAR      : true, WBR      : true
         };
+
+        /*
+         * http://www.tohoho-web.com/html/tbody.htm
+         *   > HTML4.01では、ヘッダとフッタを先読みして表示するために、<tbody> よりも <tfoot> の方を先に記述しなくてはならないと定義されています。
+         *   > IE5.0 などでは HEAD → BODY → FOOT の順に表示するのですが、
+         *   > <tfoot> に未対応の古いブラウザでは、HEAD → FOOT → BODY の順に表示されてしまいます。
+         *   > また、HTML5 では、<tfoot> と <tbody> の順番はどちらでもよいことになりました。
+         */
 
         /**
          * Elements that you can,' intentionally,' leave open (and which close themselves)
-         * @const {Object.<string, boolean>} */
-        var TAGS_CLOSE_SELF = {
-            CAPTION  : true, COLGROUP : true, DD       : true, DT : true,
-            LI       : true, OPTION   : true, OPTGROUP : true, P  : true,
-            TBODY    : true, TD       : true, TFOOT    : true, TH : true,
-            THEAD    : true, TR       : true, RP       : true, RT : true
-        };
-
-        /**
-         * Elements that you can,' intentionally,' leave open (and which close themselves)
+         * 
          * @const {Object.<string, Object.<string, boolean>>} */
-        var TAGS_SIBLING = {
-            HEAD     : { BODY    : true },
-            TH       : { TD      : true },
-            TD       : { TH      : true },
-            DT       : { DD      : true },
-            DD       : { DT      : true },
-            COLGROUP : { CAPTION : true },
-            THEAD    : { CAPTION : true, COLGROUP : true },
-            /*
-             * http://www.tohoho-web.com/html/tbody.htm
-             *   > HTML4.01では、ヘッダとフッタを先読みして表示するために、<tbody> よりも <tfoot> の方を先に記述しなくてはならないと定義されています。
-             *   > IE5.0 などでは HEAD → BODY → FOOT の順に表示するのですが、
-             *   > <tfoot> に未対応の古いブラウザでは、HEAD → FOOT → BODY の順に表示されてしまいます。
-             *   > また、HTML5 では、<tfoot> と <tbody> の順番はどちらでもよいことになりました。
-             */
-            TFOOT    : { CAPTION : true, COLGROUP : true, THEAD : true, TBODY : true },
-            TBODY    : { CAPTION : true, COLGROUP : true, THEAD : true, TFOOT : true },
-            RB       : { RP      : true, RT       : true },
-            RP       : { RB      : true, RT       : true },
-            RT       : { RB      : true, RP       : true }
+        var INVALID_CHILD = {
+            HEAD     : { BODY     : true },
+            LI       : { LI       : true },
+            OPTION   : { OPTION   : true },
+            P        : { P        : true },
+            OPTGROUP : { OPTGROUP : true },
+
+            DT       : { DT : true, DD : true },
+
+            CAPTION  : { CAPTION : true, COLGROUP : true, THEAD : true, TBODY : true, TFOOT : true, TR : true },
+            THEAD    : { CAPTION : true, COLGROUP : true, THEAD : true, TBODY : true, TFOOT : true },
+
+            TR       : { THEAD : true, TBODY : true, TFOOT : true, TR : true },
+            TH       : { THEAD : true, TBODY : true, TFOOT : true, TR : true, TD : true, TH : true },
+            RB       : { RBC   : true, RTC   : true, RB    : true, RP : true, RT : true },
+            RBC      : { RBC   : true, RTC   : true }
         };
+        INVALID_CHILD.DD = INVALID_CHILD.DT;
+        INVALID_CHILD.COLGROUP = INVALID_CHILD.CAPTION;
+        INVALID_CHILD.TFOOT = INVALID_CHILD.TBODY = INVALID_CHILD.THEAD;
+        INVALID_CHILD.TD = INVALID_CHILD.TH;
+        INVALID_CHILD.RP = INVALID_CHILD.RT = INVALID_CHILD.RB;
+        INVALID_CHILD.RTC = INVALID_CHILD.RBC;
 
         /**
          * Special Elements (can contain anything)
-         * @const {Object.<string, Object.<string, boolean>>} */
+         * @const {Object.<string, boolean>} */
         var TAGS_SPECIAL = {
             SCRIPT : true, STYLE : true, PLAINTEXT : true, XMP : true, TEXTAREA : true
         };
@@ -589,11 +590,15 @@ goog.scope(
                                 lastTagName = stack[ stack.length - 1 ];
                             };
                         };
-                        if( lastTagName && TAGS_CLOSE_SELF[ tagUpper ] &&
-                            ( lastTagName === tagUpper || ( TAGS_SIBLING[ tagUpper ] && TAGS_SIBLING[ tagUpper ][ lastTagName ] ) )
-                        ){
-                            if( closeTag( stack, handler, lastTagName ) && htmlparser.DEFINE.parsingStop ){
-                                return PARSING_STOP;
+
+                        while( lastTagName ){
+                            if( INVALID_CHILD[ lastTagName ] && INVALID_CHILD[ lastTagName ][ tagUpper ] ){
+                                if( closeTag( stack, handler, lastTagName ) && htmlparser.DEFINE.parsingStop ){
+                                    return PARSING_STOP;
+                                };
+                                lastTagName = stack[ stack.length - 1 ];
+                            } else {
+                                break;
                             };
                         };
                     };
