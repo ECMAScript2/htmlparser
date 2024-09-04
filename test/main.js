@@ -312,3 +312,36 @@ test('Mixed content (GH-333)',
         );
     }
 );
+
+test('<dl>',
+    (t) => {
+        t.deepEqual(
+            parser(
+                "<dl><dt>1<dd>2<dd>3</dl>"
+            ),
+            [ 11, [ 'DL', [ 'DT', '1' ], [ 'DD', '2' ], [ 'DD', '3' ] ] ]
+        );
+    }
+);
+
+test('<li>',
+    (t) => {
+        t.deepEqual(
+            parser(
+                "<ol><li>1<li>2<li>3</ol>"
+            ),
+            [ 11, [ 'OL', [ 'LI', '1' ], [ 'LI', '2' ], [ 'LI', '3' ] ] ]
+        );
+    }
+);
+
+test('<p>',
+    (t) => {
+        t.deepEqual(
+            parser(
+                "<p>1<p>2<p>3"
+            ),
+            [ 11, [ 'P', '1' ], [ 'P', '2' ], [ 'P', '3' ] ]
+        );
+    }
+);

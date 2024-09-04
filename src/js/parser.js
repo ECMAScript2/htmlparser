@@ -569,24 +569,25 @@ goog.scope(
                 if( phase === 9 ){
                     tagUpper = tagName.toUpperCase();
 
-                    if( !skipNestedCorrections && TAGS_BLOCK[ tagUpper ] ){
-                        while( lastTagName && TAGS_INLINE[ isXML ? lastTagName.toUpperCase() : lastTagName ] ){
+                    if( htmlparser.DEFINE.useXML && !isXML ){
+                        isXML = !!TAGS_XML[ tagName ];
+                    };
+                    if( !isXML ){
+                        if( TAGS_BLOCK[ tagUpper ] ){
+                            while( lastTagName && TAGS_INLINE[ lastTagName ] ){
+                                if( closeTag( stack, handler, lastTagName ) && htmlparser.DEFINE.parsingStop ){
+                                    return PARSING_STOP;
+                                };
+                                lastTagName = stack[ stack.length - 1 ];
+                            };
+                        };
+                        if( lastTagName && TAGS_CLOSE_SELF[ tagUpper ] &&
+                            ( lastTagName === tagUpper || ( TAGS_SIBLING[ tagUpper ] && TAGS_SIBLING[ tagUpper ][ lastTagName ] ) )
+                        ){
                             if( closeTag( stack, handler, lastTagName ) && htmlparser.DEFINE.parsingStop ){
                                 return PARSING_STOP;
                             };
-                            lastTagName = stack[ stack.length - 1 ];
                         };
-                    };
-                    if( lastTagName && TAGS_CLOSE_SELF[ tagUpper ] &&
-                        ( lastTagName === tagName || ( TAGS_SIBLING[ tagUpper ] && TAGS_SIBLING[ tagUpper ][ true || isXML ? lastTagName.toUpperCase() : lastTagName ] ) )
-                    ){
-                        if( closeTag( stack, handler, lastTagName ) && htmlparser.DEFINE.parsingStop ){
-                            return PARSING_STOP;
-                        };
-                    };
-
-                    if( htmlparser.DEFINE.useXML && !isXML ){
-                        isXML = !!TAGS_XML[ tagName ];
                     };
 
                     empty = empty || TAGS_EMPTY[ tagUpper ];
