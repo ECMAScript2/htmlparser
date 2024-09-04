@@ -2,42 +2,31 @@ goog.provide( 'htmlparser.example.handler.html2json' );
 
 goog.requireType( 'htmlparser.typedef.Handler' );
 
+var rootNode = [], currentNode = rootNode, stack = [];
+
 /** 
  * @extends {htmlparser.typedef.Handler}
  * @const
  */
-var handler =
-    {
-        _root        : null,
-        _stack       : null,
-        _currentNode : null,
-
-        _reset : function(){
-            handler._root  = handler._currentNode = [];
-            handler._stack = [];
-        },
-
+htmlparser.example.handler.html2json = {
         _getResult : function(){
-            var root = handler._root;
+            var result = rootNode;
 
-            if( typeof root[ 0 ] !== 'number' ){
-                root.unshift( 11 );
+            rootNode = currentNode = [];
+            stack = [];
+
+            if( typeof result[ 0 ] !== 'number' ){
+                result.unshift( 11 );
             };
-            return root;
-        },
-
-        _getCurrent : function(){
-            return handler._currentNode;
+            return result;
         },
 
         onParseError : function( msg ){
             throw msg;
         },
         onParseDocType : function( doctype ){
-            var root = handler._root;
-
-            root[ 0 ] = 9;
-            root[ 1 ] = '<!DOCTYPE ' + doctype + '>';
+            rootNode[ 0 ] = 9;
+            rootNode[ 1 ] = '<!DOCTYPE ' + doctype + '>';
         },
         onParseStartTag : function( tag, attrs, empty, myIndex ){
             var element = [ tag ];
@@ -50,36 +39,35 @@ var handler =
                     value = attrs[ i + 1 ];
                     attrObj[ attr ] = value;
                 };
-                if( attrs.length )
-                element[ 1 ] = attrObj;
+                if( i ){
+                    element[ 1 ] = attrObj;
+                };
             };
 
-            handler._getCurrent().push( element );
+            currentNode.push( element );
 
             if( !empty ){
-                handler._stack.push( handler._currentNode );
-                handler._currentNode = element;
+                stack.push( currentNode );
+                currentNode = element;
             };
         },
-        onParseEndTag : function( tag ){
-            if( tag === handler._getCurrent()[ 0 ] ){
-                handler._currentNode = handler._stack.pop();
+        onParseEndTag : function( tag, missingEndTag, noStartTag ){
+            if( tag === currentNode[ 0 ] ){
+                currentNode = stack.pop();
             } else {
                 // error
             };
         },
         onParseText : function( text ){
-            handler._getCurrent().push( text );
+            currentNode.push( text );
         },
         onParseComment : function( comment ){
-            handler._getCurrent().push( [ 8, comment ] );
+            currentNode.push( [ 8, comment ] );
         },
         onParseCDATASection : function( data ){
-            handler._getCurrent().push( [ 4, data ] );
+            currentNode.push( [ 4, data ] );
         },
         onParseProcessingInstruction : function( data ){
-            handler._getCurrent().push( [ 7, data ] );
+            currentNode.push( [ 7, data ] );
         }
     };
-
-htmlparser.example.handler.html2json = handler;

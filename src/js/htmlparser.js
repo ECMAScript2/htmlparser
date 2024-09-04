@@ -35,7 +35,7 @@ htmlparser.DEFINE.attributePrefixSymbol    = goog.define( 'htmlparser.DEFINE.att
  *   onParseError                 : (function(string) | void),
  *   onParseDocType               : (function(string) | void),
  *   onParseStartTag              : function(string, !Array.<string | boolean>, boolean, number):(boolean | void),
- *   onParseEndTag                : function(string, boolean):(boolean | void),
+ *   onParseEndTag                : function(string, boolean, boolean):(boolean | void),
  *   onParseText                  : function(string),
  *   onParseComment               : function(string),
  *   onParseCDATASection          : (function(string) | void),
@@ -442,9 +442,10 @@ goog.scope(
              * @param {!Array.<string>} stack 
              * @param {htmlparser.typedef.Handler} handler 
              * @param {string} tagName
-             * @param {boolean} missingEndTag 
+             * @param {boolean} closeAutomatically
+             * @return {boolean | void}
              */
-            function closeTag( stack, handler, tagName, missingEndTag ){
+            function closeTag( stack, handler, tagName, closeAutomatically ){
                 var pos = 0, i = stack.length;
                 // If no tag name is provided, clean shop
             
@@ -459,7 +460,7 @@ goog.scope(
                 if( 0 <= pos ){
                     // Close all the open elements, up the stack
                     for( ; pos < i; ){
-                        if( handler.onParseEndTag( stack[ --i ], missingEndTag ) === true && htmlparser.DEFINE.parsingStop ){
+                        if( handler.onParseEndTag( stack[ --i ], missingEndTag( stack[ i ] ), false ) === true && htmlparser.DEFINE.parsingStop ){
                             return true;
                         };
                         if( htmlparser.DEFINE.useXML && isXML && TAGS_XML[ stack[ i ] ] ){
@@ -468,6 +469,14 @@ goog.scope(
                     };
                     // Remove the open elements from the stack
                     stack.length = pos;
+                } else {
+                    if( handler.onParseEndTag( tagName, missingEndTag( tagName ), true ) === true && htmlparser.DEFINE.parsingStop ){
+                        return true;
+                    };
+                };
+
+                function missingEndTag( tagName ){
+                    return closeAutomatically && !( INVALID_CHILD[ tagName ] && INVALID_CHILD[ tagName ][ tagName ] );
                 };
             };
             /**
@@ -486,7 +495,7 @@ goog.scope(
                  */
                 function saveAttr( name, opt_value ){
                     attrs[ ++attrIndex ] = name;
-                    attrs[ ++attrIndex ] = ATTR_IS_NO_VAL[ name.toLowerCase() ] ? true : ( opt_value || '' );
+                    attrs[ ++attrIndex ] = ATTR_IS_NO_VAL[ name.toLowerCase() ] ? ( isXML ? opt_value || name : true ) : ( opt_value || '' );
                 };
                 function isEmpty(){
                     empty = html.substr( i, 2 ) === '/>';
