@@ -30,7 +30,7 @@ htmlparser.DEFINE.attributePrefixSymbol    = goog.define( 'htmlparser.DEFINE.att
 
 /**
  * @typedef {{
- *   isXML                        : (boolean | void),
+ *   isXHTML                      : (boolean | void),
  *   intervalMs                   : (number | void),
  *   onParseError                 : (function(string) | void),
  *   onParseDocType               : (function(string) | void),
@@ -59,13 +59,20 @@ var _CHAR_KINDS = {
 goog.scope(
     function(){
         /**
+         * 
+         * @const {Object.<string, boolean>} */
+        var TAGS_XML = {
+            xml : true, svg : true, math : true
+        };
+
+        /**
          * Empty Elements - HTML 4.01
          * @const {Object.<string, boolean>} */
         var TAGS_EMPTY = {
-            AREA  : true, BASE    : true, BASEFONT : true, BR   : true,
-            COL   : true, FRAME   : true, HR       : true, IMG  : true,
-            INPUT : true, ISINDEX : true, LINK     : true, META : true,
-            PARAM : true, EMBED   : true
+            AREA    : true, BASE   : true, BASEFONT : true, BR   : true, BGSOUND : true,
+            COL     : true, FRAME  : true, HR       : true, IMG  : true, INPUT   : true,
+            ISINDEX : true, KEYGEN : true, LINK     : true, META : true, PARAM   : true,
+            SOURCE  : true, TRACK  : true, EMBED    : true, WBR  : true
         };
 
         /**
@@ -192,18 +199,18 @@ goog.scope(
          * @param {htmlparser.typedef.Handler} handler
          * @param {boolean} lazy 
          * @param {number} originalHTMLLength 
-         * @param {Array.<string>=} opt_stack
+         * @param {!Array.<string>=} opt_stack
          */
         function exec( html, handler, lazy, originalHTMLLength, opt_stack ){
-            /** @const {boolean} */
-            var isXML      = htmlparser.DEFINE.useXML && !!handler.isXML;
             /** @const {number} */
             var startTime  = lazy ? now() : 0;
             /** @const {number} */
             var intervalMs = handler.intervalMs || 16;
-            /** @const {Array.<string>} */
+            /** @const {!Array.<string>} */
             var stack      = opt_stack || [];
 
+            /** @type {boolean} */
+            var isXML      = htmlparser.DEFINE.useXML && !!handler.isXHTML;
             /** @type {string} */
             var lastHtml   = html;
             var lastTagName, lastTagUpperCased, index, nextIndex;
@@ -223,7 +230,7 @@ goog.scope(
                             handler.onParseText( html.substring( 0, index ) );
                         };
                         html = html.substring( index );
-                        nextIndex = parseEndTag( stack, handler, html, isXML );
+                        nextIndex = parseEndTag( stack, handler, html );
 
                         if( nextIndex === PARSING_STOP && htmlparser.DEFINE.parsingStop ){
                             return;
@@ -251,7 +258,7 @@ goog.scope(
                         return;
                     };
                 // ProcessingInstruction
-                } else if( ( htmlparser.DEFINE.useProcessingInstruction || isXML ) && html.indexOf( '<?' ) === 0 ){
+                } else if( htmlparser.DEFINE.useProcessingInstruction && html.indexOf( '<?' ) === 0 ){
                     index = html.indexOf( '?>' );
                     if( index !== -1 ){
                         handler.onParseProcessingInstruction( html.substring( 2, index ) );
@@ -283,7 +290,7 @@ goog.scope(
                 } else {
                     // end tag
                     if( html.indexOf( '</' ) === 0 ){
-                        nextIndex = parseEndTag( stack, handler, html, isXML );
+                        nextIndex = parseEndTag( stack, handler, html );
 
                         if( htmlparser.DEFINE.parsingStop && nextIndex === PARSING_STOP ){
                             return;
@@ -295,7 +302,7 @@ goog.scope(
                         };
                     // start tag
                     } else if( html.indexOf( '<' ) === 0 ){
-                        nextIndex = parseStartTag( stack, lastTagName, handler, html, isXML, false );
+                        nextIndex = parseStartTag( stack, lastTagName, handler, html, isXML );
 
                         if( htmlparser.DEFINE.parsingStop && nextIndex === PARSING_STOP ){
                             return;
@@ -359,13 +366,12 @@ goog.scope(
             };
             /**
              * 
-             * @param {Array.<string>} stack 
+             * @param {!Array.<string>} stack 
              * @param {htmlparser.typedef.Handler} handler 
              * @param {string} html "</" で始まる HTML 文字列
-             * @param {boolean} isXML
              * @return {number} 0:error, 1:Parsing Stop, 4~:success
              */
-            function parseEndTag( stack, handler, html, isXML ){
+            function parseEndTag( stack, handler, html ){
                 var phase = 0,
                     l     = html.length,
                     i     = 2,
@@ -409,7 +415,7 @@ goog.scope(
             };
             /**
              * If return true:Parsing Stop
-             * @param {Array.<string>} stack 
+             * @param {!Array.<string>} stack 
              * @param {htmlparser.typedef.Handler} handler 
              * @param {string=} tagName 
              */
@@ -431,6 +437,9 @@ goog.scope(
                         if( handler.onParseEndTag( stack[ --i ] ) === true && htmlparser.DEFINE.parsingStop ){
                             return true;
                         };
+                        if( htmlparser.DEFINE.useXML && isXML && TAGS_XML[ stack[ i ] ] ){
+                            isXML = !!handler.isXHTML;
+                        };
                     };
                     // Remove the open elements from the stack
                     stack.length = pos;
@@ -438,15 +447,14 @@ goog.scope(
             };
             /**
              * 
-             * @param {Array.<string>} stack 
+             * @param {!Array.<string>} stack 
              * @param {string} lastTagName 
              * @param {htmlparser.typedef.Handler} handler 
              * @param {string} html "<" で始まる HTML 文字列
-             * @param {boolean} isXML
              * @param {boolean} skipNestedCorrections
              * @return {number} 0:error, 1:Parsing Stop, 3~:success
              */
-            function parseStartTag( stack, lastTagName, handler, html, isXML, skipNestedCorrections ){
+            function parseStartTag( stack, lastTagName, handler, html, skipNestedCorrections ){
                 /**
                  * 
                  * @param {string} name 
@@ -570,11 +578,15 @@ goog.scope(
                         };
                     };
                     if( lastTagName && TAGS_CLOSE_SELF[ tagUpper ] &&
-                        ( lastTagName === tagName || ( TAGS_SIBLING[ tagUpper ] && TAGS_SIBLING[ tagUpper ][ isXML ? lastTagName.toUpperCase() : lastTagName ] ) )
+                        ( lastTagName === tagName || ( TAGS_SIBLING[ tagUpper ] && TAGS_SIBLING[ tagUpper ][ true || isXML ? lastTagName.toUpperCase() : lastTagName ] ) )
                     ){
                         if( closeTag( stack, handler, lastTagName ) && htmlparser.DEFINE.parsingStop ){
                             return PARSING_STOP;
                         };
+                    };
+
+                    if( htmlparser.DEFINE.useXML && !isXML ){
+                        isXML = !!TAGS_XML[ tagName ];
                     };
 
                     empty = empty || TAGS_EMPTY[ tagUpper ];

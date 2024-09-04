@@ -8,7 +8,6 @@ goog.requireType( 'htmlparser.typedef.Handler' );
  */
 var handler =
     {
-        isXML        : true,
         _root        : null,
         _stack       : null,
         _currentNode : null,
@@ -18,18 +17,27 @@ var handler =
             handler._stack = [];
         },
 
+        _getResult : function(){
+            var root = handler._root;
+
+            if( typeof root[ 0 ] !== 'number' ){
+                root.unshift( 11 );
+            };
+            return root;
+        },
+
         _getCurrent : function(){
             return handler._currentNode;
         },
 
         onParseError : function( msg ){
-
+            throw msg;
         },
         onParseDocType : function( doctype ){
             var root = handler._root;
 
             root[ 0 ] = 9;
-            root[ 1 ] = doctype;
+            root[ 1 ] = '<!DOCTYPE ' + doctype + '>';
         },
         onParseStartTag : function( tag, attrs, empty, myIndex ){
             var element = [ tag ];

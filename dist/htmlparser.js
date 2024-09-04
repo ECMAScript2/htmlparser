@@ -1,216 +1,205 @@
 /* es2-html-parser@0.0.1
 (c) 2024-2024 itozyun <itozyun@gmail.com> (https://outcloud.blogspot.com/)(undefined), MIT. */
-(function(O, ba) {
-  function P(a, d) {
-    function c(q, m, r, e) {
-      for (var k = 1, G = r.length, n = 2, u, b, D; n < G && 4 !== k;) {
-        b = r.charAt(n);
-        switch(k) {
+(function(O, Y) {
+  function P(a) {
+    function x(h, k, r) {
+      for (var d = 0, y = r.length, m = 2, u, b, E; m < y && 3 !== d;) {
+        b = r.charAt(m);
+        switch(d) {
+          case 0:
+            n[b] & 3 && (d = 1, E = m);
+            break;
           case 1:
-            v[b] & 3 && (k = 2, D = n);
+            n[b] & 4 ? d = 2 : ">" === b && (d = 3);
+            1 !== d && (u = r.substring(E, m));
             break;
           case 2:
-            v[b] & 4 ? k = 3 : ">" === b && (k = 4);
-            2 !== k && (u = r.substring(D, n));
-            break;
-          case 3:
-            ">" === b && (k = 4);
+            ">" === b && (d = 3);
         }
-        ++n;
+        ++m;
       }
-      return 4 === k ? y(q, m, e ? u : u.toUpperCase()) ? 1 : n : 0;
+      return 3 === d ? (v(h, k, t ? u : u.toUpperCase()), m) : 0;
     }
-    function y(q, m, r) {
-      var e = 0, k = q.length;
+    function v(h, k, r) {
+      var d = 0, y = h.length;
       if (r) {
-        for (e = k; 0 <= e && q[--e] !== r;) {
+        for (d = y; 0 <= d && h[--d] !== r;) {
         }
       }
-      if (0 <= e) {
-        for (; e < k;) {
-          if (!1 === m.i(q[--k])) {
-            return !0;
-          }
+      if (0 <= d) {
+        for (; d < y;) {
+          k.l(h[--y]), t && I[h[y]] && (t = !!k.j);
         }
-        q.length = e;
+        h.length = d;
       }
     }
-    function H(q, m, r, e, k, G) {
-      function n(Q, R) {
-        var I = Q.toLowerCase(), J = S[I] ? I : R || "";
-        K[++L] = I;
-        K[++L] = -1 !== J.indexOf('"') ? J.split('"').join('\\"').split('\\\\"').join('\\"') : J;
+    function F(h, k, r, d, y) {
+      function m(J, Q) {
+        H[++K] = J;
+        H[++K] = R[J.toLowerCase()] ? !0 : Q || "";
       }
       function u() {
-        (B = "/>" === e.substr(f, 2)) && ++f;
-        return B;
+        (C = "/>" === d.substr(f, 2)) && ++f;
+        return C;
       }
-      for (var b = 1, D = e.length, f = 1, K = [], L = -1, B = !1, z, g, p, w, M, E; f < D && 9 > b;) {
-        g = e.charAt(f);
+      for (var b = 0, E = d.length, f = 1, H = [], K = -1, C = !1, A, e, l, z, L, G; f < E && 9 > b;) {
+        e = d.charAt(f);
         switch(b) {
-          case 1:
-            v[g] & 3 && (b = 2, p = f);
+          case 0:
+            n[e] & 3 && (b = 1, l = f);
             break;
-          case 2:
-            if (v[g] & 4) {
-              b = 3, z = e.substring(p, f);
-            } else if (">" === g || u()) {
-              b = 9, z = e.substring(p, f);
+          case 1:
+            if (n[e] & 4) {
+              b = 2, A = d.substring(l, f);
+            } else if (">" === e || u()) {
+              b = 9, A = d.substring(l, f);
             }
             break;
-          case 3:
-            if (v[g] & 3) {
-              b = 4, p = f;
-            } else if (">" === g || u()) {
+          case 2:
+            if (":" === e) {
+              b = 3, l = f;
+            } else if (n[e] & 3) {
+              b = 4, l = f;
+            } else if (">" === e || u()) {
               b = 9;
             }
             break;
+          case 3:
+            b = n[e] & 3 ? 4 : 9;
+            break;
           case 4:
-            if ("=" === g) {
-              b = 6, w = e.substring(p, f);
-            } else if (v[g] & 4) {
-              b = 5, w = e.substring(p, f);
-            } else if (">" === g || u()) {
-              b = 9, n(e.substring(p, f));
+            if ("=" === e) {
+              b = 6, z = d.substring(l, f);
+            } else if (n[e] & 4) {
+              b = 5, z = d.substring(l, f);
+            } else if (">" === e || u()) {
+              b = 9, m(d.substring(l, f));
             }
             break;
           case 5:
-            if (v[g] & 3) {
-              b = 4, n(w), p = f;
-            } else if ("=" === g) {
+            if (":" === e) {
+              b = 3, m(z), l = f;
+            } else if (n[e] & 3) {
+              b = 4, m(z), l = f;
+            } else if ("=" === e) {
               b = 6;
-            } else if (">" === g || u()) {
-              b = 9, n(w);
+            } else if (">" === e || u()) {
+              b = 9, m(z);
             }
             break;
           case 6:
-            '"' === g || "'" === g ? (b = 7, M = g, p = f + 1) : v[g] & 4 || (b = 8, p = f);
+            '"' === e || "'" === e ? (b = 7, L = e, l = f + 1) : n[e] & 4 || (b = 8, l = f);
+            G = !1;
             break;
           case 7:
-            E || g !== M || (b = 3, n(w, e.substring(p, f)));
+            G || e !== L || (b = 2, m(z, d.substring(l, f)));
+            G = "\\" === e && !G;
             break;
           case 8:
-            v[g] & 4 ? (b = 3, n(w, e.substring(p, f))) : ">" === g ? (b = 9, n(w, e.substring(p, f))) : E || T[w] || !u() || (b = 9, n(w, e.substring(p, f)));
+            n[e] & 4 ? b = 2 : ">" === e ? b = 9 : !S[z] && u() && (b = 9), 8 !== b && m(z, d.substring(l, f));
         }
-        E = "\\" === g && !E;
         ++f;
       }
       if (9 === b) {
-        b = z.toUpperCase();
-        if (!G && U[b]) {
-          for (; m && V[k ? m.toUpperCase() : m];) {
-            if (y(q, r, m)) {
-              return 1;
-            }
-            m = q[q.length - 1];
+        b = A.toUpperCase();
+        if (!y && T[b]) {
+          for (; k && U[t ? k.toUpperCase() : k];) {
+            v(h, r, k), k = h[h.length - 1];
           }
         }
-        if (m && W[b] && (m === z || N[b] && N[b][k ? m.toUpperCase() : m]) && y(q, r, m)) {
-          return 1;
-        }
-        (B = B || X[b]) || (q[q.length] = k ? z : b);
-        return !1 === r.j(k ? z : b, K, B, f) ? 1 : f;
+        k && V[b] && (k === A || M[b] && M[b][k.toUpperCase()]) && v(h, r, k);
+        t || (t = !!I[A]);
+        (C = C || W[b]) || (h[h.length] = t ? A : b);
+        r.m(t ? A : b, H, C, f);
+        return f;
       }
       return 0;
     }
-    for (var t = [], A = a, h, l; a;) {
-      if ((h = l = t[t.length - 1]) && Y[l]) {
-        if (h = a.toUpperCase().indexOf("</" + l), 0 <= h) {
-          h && d.g(a.substring(0, h));
-          a = a.substring(h);
-          l = c(t, d, a);
-          if (1 === l) {
-            return;
-          }
-          l ? a = a.substring(l) : (d.g(a), a = "");
-        } else if ("PLAINTEXT" === l) {
-          d.g(a), a = "";
+    for (var g = p, B = [], t = !!g.j, N = a, c, q; a;) {
+      (c = q = B[B.length - 1]) && t && (q = c.toUpperCase());
+      if (c && X[q]) {
+        if (c = a.toUpperCase().indexOf("</" + q), 0 <= c) {
+          c && g.i(a.substring(0, c)), a = a.substring(c), (q = x(B, g, a)) ? a = a.substring(q) : (g.i(a), a = "");
+        } else if ("PLAINTEXT" === q) {
+          g.i(a), a = "";
         } else {
-          d.h(a);
+          g.h(a);
+          return;
+        }
+      } else if (0 === a.indexOf("<!DOCTYPE ")) {
+        if (c = a.indexOf(">"), -1 !== c) {
+          g.u(a.substring(10, c)), a = a.substring(c + 1);
+        } else {
+          g.h(a);
+          return;
+        }
+      } else if (0 === a.indexOf("<?")) {
+        if (c = a.indexOf("?>"), -1 !== c) {
+          a = a.substring(c + 2);
+        } else {
+          g.h(a);
           return;
         }
       } else if (0 === a.indexOf("<![CDATA[")) {
-        if (h = a.indexOf("]]\x3e"), -1 !== h) {
-          a = a.substring(h + 3);
+        if (c = a.indexOf("]]\x3e"), -1 !== c) {
+          a = a.substring(c + 3);
         } else {
-          d.h(a);
+          g.h(a);
           return;
         }
-      } else if (0 === a.indexOf("\x3c!--")) {
-        h = a.indexOf("--\x3e"), a = -1 !== h ? a.substring(h + 3) : "";
       } else {
-        if (0 === a.indexOf("</")) {
-          l = c(t, d, a);
-          if (1 === l) {
-            return;
-          }
-          a = l ? a.substring(l) : "&lt;" + a.substr(1);
-        } else if (0 === a.indexOf("<")) {
-          l = H(t, h, d, a, !1, !1);
-          if (1 === l) {
-            return;
-          }
-          a = l ? a.substring(l) : "&lt;" + a.substr(1);
-        }
-        h = a.indexOf("<");
-        -1 === h ? (d.g(a), a = "") : h && (d.g(a.substring(0, h)), a = a.substring(h));
+        0 === a.indexOf("\x3c!--") ? (c = a.indexOf("--\x3e"), a = -1 !== c ? a.substring(c + 3) : "") : (0 === a.indexOf("</") ? a = (q = x(B, g, a)) ? a.substring(q) : "&lt;" + a.substr(1) : 0 === a.indexOf("<") && (a = (q = F(B, c, g, a, t)) ? a.substring(q) : "&lt;" + a.substr(1)), a && (c = a.indexOf("<"), -1 === c ? (g.i(a), a = "") : c && (g.i(a.substring(0, c)), a = a.substring(c))));
       }
-      if (a === A) {
-        d.h(a);
+      if (a === N) {
+        g.h(a);
         return;
       }
-      A = a;
+      N = a;
     }
-    y(t, d);
+    v(B, g);
   }
-  function Z(a, d) {
-    P(a, d);
+  var I = {xml:!0, svg:!0, math:!0}, W = {AREA:!0, BASE:!0, BASEFONT:!0, BR:!0, BGSOUND:!0, COL:!0, FRAME:!0, HR:!0, IMG:!0, INPUT:!0, ISINDEX:!0, KEYGEN:!0, LINK:!0, META:!0, PARAM:!0, SOURCE:!0, TRACK:!0, EMBED:!0, WBR:!0}, T = {ADDRESS:!0, APPLET:!0, BLOCKQUOTE:!0, BUTTON:!0, CENTER:!0, DD:!0, DEL:!0, DIR:!0, DIV:!0, DL:!0, DT:!0, FIELDSET:!0, FORM:!0, FRAMESET:!0, HR:!0, IFRAME:!0, INS:!0, ISINDEX:!0, LI:!0, MAP:!0, MENU:!0, NOFRAMES:!0, NOSCRIPT:!0, OBJECT:!0, OL:!0, P:!0, PRE:!0, SCRIPT:!0, 
+  TABLE:!0, TBODY:!0, TD:!0, TFOOT:!0, TH:!0, THEAD:!0, TR:!0, UL:!0}, U = {ABBR:!0, ACRONYM:!0, APPLET:!0, B:!0, BASEFONT:!0, BDO:!0, BIG:!0, BR:!0, BUTTON:!0, CITE:!0, CODE:!0, DEL:!0, DFN:!0, EM:!0, FONT:!0, I:!0, IFRAME:!0, IMG:!0, INPUT:!0, INS:!0, KBD:!0, LABEL:!0, MAP:!0, OBJECT:!0, Q:!0, S:!0, SAMP:!0, SCRIPT:!0, SELECT:!0, SMALL:!0, SPAN:!0, STRIKE:!0, STRONG:!0, SUB:!0, SUP:!0, TEXTAREA:!0, TT:!0, U:!0, VAR:!0}, V = {COLGROUP:!0, DD:!0, DT:!0, LI:!0, OPTIONS:!0, P:!0, TBODY:!0, TD:!0, TFOOT:!0, 
+  TH:!0, THEAD:!0, TR:!0}, M = {HEAD:{BODY:!0}, TH:{TD:!0}, TD:{TH:!0}, DT:{DD:!0}, DD:{DT:!0}, COLGROUP:{CAPTION:!0}, THEAD:{CAPTION:!0, COLGROUP:!0}, TFOOT:{CAPTION:!0, COLGROUP:!0, THEAD:!0, TBODY:!0}, TBODY:{CAPTION:!0, COLGROUP:!0, THEAD:!0, TFOOT:!0}}, X = {SCRIPT:!0, STYLE:!0, PLAINTEXT:!0, XMP:!0, TEXTAREA:!0}, S = {action:!0, archive:!0, background:!0, cite:!0, classid:!0, codebase:!0, data:!0, href:!0, longdesc:!0, profile:!0, src:!0, usemap:!0}, R = {checked:!0, compact:!0, declare:!0, 
+  defer:!0, disabled:!0, ismap:!0, multiple:!0, nohref:!0, noresize:!0, noshade:!0, nowrap:!0, readonly:!0, selected:!0}, n = {}, D = "abcdefghijklmnopqrstuvwxyz \t\r\n\f\b", w, p;
+  for (w = 26; w;) {
+    n[D.charAt(--w)] = 2;
   }
-  function aa(a) {
-    var d = "";
-    Z(a, {o:!0, h:function(c) {
-      d = c;
-    }, j:function(c, y, H) {
-      d += "<" + c;
-      c = 0;
-      for (var t, A; c < y.length; ++c) {
-        t = y[c], A = t[1], d += " " + t[0] + (A ? '="' + A + '"' : "");
-      }
-      d += (H ? "/" : "") + ">";
-    }, i:function(c) {
-      d += "</" + c + ">";
-    }, g:function(c) {
-      c.split(" ").join("") && (c = " " === c.charAt(0) ? c.substr(1) : c, c = c.length && " " === c.charAt(c.length - 1) ? c.substr(0, c.length - 1) : c, d += c);
-    }, u:function() {
-    }, s:function() {
-    }});
-    return d;
+  w = 26;
+  for (D = D.toUpperCase(); w;) {
+    n[D.charAt(--w)] = 1;
   }
-  var X = {AREA:!0, BASE:!0, BASEFONT:!0, BR:!0, COL:!0, FRAME:!0, HR:!0, IMG:!0, INPUT:!0, ISINDEX:!0, LINK:!0, META:!0, PARAM:!0, EMBED:!0}, U = {ADDRESS:!0, APPLET:!0, BLOCKQUOTE:!0, BUTTON:!0, CENTER:!0, DD:!0, DEL:!0, DIR:!0, DIV:!0, DL:!0, DT:!0, FIELDSET:!0, FORM:!0, FRAMESET:!0, HR:!0, IFRAME:!0, INS:!0, ISINDEX:!0, LI:!0, MAP:!0, MENU:!0, NOFRAMES:!0, NOSCRIPT:!0, OBJECT:!0, OL:!0, P:!0, PRE:!0, SCRIPT:!0, TABLE:!0, TBODY:!0, TD:!0, TFOOT:!0, TH:!0, THEAD:!0, TR:!0, UL:!0}, V = {ABBR:!0, 
-  ACRONYM:!0, APPLET:!0, B:!0, BASEFONT:!0, BDO:!0, BIG:!0, BR:!0, BUTTON:!0, CITE:!0, CODE:!0, DEL:!0, DFN:!0, EM:!0, FONT:!0, I:!0, IFRAME:!0, IMG:!0, INPUT:!0, INS:!0, KBD:!0, LABEL:!0, MAP:!0, OBJECT:!0, Q:!0, S:!0, SAMP:!0, SCRIPT:!0, SELECT:!0, SMALL:!0, SPAN:!0, STRIKE:!0, STRONG:!0, SUB:!0, SUP:!0, TEXTAREA:!0, TT:!0, U:!0, VAR:!0}, W = {COLGROUP:!0, DD:!0, DT:!0, LI:!0, OPTIONS:!0, P:!0, TBODY:!0, TD:!0, TFOOT:!0, TH:!0, THEAD:!0, TR:!0}, N = {m:{l:!0}, TH:{TD:!0}, TD:{TH:!0}, DT:{DD:!0}, 
-  DD:{DT:!0}, COLGROUP:{CAPTION:!0}, THEAD:{CAPTION:!0, COLGROUP:!0}, TFOOT:{CAPTION:!0, COLGROUP:!0, THEAD:!0, TBODY:!0}, TBODY:{CAPTION:!0, COLGROUP:!0, THEAD:!0, TFOOT:!0}}, Y = {SCRIPT:!0, STYLE:!0, PLAINTEXT:!0, XMP:!0, TEXTAREA:!0}, T = {action:!0, archive:!0, background:!0, cite:!0, classid:!0, codebase:!0, data:!0, href:!0, longdesc:!0, profile:!0, src:!0, usemap:!0}, S = {checked:!0, compact:!0, declare:!0, defer:!0, disabled:!0, ismap:!0, multiple:!0, nohref:!0, noresize:!0, noshade:!0, 
-  nowrap:!0, readonly:!0, selected:!0}, C = "abcdefghijklmnopqrstuvwxyz \t\r\n\f\b", F = {}, x, v;
-  for (x = 26; x;) {
-    F[C.charAt(--x)] = 2;
+  for (w = 32; 26 < w;) {
+    n[D.charAt(--w)] = 4;
   }
-  x = 26;
-  for (C = C.toUpperCase(); x;) {
-    F[C.charAt(--x)] = 1;
-  }
-  for (x = 32; 26 < x;) {
-    F[C.charAt(--x)] = 4;
-  }
-  v = F;
+  p = {g:"", h:function(a) {
+    p.g = a;
+  }, m:function(a, x, v) {
+    p.g += "<" + a;
+    a = 0;
+    for (var F, g; a < x.length; a += 2) {
+      F = x[a], g = x[a + 1], p.g += " " + F[0] + (!0 !== g ? '="' + g.split('"').join('\\"').split('\\\\"').join('\\"') + '"' : "");
+    }
+    p.g += (v ? "/" : "") + ">";
+  }, l:function(a) {
+    p.g += "</" + a + ">";
+  }, i:function(a) {
+    a.split(" ").join("") && (a = " " === a.charAt(0) ? a.substr(1) : a, a = a.length && " " === a.charAt(a.length - 1) ? a.substr(0, a.length - 1) : a, p.g += a);
+  }, s:function() {
+  }, o:function() {
+  }, v:function() {
+  }};
   O.onload = function() {
-    var a = document.all("input"), d = document.all("output");
+    var a = document.all("input"), x = document.all("output");
     document.all("form").onsubmit = bz;
-    function bz(c) {
-      c && c.preventDefault();
+    function bz(v) {
+      v && v.preventDefault();
       "undefined" != typeof event && (event.returnValue = !1);
-      d.value = aa(a.value);
+      P(a.value);
+      x.value = p.g;
       return !1;
     }
     bz = !1;
   };
-})(this, parseFloat);
+})(this, Date);
 

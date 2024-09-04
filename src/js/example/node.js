@@ -10,5 +10,5 @@ module.exports = function( html ){
 
     htmlparser.exec( html, handler );
 
-    return handler._root;
+    return handler._getResult();
 };

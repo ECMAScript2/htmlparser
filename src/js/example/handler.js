@@ -8,7 +8,6 @@ goog.requireType( 'htmlparser.typedef.Handler' );
  */
 var handler =
     {
-        isXML   : true,
         _result : '',
         onParseError : function( msg ){
             handler._result = msg;

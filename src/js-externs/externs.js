@@ -3,10 +3,13 @@
  */
 var __avoidRenamingTagNamesAndAttributes__ = [
     {
-        AREA  : true, BASE    : true, BASEFONT : true, BR   : true,
-        COL   : true, FRAME   : true, HR       : true, IMG  : true,
-        INPUT : true, ISINDEX : true, LINK     : true, META : true,
-        PARAM : true, EMBED   : true
+        xml : true, svg : true, math : true
+    },
+    {
+        AREA    : true, BASE   : true, BASEFONT : true, BR   : true, BGSOUND : true,
+        COL     : true, FRAME  : true, HR       : true, IMG  : true, INPUT   : true,
+        ISINDEX : true, KEYGEN : true, LINK     : true, META : true, PARAM   : true,
+        SOURCE  : true, TRACK  : true, EMBED    : true, WBR  : true
     },
     {
         ADDRESS : true, APPLET   : true, BLOCKQUOTE : true, BUTTON   : true,

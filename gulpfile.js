@@ -42,15 +42,15 @@ gulp.task( 'dist', gulp.series(
                         entry_point       : 'goog:example.node',
                         externs           : [ externsJs ],
                         compilation_level : 'ADVANCED',
-                        define            : [ /*
-                            'htmlparser.DEFINE.useXML=' + minify,
-                            'htmlparser.DEFINE.useDocTypeNode=' + minify,
-                            'htmlparser.DEFINE.useProcessingInstruction=' + minify,
-                            'htmlparser.DEFINE.useLazy=' + minify,
-                            'htmlparser.DEFINE.parsingStop=' + minify,
-                            'htmlparser.DEFINE.useCDATASection=' + minify,
+                        define            : [
+                            'htmlparser.DEFINE.useXML=' + true,
+                            'htmlparser.DEFINE.useDocTypeNode=' + true,
+                            'htmlparser.DEFINE.useProcessingInstruction=' + true,
+                            'htmlparser.DEFINE.useLazy=' + false,
+                            'htmlparser.DEFINE.parsingStop=' + false,
+                            'htmlparser.DEFINE.useCDATASection=' + true,
                             'htmlparser.DEFINE.attributePrefixSymbol=":"'
-                        */ ],
+                        ],
                         warning_level     : 'VERBOSE',
                         language_in       : 'ECMASCRIPT6',
                         language_out      : 'ECMASCRIPT6',
