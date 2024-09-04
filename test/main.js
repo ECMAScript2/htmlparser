@@ -178,7 +178,7 @@ test('Text nodes escaping - &nbsp;',
         );
     }
 );
-/*
+
 test('Text nodes escaping - < and >',
     (t) => {
         t.deepEqual(
@@ -188,7 +188,7 @@ test('Text nodes escaping - < and >',
             [ 11, [ 'TITLE', '< foo >' ], [ 'DIV', '> bar <' ] ]
         );
     }
-); */
+);
 
 test('Text nodes escaping - quotes',
     (t) => {
@@ -200,7 +200,7 @@ test('Text nodes escaping - quotes',
         );
     }
 );
-/*
+
 test('Text nodes escaping - non-escapable tags',
     (t) => {
         t.deepEqual(
@@ -210,8 +210,8 @@ test('Text nodes escaping - non-escapable tags',
             [ 11, [ 'BODY', [ 'STYLE', '&\u00A0><' ], [ 'SCRIPT', '&\u00A0><' ], [ 'XMP', '&\u00A0><' ], [ 'IFRAME', '&\u00A0><' ], [ 'NOEMBED', '&\u00A0><' ], [ 'NOFRAMES', '&\u00A0><' ], [ 'PLAINTEXT', '&\u00A0><' ] ] ]
         );
     }
-); */
-/*
+);
+
 test('Text nodes escaping - <noscript> with scripting enabled',
     (t) => {
         t.deepEqual(
@@ -221,7 +221,7 @@ test('Text nodes escaping - <noscript> with scripting enabled',
             [ 11, [ 'BODY', [ 'NOSCRIPT', '& ><' ] ] ]
         );
     }
-); */
+);
 
 test('Comment nodes',
     (t) => {

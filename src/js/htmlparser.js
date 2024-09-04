@@ -199,18 +199,19 @@ goog.scope(
          * @param {htmlparser.typedef.Handler} handler
          */
         htmlparser.exec = function( html, handler ){
-            exec( html, handler, htmlparser.DEFINE.useLazy && !!handler.onComplete, html.length );
+            exec( html, '', handler, htmlparser.DEFINE.useLazy && !!handler.onComplete, html.length );
         };
 
         /**
          * 
          * @param {string} html 
+         * @param {string} text
          * @param {htmlparser.typedef.Handler} handler
          * @param {boolean} lazy 
          * @param {number} originalHTMLLength 
          * @param {!Array.<string>=} opt_stack
          */
-        function exec( html, handler, lazy, originalHTMLLength, opt_stack ){
+        function exec( html, text, handler, lazy, originalHTMLLength, opt_stack ){
             /** @const {number} */
             var startTime  = lazy ? now() : 0;
             /** @const {number} */
@@ -232,126 +233,140 @@ goog.scope(
                 };
 
                 // Make sure we're not in a script or style element
-                if( lastTagName && TAGS_SPECIAL[ lastTagUpperCased ] ){
-                    index = html.toUpperCase().indexOf( '</' + lastTagUpperCased );
-                    if( 0 <= index ){
-                        if( index ){
-                            handler.onParseText( html.substring( 0, index ) );
-                        };
-                        html = html.substring( index );
-                        nextIndex = parseEndTag( stack, handler, html );
-
-                        if( nextIndex === PARSING_STOP && htmlparser.DEFINE.parsingStop ){
-                            return;
-                        } else if( nextIndex ){
-                            html = html.substring( nextIndex );
-                        } else {
-                            handler.onParseText( html );
-                            html = '';
-                        };
-                    } else if( lastTagUpperCased === 'PLAINTEXT' ){
+                if( TAGS_SPECIAL[ lastTagUpperCased ] ){
+                    if( lastTagUpperCased === 'PLAINTEXT' ){
                         handler.onParseText( html );
                         html = '';
                     } else {
-                        handler.onParseError( html );
-                        return;
+                        index = html.toUpperCase().indexOf( '</' + lastTagUpperCased );
+                        if( 0 <= index ){
+                            if( index ){
+                                handler.onParseText( html.substring( 0, index ) );
+                            };
+                            html = html.substring( index );
+                            nextIndex = parseEndTag( stack, handler, html );
+    
+                            if( nextIndex === PARSING_STOP && htmlparser.DEFINE.parsingStop ){
+                                return;
+                            } else if( nextIndex ){
+                                html = html.substring( nextIndex );
+                            } else {
+                                handler.onParseError( text + html );
+                                return;
+                            };
+                        } else {
+                            handler.onParseError( text + html );
+                            return;
+                        };
                     };
                 // DocType
                 } else if( htmlparser.DEFINE.useDocTypeNode && html.indexOf( '<!DOCTYPE ' ) === 0 ){
                     index = html.indexOf( '>' );
                     if( index !== -1 ){
+                        processText();
                         handler.onParseDocType( html.substring( 10, index ) );
                         html = html.substring( index + 1 );
                     } else {
-                        handler.onParseError( html );
+                        handler.onParseError( text + html );
                         return;
                     };
                 // ProcessingInstruction
                 } else if( htmlparser.DEFINE.useProcessingInstruction && html.indexOf( '<?' ) === 0 ){
                     index = html.indexOf( '?>' );
                     if( index !== -1 ){
+                        processText();
                         handler.onParseProcessingInstruction( html.substring( 2, index ) );
                         html = html.substring( index + 2 );
                     } else {
-                        handler.onParseError( html );
+                        handler.onParseError( text + html );
                         return;
                     };
                 // CDATASection
                 } else if( htmlparser.DEFINE.useCDATASection && html.indexOf( '<![CDATA[' ) === 0 ){
                     index = html.indexOf( ']]>' );
                     if( index !== -1 ){
+                        processText();
                         handler.onParseCDATASection( html.substring( 9, index ) );
                         html = html.substring( index + 3 );
                     } else {
-                        handler.onParseError( html );
+                        handler.onParseError( text + html );
                         return;
                     };
                 // Comment
                 } else if( html.indexOf( '<!--' ) === 0 ){
                     index = html.indexOf( '-->' );
                     if( index !== -1 ){
+                        processText();
                         handler.onParseComment( html.substring( 4, index ) );
                         html = html.substring( index + 3 );
                     } else {
-                        handler.onParseComment( html.substring( 4 ) );
-                        html = '';
+                        handler.onParseError( text + html );
+                        return;
+                    };
+                // end tag
+                } else if( html.indexOf( '</' ) === 0 ){
+                    processText();
+                    nextIndex = parseEndTag( stack, handler, html );
+
+                    if( htmlparser.DEFINE.parsingStop && nextIndex === PARSING_STOP ){
+                        return;
+                    } else if( nextIndex ){
+                        html = html.substring( nextIndex );
+                    } else {
+                        handler.onParseError( html );
+                        return;
+                    };
+                // start tag
+                } else if( html.charAt( 0 ) === '<' && isAlphabet( html.charAt( 1 ) ) ){
+                    processText();
+                    nextIndex = parseStartTag( stack, lastTagName, handler, html );
+
+                    if( htmlparser.DEFINE.parsingStop && nextIndex === PARSING_STOP ){
+                        return;
+                    } else if( nextIndex ){
+                        html = html.substring( nextIndex );
+                    } else {
+                        handler.onParseError( html );
+                        return;
                     };
                 } else {
-                    // end tag
-                    if( html.indexOf( '</' ) === 0 ){
-                        nextIndex = parseEndTag( stack, handler, html );
-
-                        if( htmlparser.DEFINE.parsingStop && nextIndex === PARSING_STOP ){
-                            return;
-                        } else if( nextIndex ){
-                            html = html.substring( nextIndex );
-                        } else {
-                            // 解析できなかった閉じタグをテキストとして扱う
-                            html = '&lt;' + html.substr( 1 );
-                        };
-                    // start tag
-                    } else if( html.indexOf( '<' ) === 0 ){
-                        nextIndex = parseStartTag( stack, lastTagName, handler, html );
-
-                        if( htmlparser.DEFINE.parsingStop && nextIndex === PARSING_STOP ){
-                            return;
-                        } else if( nextIndex ){
-                            html = html.substring( nextIndex );
-                        } else {
-                            // 解析できなかった開始タグをテキストとして扱う
-                            html = '&lt;' + html.substr( 1 );
-                        };
-                    };
-
-                    if( html ){
-                        index = html.indexOf( '<' );
-                        if( index === -1 ){
-                            handler.onParseText( html );
-                            html = '';
-                        } else if( index ){
-                            handler.onParseText( html.substring( 0, index ) );
-                            html = html.substring( index );
-                        };
+                    index = html.indexOf( '<' );
+                    if( index === -1 ){
+                        handler.onParseText( text + html );
+                        html = text = '';
+                    } else if( index ){
+                        text += html.substring( 0, index );
+                        html = html.substring( index );
+                    } else {
+                        text += '<';
+                        html = html.substring( 1 );
                     };
                 };
 
                 if( html === lastHtml ){
-                    handler.onParseError( html );
+                    handler.onParseError( text + html );
                     return;
                 };
 
                 if( htmlparser.DEFINE.useLazy && lazy && html && ( startTime + intervalMs <= now() ) ){
-                    handler.onParseProgress( 1 - html.length / originalHTMLLength, exec, [ html, handler, lazy, originalHTMLLength, stack ] );
+                    handler.onParseProgress( 1 - html.length / originalHTMLLength, exec, [ html, text, handler, lazy, originalHTMLLength, stack ] );
                     return;
                 };
 
                 lastHtml = html;
             };
 
+            processText();
+
             // Clean up any remaining tags
             closeTag( stack, handler, '', true );
 
             htmlparser.DEFINE.useLazy && lazy && handler.onComplete();
+
+            function processText(){
+                text && handler.onParseText( text );
+                text = '';
+            };
 
             /**
              * @return {number}
