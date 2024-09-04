@@ -35,7 +35,7 @@ htmlparser.DEFINE.attributePrefixSymbol    = goog.define( 'htmlparser.DEFINE.att
  *   onParseError                 : (function(string) | void),
  *   onParseDocType               : (function(string) | void),
  *   onParseStartTag              : function(string, !Array.<string | boolean>, boolean, number):(boolean | void),
- *   onParseEndTag                : function(string):(boolean | void),
+ *   onParseEndTag                : function(string, boolean):(boolean | void),
  *   onParseText                  : function(string),
  *   onParseComment               : function(string),
  *   onParseCDATASection          : (function(string) | void),
@@ -311,7 +311,7 @@ goog.scope(
                         };
                     // start tag
                     } else if( html.indexOf( '<' ) === 0 ){
-                        nextIndex = parseStartTag( stack, lastTagName, handler, html, isXML );
+                        nextIndex = parseStartTag( stack, lastTagName, handler, html );
 
                         if( htmlparser.DEFINE.parsingStop && nextIndex === PARSING_STOP ){
                             return;
@@ -349,7 +349,7 @@ goog.scope(
             };
 
             // Clean up any remaining tags
-            closeTag( stack, handler );
+            closeTag( stack, handler, '', true );
 
             htmlparser.DEFINE.useLazy && lazy && handler.onComplete();
 
@@ -415,7 +415,7 @@ goog.scope(
                 };
                 if( phase === 3 ){
                     tagName = /** @type {string} */ (tagName);
-                    if( closeTag( stack, handler, isXML ? tagName : tagName.toUpperCase() ) && htmlparser.DEFINE.parsingStop ){
+                    if( closeTag( stack, handler, isXML ? tagName : tagName.toUpperCase(), false ) && htmlparser.DEFINE.parsingStop ){
                         return PARSING_STOP;
                     };
                     return i;
@@ -426,9 +426,10 @@ goog.scope(
              * If return true:Parsing Stop
              * @param {!Array.<string>} stack 
              * @param {htmlparser.typedef.Handler} handler 
-             * @param {string=} tagName 
+             * @param {string} tagName
+             * @param {boolean} missingEndTag 
              */
-            function closeTag( stack, handler, tagName ){
+            function closeTag( stack, handler, tagName, missingEndTag ){
                 var pos = 0, i = stack.length;
                 // If no tag name is provided, clean shop
             
@@ -443,7 +444,7 @@ goog.scope(
                 if( 0 <= pos ){
                     // Close all the open elements, up the stack
                     for( ; pos < i; ){
-                        if( handler.onParseEndTag( stack[ --i ] ) === true && htmlparser.DEFINE.parsingStop ){
+                        if( handler.onParseEndTag( stack[ --i ], missingEndTag ) === true && htmlparser.DEFINE.parsingStop ){
                             return true;
                         };
                         if( htmlparser.DEFINE.useXML && isXML && TAGS_XML[ stack[ i ] ] ){
@@ -460,10 +461,9 @@ goog.scope(
              * @param {string} lastTagName 
              * @param {htmlparser.typedef.Handler} handler 
              * @param {string} html "<" で始まる HTML 文字列
-             * @param {boolean} skipNestedCorrections
              * @return {number} 0:error, 1:Parsing Stop, 3~:success
              */
-            function parseStartTag( stack, lastTagName, handler, html, skipNestedCorrections ){
+            function parseStartTag( stack, lastTagName, handler, html ){
                 /**
                  * 
                  * @param {string} name 
@@ -584,7 +584,7 @@ goog.scope(
                     if( !isXML ){
                         if( TAGS_BLOCK[ tagUpper ] ){
                             while( lastTagName && TAGS_INLINE[ lastTagName ] ){
-                                if( closeTag( stack, handler, lastTagName ) && htmlparser.DEFINE.parsingStop ){
+                                if( closeTag( stack, handler, lastTagName, false ) && htmlparser.DEFINE.parsingStop ){
                                     return PARSING_STOP;
                                 };
                                 lastTagName = stack[ stack.length - 1 ];
@@ -593,7 +593,7 @@ goog.scope(
 
                         while( lastTagName ){
                             if( INVALID_CHILD[ lastTagName ] && INVALID_CHILD[ lastTagName ][ tagUpper ] ){
-                                if( closeTag( stack, handler, lastTagName ) && htmlparser.DEFINE.parsingStop ){
+                                if( closeTag( stack, handler, lastTagName, false ) && htmlparser.DEFINE.parsingStop ){
                                     return PARSING_STOP;
                                 };
                                 lastTagName = stack[ stack.length - 1 ];
