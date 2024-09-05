@@ -52,10 +52,14 @@ htmlparser.example.handler.html2json = {
             };
         },
         onParseEndTag : function( tag, missingEndTag, noStartTag ){
-            if( tag === currentNode[ 0 ] ){
-                currentNode = stack.pop();
-            } else {
-                // error
+            if( noStartTag ){
+                currentNode.push( '</' + tag + '>' );
+            } else if( !missingEndTag ){
+                if( tag === currentNode[ 0 ] ){
+                    currentNode = stack.pop();
+                } else {
+                    // error
+                };
             };
         },
         onParseText : function( text ){

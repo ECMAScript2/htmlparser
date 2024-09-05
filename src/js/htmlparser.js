@@ -447,6 +447,10 @@ goog.scope(
              * @return {boolean | void}
              */
             function closeTag( stack, handler, tagName, closeAutomatically ){
+                function missingEndTag( tagName ){
+                    return closeAutomatically && !( INVALID_CHILD[ tagName ] && INVALID_CHILD[ tagName ][ tagName ] );
+                };
+
                 var pos = 0, i = stack.length;
                 // If no tag name is provided, clean shop
             
@@ -471,13 +475,9 @@ goog.scope(
                     // Remove the open elements from the stack
                     stack.length = pos;
                 } else {
-                    if( handler.onParseEndTag( tagName, missingEndTag( tagName ), true ) === true && htmlparser.DEFINE.parsingStop ){
+                    if( handler.onParseEndTag( tagName, false, true ) === true && htmlparser.DEFINE.parsingStop ){
                         return true;
                     };
-                };
-
-                function missingEndTag( tagName ){
-                    return closeAutomatically && !( INVALID_CHILD[ tagName ] && INVALID_CHILD[ tagName ][ tagName ] );
                 };
             };
             /**
