@@ -343,6 +343,12 @@ test('<p>',
             ),
             [ 11, [ 'P', '1' ], [ 'P', '2' ], [ 'P', '3' ] ]
         );
+        t.deepEqual(
+            parser(
+                '<p>Some <div>content</div>'
+            ),
+            [ 11, [ 'P', 'Some ' ], [ 'DIV', 'content' ] ]
+        );
     }
 );
 

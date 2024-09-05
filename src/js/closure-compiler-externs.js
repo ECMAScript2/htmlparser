@@ -12,47 +12,21 @@ var __avoidRenamingTagNamesAndAttributes__ = [
         SOURCE  : true, TRACK  : true, EMBED    : true, WBR  : true
     },
     {
-        ADDRESS : true, APPLET   : true, BLOCKQUOTE : true, BUTTON   : true,
-        CENTER  : true, DD       : true, DEL        : true, DIR      : true,
-        DIV     : true, DL       : true, DT         : true, FIELDSET : true,
-        FORM    : true, FRAMESET : true, HR         : true, IFRAME   : true,
-        INS     : true, ISINDEX  : true, LI         : true, MAP      : true,
-        MARQUEE : true, MENU     : true, NOFRAMES   : true, NOSCRIPT : true,
-        OBJECT  : true, OL       : true, P          : true, PRE      : true,
-        SCRIPT  : true, TABLE    : true, TBODY      : true, TD       : true,
-        TFOOT   : true, TH       : true, THEAD      : true, TR       : true,
-        UL      : true
-    },
-    {
-        ABBR     : true, ACRONYM  : true, APPLET   : true, B        : true,
-        BASEFONT : true, BDO      : true, BIG      : true, BR       : true,
-        BUTTON   : true, CAPTION  : true, CITE     : true, CODE     : true,
-        DEL      : true, DFN      : true, EM       : true, FONT     : true,
-        I        : true, IFRAME   : true, IMG      : true, INPUT    : true,
-        INS      : true, KBD      : true, LABEL    : true, MAP      : true,
-        NOBR     : true, OBJECT   : true, Q        : true, RB       : true,
-        RBC      : true, RP       : true, RT       : true, RTC      : true,
-        RUBY     : true, S        : true, SAMP     : true, SCRIPT   : true,
-        SELECT   : true, SMALL    : true, SPAN     : true, STRIKE   : true,
-        STRONG   : true, SUB      : true, SUP      : true, TEXTAREA : true,
-        TT       : true, U        : true, VAR      : true, WBR      : true
-    },
-    {
-        HEAD     : { BODY     : true },
-        LI       : { LI       : true },
-        OPTION   : { OPTION   : true },
-        P        : { P        : true },
-        OPTGROUP : { OPTGROUP : true },
-
-        DT       : { DT : true, DD : true },
-
-        CAPTION  : { CAPTION : true, COLGROUP : true, THEAD : true, TBODY : true, TFOOT : true, TR : true },
-        THEAD    : { CAPTION : true, COLGROUP : true, THEAD : true, TBODY : true, TFOOT : true },
-
-        TR       : { THEAD : true, TBODY : true, TFOOT : true, TR : true },
-        TH       : { THEAD : true, TBODY : true, TFOOT : true, TR : true, TD : true, TH : true },
-        RB       : { RBC   : true, RTC   : true, RB    : true, RP : true, RT : true },
-        RBC      : { RBC   : true, RTC   : true }
+        CAPTION  : {ARTICLE:!0,SECTION:!0,NAV:!0,ASIDE:!0,H1:!0,H2:!0,H3:!0,H4:!0,H5:!0,H6:!0,HEADER:!0,FOOTER:!0,ADDRESS:!0,P:!0,HR:!0,PRE:!0,BLOCKQUOTE:!0,OL:!0,UL:!0,DL:!0,FIGURE:!0,DIV:!0,A:!0,EM:!0,STRONG:!0,SMALL:!0,S:!0,CITE:!0,Q:!0,DFN:!0,ABBR:!0,DATA:!0,TIME:!0,CODE:!0,VAR:!0,SAMP:!0,KBD:!0,SUB:!0,SUP:!0,I:!0,B:!0,U:!0,MARK:!0,RUBY:!0,BDI:!0,BDO:!0,SPAN:!0,BR:!0,WBR:!0,INS:!0,DEL:!0,PICTURE:!0,IMG:!0,IFRAME:!0,EMBED:!0,OBJECT:!0,VIDEO:!0,AUDIO:!0,MAP:!0,AREA:!0,MATH:!0,SVG:!0,         FORM:!0,LABEL:!0,INPUT:!0,BUTTON:!0,SELECT:!0,DATALIST:!0,TEXTAREA:!0,KEYGEN:!0,OUTPUT:!0,PROGRESS:!0,METER:!0,FIELDSET:!0,DETAILS:!0,DIALOG:!0,SCRIPT:!0,NOSCRIPT:!0,TEMPLATE:!0,CANVAS:!0},
+        DD       : {ARTICLE:!0,SECTION:!0,NAV:!0,ASIDE:!0,H1:!0,H2:!0,H3:!0,H4:!0,H5:!0,H6:!0,HEADER:!0,FOOTER:!0,ADDRESS:!0,P:!0,HR:!0,PRE:!0,BLOCKQUOTE:!0,OL:!0,UL:!0,DL:!0,FIGURE:!0,DIV:!0,A:!0,EM:!0,STRONG:!0,SMALL:!0,S:!0,CITE:!0,Q:!0,DFN:!0,ABBR:!0,DATA:!0,TIME:!0,CODE:!0,VAR:!0,SAMP:!0,KBD:!0,SUB:!0,SUP:!0,I:!0,B:!0,U:!0,MARK:!0,RUBY:!0,BDI:!0,BDO:!0,SPAN:!0,BR:!0,WBR:!0,INS:!0,DEL:!0,PICTURE:!0,IMG:!0,IFRAME:!0,EMBED:!0,OBJECT:!0,VIDEO:!0,AUDIO:!0,MAP:!0,AREA:!0,MATH:!0,SVG:!0,TABLE:!0,FORM:!0,LABEL:!0,INPUT:!0,BUTTON:!0,SELECT:!0,DATALIST:!0,TEXTAREA:!0,KEYGEN:!0,OUTPUT:!0,PROGRESS:!0,METER:!0,FIELDSET:!0,DETAILS:!0,DIALOG:!0,SCRIPT:!0,NOSCRIPT:!0,TEMPLATE:!0,CANVAS:!0},
+                   // => LI, TD
+        DT       : {                                                                                              ADDRESS:!0,P:!0,HR:!0,PRE:!0,BLOCKQUOTE:!0,OL:!0,UL:!0,DL:!0,FIGURE:!0,DIV:!0,A:!0,EM:!0,STRONG:!0,SMALL:!0,S:!0,CITE:!0,Q:!0,DFN:!0,ABBR:!0,DATA:!0,TIME:!0,CODE:!0,VAR:!0,SAMP:!0,KBD:!0,SUB:!0,SUP:!0,I:!0,B:!0,U:!0,MARK:!0,RUBY:!0,BDI:!0,BDO:!0,SPAN:!0,BR:!0,WBR:!0,INS:!0,DEL:!0,PICTURE:!0,IMG:!0,IFRAME:!0,EMBED:!0,OBJECT:!0,VIDEO:!0,AUDIO:!0,MAP:!0,AREA:!0,MATH:!0,SVG:!0,TABLE:!0,FORM:!0,LABEL:!0,INPUT:!0,BUTTON:!0,SELECT:!0,DATALIST:!0,TEXTAREA:!0,KEYGEN:!0,OUTPUT:!0,PROGRESS:!0,METER:!0,FIELDSET:!0,DETAILS:!0,DIALOG:!0,SCRIPT:!0,NOSCRIPT:!0,TEMPLATE:!0,CANVAS:!0},
+                   // => TH
+        P        : {                                                                                                                                                                            A:!0,EM:!0,STRONG:!0,SMALL:!0,S:!0,CITE:!0,Q:!0,DFN:!0,ABBR:!0,DATA:!0,TIME:!0,CODE:!0,VAR:!0,SAMP:!0,KBD:!0,SUB:!0,SUP:!0,I:!0,B:!0,U:!0,MARK:!0,RUBY:!0,BDI:!0,BDO:!0,SPAN:!0,BR:!0,WBR:!0,INS:!0,DEL:!0,PICTURE:!0,IMG:!0,IFRAME:!0,EMBED:!0,OBJECT:!0,VIDEO:!0,AUDIO:!0,MAP:!0,AREA:!0,MATH:!0,SVG:!0,                 LABEL:!0,INPUT:!0,BUTTON:!0,SELECT:!0,DATALIST:!0,TEXTAREA:!0,KEYGEN:!0,OUTPUT:!0,PROGRESS:!0,METER:!0,                                 SCRIPT:!0,NOSCRIPT:!0,TEMPLATE:!0,CANVAS:!0},
+                   // => RB, RP, RT 
+        HTML     : {HEAD:!0,BODY:!0},
+        HEAD     : {TITLE:!0,BASE:!0,BGSOUND:!0,LINK:!0,META:!0,STYLE:!0,SCRIPT:!0,NOSCRIPT:!0,TEMPLETE:!0},
+        COLGROUP : {COL:!0},
+        OPTGROUP : {OPTION:!0},
+        OPTION   : {},
+        TBODY    : {TR:!0},            // => THEAD, TFOOT
+        TR       : {TH:!0,TD:!0},
+        RBC      : {RB:!0,RP:!0,RT:!0} // => RTC
     },
     {
         SCRIPT : true, STYLE : true, PLAINTEXT : true, XMP : true, TEXTAREA : true
@@ -70,5 +44,11 @@ var __avoidRenamingTagNamesAndAttributes__ = [
         selected : true
     }
 ];
+
+__avoidRenamingTagNamesAndAttributes__.LI    = __avoidRenamingTagNamesAndAttributes__.TD    = __avoidRenamingTagNamesAndAttributes__.DD;
+__avoidRenamingTagNamesAndAttributes__.TH    = __avoidRenamingTagNamesAndAttributes__.DT;
+__avoidRenamingTagNamesAndAttributes__.RB    = __avoidRenamingTagNamesAndAttributes__.RP    = __avoidRenamingTagNamesAndAttributes__.RT = __avoidRenamingTagNamesAndAttributes__.P;
+__avoidRenamingTagNamesAndAttributes__.TFOOT = __avoidRenamingTagNamesAndAttributes__.THEAD = __avoidRenamingTagNamesAndAttributes__.TBODY;
+__avoidRenamingTagNamesAndAttributes__.RTC   = __avoidRenamingTagNamesAndAttributes__.RBC;
 
 var module = { exports : function(){} };

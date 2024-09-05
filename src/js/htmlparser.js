@@ -13,6 +13,8 @@ goog.provide( 'htmlparser.DEFINE' );
 /** @const */
 var htmlparser = {};
 
+goog.require( 'OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
+
 /** @define {boolean} */
 htmlparser.DEFINE.useXML                   = goog.define( 'htmlparser.DEFINE.useXML' , false );
 /** @define {boolean} */
@@ -76,77 +78,6 @@ goog.scope(
         };
 
         /**
-         * Block Elements - HTML 4.01
-         * @const {Object.<string, boolean>} */
-        var TAGS_BLOCK = {
-            ADDRESS : true, APPLET   : true, BLOCKQUOTE : true, BUTTON   : true,
-            CENTER  : true, DD       : true, DEL        : true, DIR      : true,
-            DIV     : true, DL       : true, DT         : true, FIELDSET : true,
-            FORM    : true, FRAMESET : true, HR         : true, IFRAME   : true,
-            INS     : true, ISINDEX  : true, LI         : true, MAP      : true,
-            MARQUEE : true, MENU     : true, NOFRAMES   : true, NOSCRIPT : true,
-            OBJECT  : true, OL       : true, P          : true, PRE      : true,
-            SCRIPT  : true, TABLE    : true, TBODY      : true, TD       : true,
-            TFOOT   : true, TH       : true, THEAD      : true, TR       : true,
-            UL      : true
-        };
-
-        /**
-         * Inline Elements - HTML 4.01
-         * @const {Object.<string, boolean>} */
-        var TAGS_INLINE = {
-            /*A:true,*/      
-            ABBR     : true, ACRONYM  : true, APPLET   : true, B        : true,
-            BASEFONT : true, BDO      : true, BIG      : true, BR       : true,
-            BUTTON   : true, CAPTION  : true, CITE     : true, CODE     : true,
-            DEL      : true, DFN      : true, EM       : true, FONT     : true,
-            I        : true, IFRAME   : true, IMG      : true, INPUT    : true,
-            INS      : true, KBD      : true, LABEL    : true, MAP      : true,
-            NOBR     : true, OBJECT   : true, Q        : true, RB       : true,
-            RBC      : true, RP       : true, RT       : true, RTC      : true,
-            RUBY     : true, S        : true, SAMP     : true, SCRIPT   : true,
-            SELECT   : true, SMALL    : true, SPAN     : true, STRIKE   : true,
-            STRONG   : true, SUB      : true, SUP      : true, TEXTAREA : true,
-            TT       : true, U        : true, VAR      : true, WBR      : true
-        };
-
-        /*
-         * http://www.tohoho-web.com/html/tbody.htm
-         *   > HTML4.01では、ヘッダとフッタを先読みして表示するために、<tbody> よりも <tfoot> の方を先に記述しなくてはならないと定義されています。
-         *   > IE5.0 などでは HEAD → BODY → FOOT の順に表示するのですが、
-         *   > <tfoot> に未対応の古いブラウザでは、HEAD → FOOT → BODY の順に表示されてしまいます。
-         *   > また、HTML5 では、<tfoot> と <tbody> の順番はどちらでもよいことになりました。
-         */
-
-        /**
-         * Elements that you can,' intentionally,' leave open (and which close themselves)
-         * 
-         * @const {Object.<string, Object.<string, boolean>>} */
-        var INVALID_CHILD = {
-            HEAD     : { BODY     : true },
-            LI       : { LI       : true },
-            OPTION   : { OPTION   : true },
-            P        : { P        : true },
-            OPTGROUP : { OPTGROUP : true },
-
-            DT       : { DT : true, DD : true },
-
-            CAPTION  : { CAPTION : true, COLGROUP : true, THEAD : true, TBODY : true, TFOOT : true, TR : true },
-            THEAD    : { CAPTION : true, COLGROUP : true, THEAD : true, TBODY : true, TFOOT : true },
-
-            TR       : { THEAD : true, TBODY : true, TFOOT : true, TR : true },
-            TH       : { THEAD : true, TBODY : true, TFOOT : true, TR : true, TD : true, TH : true },
-            RB       : { RBC   : true, RTC   : true, RB    : true, RP : true, RT : true },
-            RBC      : { RBC   : true, RTC   : true }
-        };
-        INVALID_CHILD.DD = INVALID_CHILD.DT;
-        INVALID_CHILD.COLGROUP = INVALID_CHILD.CAPTION;
-        INVALID_CHILD.TFOOT = INVALID_CHILD.TBODY = INVALID_CHILD.THEAD;
-        INVALID_CHILD.TD = INVALID_CHILD.TH;
-        INVALID_CHILD.RP = INVALID_CHILD.RT = INVALID_CHILD.RB;
-        INVALID_CHILD.RTC = INVALID_CHILD.RBC;
-
-        /**
          * Special Elements (can contain anything)
          * @const {Object.<string, boolean>} */
         var TAGS_SPECIAL = {
@@ -175,20 +106,13 @@ goog.scope(
 
         /**
          * @const {Object.<string, number>} */
-        var CHARS = {};
-            (function(){
-                var chars = 'abcdefghijklmnopqrstuvwxyz \t\r\n\f\b', i;
-
-                for( i = 26; i; ){
-                    CHARS[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_LOWERCASE_ALPHABETS;
-                };
-                for( i = 26, chars = chars.toUpperCase(); i; ){
-                    CHARS[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_UPPERCASE_ALPHABETS;
-                };
-                for( i = 32; 26 < i; ){
-                    CHARS[ chars.charAt( --i ) ] = _CHAR_KINDS.IS_WHITESPACE;
-                };
-            })();
+        var CHARS = {
+            'a':2,'b':2,'c':2,'d':2,'e':2,'f':2,'g':2,'h':2,'i':2,'j':2,'k':2,'l':2,'m':2,
+            'n':2,'o':2,'p':2,'q':2,'r':2,'s':2,'t':2,'u':2,'v':2,'w':2,'x':2,'y':2,'z':2,
+            'A':1,'B':1,'C':1,'D':1,'E':1,'F':1,'G':1,'H':1,'I':1,'J':1,'K':1,'L':1,'M':1,
+            'N':1,'O':1,'P':1,'Q':1,'R':1,'S':1,'T':1,'U':1,'V':1,'W':1,'X':1,'Y':1,'Z':1,
+            '\b':4,'\f':4,'\n':4,'\r':4,'\t':4,' ':4
+        };
 
         /** @const {number} */
         var PARSING_STOP = 1;
@@ -448,7 +372,7 @@ goog.scope(
              */
             function closeTag( stack, handler, tagName, closeAutomatically ){
                 function missingEndTag( tagName ){
-                    return closeAutomatically && !( INVALID_CHILD[ tagName ] && INVALID_CHILD[ tagName ][ tagName ] );
+                    return closeAutomatically && !OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ tagName ];
                 };
 
                 var pos = 0, i = stack.length;
@@ -607,17 +531,8 @@ goog.scope(
                         isXML = !!TAGS_XML[ tagName ];
                     };
                     if( !isXML ){
-                        if( TAGS_BLOCK[ tagUpper ] ){
-                            while( lastTagName && TAGS_INLINE[ lastTagName ] ){
-                                if( closeTag( stack, handler, lastTagName, false ) && htmlparser.DEFINE.parsingStop ){
-                                    return PARSING_STOP;
-                                };
-                                lastTagName = stack[ stack.length - 1 ];
-                            };
-                        };
-
                         while( lastTagName ){
-                            if( INVALID_CHILD[ lastTagName ] && INVALID_CHILD[ lastTagName ][ tagUpper ] ){
+                            if( OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ] && !OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ][ tagUpper ] ){
                                 if( closeTag( stack, handler, lastTagName, false ) && htmlparser.DEFINE.parsingStop ){
                                     return PARSING_STOP;
                                 };
