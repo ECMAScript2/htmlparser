@@ -1,7 +1,7 @@
 goog.provide( 'OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
 
 /**
- * Elements that you can,' intentionally,' leave open (and which close themselves)
+ * Elements that can omit end tag and elements they can make children of.
  * 
  * @const {Object.<string, Object.<string, boolean>>} */
 var OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN = {

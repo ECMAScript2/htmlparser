@@ -10,10 +10,10 @@ goog.provide( 'htmlparser.exec' );
 goog.provide( 'htmlparser.typedef.Handler' );
 goog.provide( 'htmlparser.DEFINE' );
 
+goog.require( 'OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
+
 /** @const */
 var htmlparser = {};
-
-goog.require( 'OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
 
 /** @define {boolean} */
 htmlparser.DEFINE.useXML                   = goog.define( 'htmlparser.DEFINE.useXML' , false );
