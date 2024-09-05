@@ -199,19 +199,19 @@ goog.scope(
          * @param {htmlparser.typedef.Handler} handler
          */
         htmlparser.exec = function( html, handler ){
-            exec( html, '', handler, htmlparser.DEFINE.useLazy && !!handler.onComplete, html.length );
+            exec( html, 0, handler, htmlparser.DEFINE.useLazy && !!handler.onComplete, html.length );
         };
 
         /**
          * 
          * @param {string} html 
-         * @param {string} text
+         * @param {number} pos
          * @param {htmlparser.typedef.Handler} handler
          * @param {boolean} lazy 
          * @param {number} originalHTMLLength 
          * @param {!Array.<string>=} opt_stack
          */
-        function exec( html, text, handler, lazy, originalHTMLLength, opt_stack ){
+        function exec( html, pos, handler, lazy, originalHTMLLength, opt_stack ){
             /** @const {number} */
             var startTime  = lazy ? now() : 0;
             /** @const {number} */
@@ -221,9 +221,9 @@ goog.scope(
 
             /** @type {boolean} */
             var isXML      = htmlparser.DEFINE.useXML && !!handler.isXHTML;
-            /** @type {string} */
-            var lastHtml   = html;
-            var lastTagName, lastTagUpperCased, index, nextIndex;
+            /** @type {number} */
+            var lastLength = html.length - pos;
+            var lastTagName, lastTagUpperCased, index, nextIndex, htmlLength;
 
             while( html ){
                 lastTagName = lastTagUpperCased = stack[ stack.length - 1 ];
@@ -240,10 +240,8 @@ goog.scope(
                     } else {
                         index = html.toUpperCase().indexOf( '</' + lastTagUpperCased );
                         if( 0 <= index ){
-                            if( index ){
-                                handler.onParseText( html.substring( 0, index ) );
-                            };
-                            html = html.substring( index );
+                            pos = index;
+                            processText();
                             nextIndex = parseEndTag( stack, handler, html );
     
                             if( nextIndex === PARSING_STOP && htmlparser.DEFINE.parsingStop ){
@@ -251,60 +249,60 @@ goog.scope(
                             } else if( nextIndex ){
                                 html = html.substring( nextIndex );
                             } else {
-                                handler.onParseError( text + html );
+                                handler.onParseError( html );
                                 return;
                             };
                         } else {
-                            handler.onParseError( text + html );
+                            handler.onParseError( html );
                             return;
                         };
                     };
                 // DocType
-                } else if( htmlparser.DEFINE.useDocTypeNode && html.indexOf( '<!DOCTYPE ' ) === 0 ){
+                } else if( htmlparser.DEFINE.useDocTypeNode && html.indexOf( '<!DOCTYPE ' ) === pos ){
+                    processText();
                     index = html.indexOf( '>' );
                     if( index !== -1 ){
-                        processText();
                         handler.onParseDocType( html.substring( 10, index ) );
                         html = html.substring( index + 1 );
                     } else {
-                        handler.onParseError( text + html );
+                        handler.onParseError( html );
                         return;
                     };
                 // ProcessingInstruction
-                } else if( htmlparser.DEFINE.useProcessingInstruction && html.indexOf( '<?' ) === 0 ){
+                } else if( htmlparser.DEFINE.useProcessingInstruction && html.indexOf( '<?' ) === pos ){
+                    processText();
                     index = html.indexOf( '?>' );
                     if( index !== -1 ){
-                        processText();
                         handler.onParseProcessingInstruction( html.substring( 2, index ) );
                         html = html.substring( index + 2 );
                     } else {
-                        handler.onParseError( text + html );
+                        handler.onParseError( html );
                         return;
                     };
                 // CDATASection
-                } else if( htmlparser.DEFINE.useCDATASection && html.indexOf( '<![CDATA[' ) === 0 ){
+                } else if( htmlparser.DEFINE.useCDATASection && html.indexOf( '<![CDATA[' ) === pos ){
+                    processText();
                     index = html.indexOf( ']]>' );
                     if( index !== -1 ){
-                        processText();
                         handler.onParseCDATASection( html.substring( 9, index ) );
                         html = html.substring( index + 3 );
                     } else {
-                        handler.onParseError( text + html );
+                        handler.onParseError( html );
                         return;
                     };
                 // Comment
-                } else if( html.indexOf( '<!--' ) === 0 ){
+                } else if( html.indexOf( '<!--' ) === pos ){
+                    processText();
                     index = html.indexOf( '-->' );
                     if( index !== -1 ){
-                        processText();
                         handler.onParseComment( html.substring( 4, index ) );
                         html = html.substring( index + 3 );
                     } else {
-                        handler.onParseError( text + html );
+                        handler.onParseError( html );
                         return;
                     };
                 // end tag
-                } else if( html.indexOf( '</' ) === 0 ){
+                } else if( html.indexOf( '</' ) === pos ){
                     processText();
                     nextIndex = parseEndTag( stack, handler, html );
 
@@ -317,7 +315,7 @@ goog.scope(
                         return;
                     };
                 // start tag
-                } else if( html.charAt( 0 ) === '<' && isAlphabet( html.charAt( 1 ) ) ){
+                } else if( html.charAt( pos ) === '<' && isAlphabet( html.charAt( pos + 1 ) ) ){
                     processText();
                     nextIndex = parseStartTag( stack, lastTagName, handler, html );
 
@@ -330,30 +328,30 @@ goog.scope(
                         return;
                     };
                 } else {
-                    index = html.indexOf( '<' );
+                    index = html.indexOf( '<', pos );
                     if( index === -1 ){
-                        handler.onParseText( text + html );
-                        html = text = '';
-                    } else if( index ){
-                        text += html.substring( 0, index );
-                        html = html.substring( index );
+                        handler.onParseText( html );
+                        html = '';
+                    } else if( pos < index ){
+                        pos = index;
                     } else {
-                        text += '<';
-                        html = html.substring( 1 );
+                        ++pos;
                     };
                 };
 
-                if( html === lastHtml ){
-                    handler.onParseError( text + html );
+                htmlLength = html.length - pos;
+
+                if( htmlLength === lastLength ){
+                    handler.onParseError( html );
                     return;
                 };
 
                 if( htmlparser.DEFINE.useLazy && lazy && html && ( startTime + intervalMs <= now() ) ){
-                    handler.onParseProgress( 1 - html.length / originalHTMLLength, exec, [ html, text, handler, lazy, originalHTMLLength, stack ] );
+                    handler.onParseProgress( 1 - htmlLength / originalHTMLLength, exec, [ html, pos, handler, lazy, originalHTMLLength, stack ] );
                     return;
                 };
 
-                lastHtml = html;
+                lastLength = htmlLength;
             };
 
             processText();
@@ -364,8 +362,11 @@ goog.scope(
             htmlparser.DEFINE.useLazy && lazy && handler.onComplete();
 
             function processText(){
-                text && handler.onParseText( text );
-                text = '';
+                if( pos ){
+                    handler.onParseText( html.substring( 0, pos ) );
+                    html = html.substring( pos );
+                    pos = 0;
+                };
             };
 
             /**

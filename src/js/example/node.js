@@ -6,6 +6,8 @@ goog.require( 'htmlparser.example.handler.html2json' );
 module.exports = function( html ){
     var handler = htmlparser.example.handler.html2json;
 
+    handler._init();
+
     htmlparser.exec( html, handler );
 
     return handler._getResult();

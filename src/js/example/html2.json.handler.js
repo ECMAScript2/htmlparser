@@ -2,23 +2,23 @@ goog.provide( 'htmlparser.example.handler.html2json' );
 
 goog.requireType( 'htmlparser.typedef.Handler' );
 
-var rootNode = [], currentNode = rootNode, stack = [];
+var rootNode, currentNode, stack;
 
 /** 
  * @extends {htmlparser.typedef.Handler}
  * @const
  */
 htmlparser.example.handler.html2json = {
-        _getResult : function(){
-            var result = rootNode;
-
+        _init : function(){
             rootNode = currentNode = [];
             stack = [];
+        },
 
-            if( typeof result[ 0 ] !== 'number' ){
-                result.unshift( 11 );
+        _getResult : function(){
+            if( typeof rootNode[ 0 ] !== 'number' ){
+                rootNode.unshift( 11 );
             };
-            return result;
+            return rootNode;
         },
 
         onParseError : function( msg ){
