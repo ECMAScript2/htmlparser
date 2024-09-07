@@ -71,10 +71,10 @@ goog.scope(
          * Empty Elements - HTML 4.01
          * @const {Object.<string, boolean>} */
         var TAGS_EMPTY = {
-            AREA    : true, BASE   : true, BASEFONT : true, BR   : true, BGSOUND : true,
-            COL     : true, FRAME  : true, HR       : true, IMG  : true, INPUT   : true,
-            ISINDEX : true, KEYGEN : true, LINK     : true, META : true, PARAM   : true,
-            SOURCE  : true, TRACK  : true, EMBED    : true, WBR  : true
+            AREA    : true, BASE    : true, BASEFONT : true, BR    : true, BGSOUND : true,
+            COL     : true, COMMAND : true, FRAME    : true, HR    : true, IMG     : true,
+            INPUT   : true, ISINDEX : true, KEYGEN   : true, LINK  : true, META    : true,
+            PARAM   : true, SOURCE  : true, TRACK    : true, EMBED : true, WBR     : true
         };
 
         /**
