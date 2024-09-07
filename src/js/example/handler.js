@@ -13,12 +13,13 @@ var handler =
             handler._result = msg;
         },
         onParseStartTag : function( tag, attrs, empty, myIndex ){
+            var name, value;
+
             handler._result += '<' + tag;
 
-            for( var i = 0, attr, val; i < attrs.length; i += 2 ){
-                attr = attrs[ i ];
-                val  = attrs[ i + 1 ];
-                handler._result += ' ' + attr[ 0 ] + ( val !== true ? '="' + val.split( '"' ).join( '\\"' ).split( '\\\\"' ).join( '\\"' ) + '"' : '' );
+            for( name in attrs ){
+                value = attrs[ name ];
+                handler._result += ' ' + name + ( value !== true ? '="' + value.split( '"' ).join( '\\"' ).split( '\\\\"' ).join( '\\"' ) + '"' : '' );
             };
             handler._result += ( empty ? '/' : '' ) + '>';
         },

@@ -7,7 +7,7 @@ const pkg             = require('./package.json'),
       moduleName      = pkg.name,
       tempJsName      = 'temp.js',
       tempDir         = require('os').tmpdir() + '/' + moduleName,
-      globalVariables = 'Date',
+      globalVariables = 'document,Date',
       copyright       = moduleName + '@' + pkg.version + '\n' +
                        '(c) 2024-' + (new Date).getFullYear() + ' ' + pkg.author + '(' + pkg.homepage + '), ' + pkg.license + '.';
 

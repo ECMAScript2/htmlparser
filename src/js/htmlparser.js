@@ -36,7 +36,7 @@ htmlparser.DEFINE.attributePrefixSymbol    = goog.define( 'htmlparser.DEFINE.att
  *   intervalMs                   : (number | void),
  *   onParseError                 : (function(string) | void),
  *   onParseDocType               : (function(string) | void),
- *   onParseStartTag              : function(string, !Array.<string | boolean>, boolean, number):(boolean | void),
+ *   onParseStartTag              : function(string, Object.<string, (string | boolean)>, boolean, number):(boolean | void),
  *   onParseEndTag                : function(string, boolean, boolean):(boolean | void),
  *   onParseText                  : function(string),
  *   onParseComment               : function(string),
@@ -419,8 +419,10 @@ goog.scope(
                  * @param {string=} opt_value 
                  */
                 function saveAttr( name, opt_value ){
-                    attrs[ ++attrIndex ] = name;
-                    attrs[ ++attrIndex ] = ATTR_IS_NO_VAL[ name.toLowerCase() ] ? ( isXML ? opt_value || name : true ) : ( opt_value || '' );
+                    attrs[ name ] = ATTR_IS_NO_VAL[ name.toLowerCase() ]
+                                  ? ( isXML ? opt_value || name : true )
+                                  : ( opt_value || '' );
+                    ++numAttrs;
                 };
                 function isEmpty(){
                     empty = html.substr( i, 2 ) === '/>';
@@ -434,12 +436,12 @@ goog.scope(
                     return htmlparser.DEFINE.attributePrefixSymbol && chr === htmlparser.DEFINE.attributePrefixSymbol;
                 };
 
-                var phase     = 0,
-                    l         = html.length,
-                    i         = 1,
-                    attrs     = [],
-                    attrIndex = -1,
-                    empty     = false,
+                var phase    = 0,
+                    l        = html.length,
+                    i        = 1,
+                    attrs    = {},
+                    numAttrs = 0,
+                    empty    = false,
                     tagName, chr, start, attrName, quot, escape, tagUpper;
 
                 while( i < l && phase < 9 ){
@@ -548,7 +550,7 @@ goog.scope(
                         stack[ stack.length ] = isXML ? tagName : tagUpper;
                     };
 
-                    if( handler.onParseStartTag( isXML ? tagName : tagUpper, attrs, empty, i ) === true && htmlparser.DEFINE.parsingStop ){
+                    if( handler.onParseStartTag( isXML ? tagName : tagUpper, numAttrs ? attrs : null, empty, i ) === true && htmlparser.DEFINE.parsingStop ){
                         return PARSING_STOP;
                     };
                     return i;

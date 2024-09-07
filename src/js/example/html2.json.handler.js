@@ -30,18 +30,9 @@ htmlparser.example.handler.html2json = {
         },
         onParseStartTag : function( tag, attrs, empty, myIndex ){
             var element = [ tag ];
-            var attrObj, i, attr, value;
 
             if( attrs ){
-                attrObj = {};
-                for( i = 0; i < attrs.length; i += 2 ){
-                    attr  = attrs[ i ];
-                    value = attrs[ i + 1 ];
-                    attrObj[ attr ] = value;
-                };
-                if( i ){
-                    element[ 1 ] = attrObj;
-                };
+                element[ 1 ] = attrs;
             };
 
             currentNode.push( element );
