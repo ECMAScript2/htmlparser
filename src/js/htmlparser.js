@@ -156,7 +156,7 @@ goog.scope(
                 // Make sure we're not in a script or style element
                 if( TAGS_SPECIAL[ lastTagUpperCased ] ){
                     if( lastTagUpperCased === 'PLAINTEXT' ){
-                        handler.onParseText( html );
+                        handler.onParseText( unescapeForHTML( html ) );
                         html = '';
                     } else {
                         index = html.toUpperCase().indexOf( '</' + lastTagUpperCased );
@@ -194,7 +194,7 @@ goog.scope(
                     processText();
                     index = html.indexOf( '?>' );
                     if( index !== -1 ){
-                        handler.onParseProcessingInstruction( html.substring( 2, index ) );
+                        handler.onParseProcessingInstruction( unescapeForHTML( html.substring( 2, index ) ) );
                         html = html.substring( index + 2 );
                     } else {
                         handler.onParseError( html );
@@ -205,7 +205,7 @@ goog.scope(
                     processText();
                     index = html.indexOf( ']]>' );
                     if( index !== -1 ){
-                        handler.onParseCDATASection( html.substring( 9, index ) );
+                        handler.onParseCDATASection( unescapeForHTML( html.substring( 9, index ) ) );
                         html = html.substring( index + 3 );
                     } else {
                         handler.onParseError( html );
@@ -216,7 +216,7 @@ goog.scope(
                     processText();
                     index = html.indexOf( '-->' );
                     if( index !== -1 ){
-                        handler.onParseComment( html.substring( 4, index ) );
+                        handler.onParseComment( unescapeForHTML( html.substring( 4, index ) ) );
                         html = html.substring( index + 3 );
                     } else {
                         handler.onParseError( html );
@@ -251,7 +251,7 @@ goog.scope(
                 } else {
                     index = html.indexOf( '<', pos );
                     if( index === -1 ){
-                        handler.onParseText( html );
+                        handler.onParseText( unescapeForHTML( html ) );
                         html = '';
                     } else if( pos < index ){
                         pos = index;
@@ -284,7 +284,7 @@ goog.scope(
 
             function processText(){
                 if( pos ){
-                    handler.onParseText( html.substring( 0, pos ) );
+                    handler.onParseText( unescapeForHTML( html.substring( 0, pos ) ) );
                     html = html.substring( pos );
                     pos = 0;
                 };
@@ -309,6 +309,13 @@ goog.scope(
              */
             function isAlphabet( chr ){
                 return CHARS[ chr ] & ( _CHAR_KINDS.IS_UPPERCASE_ALPHABETS + _CHAR_KINDS.IS_LOWERCASE_ALPHABETS );
+            };
+            /**
+             * @param {string} str 
+             * @return {string}
+             */
+            function unescapeForHTML( str ){
+                return str.split( '&lt;' ).join( '<' ).split( '&gt;' ).join( '>' ).split( '&amp;' ).join( '&' );
             };
             /**
              * 
@@ -417,8 +424,8 @@ goog.scope(
                  */
                 function saveAttr( name, opt_value ){
                     attrs[ name ] = ATTR_IS_NO_VAL[ name.toLowerCase() ]
-                                  ? ( isXML ? opt_value || name : true )
-                                  : ( opt_value || '' );
+                                  ? ( isXML ? unescapeForHTML( opt_value || name ) : true )
+                                  : ( unescapeForHTML( opt_value || '' ) );
                     ++numAttrs;
                 };
                 function isEmpty(){

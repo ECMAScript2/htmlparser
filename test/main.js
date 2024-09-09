@@ -308,7 +308,7 @@ test('Mixed content (GH-333)',
             parser(
                 "<svg><style>&lt;</style></svg><style>&lt;</style><svg><script>&lt;</script></svg><script>&lt;</script>"
             ),
-            [ 11, [ 'svg', [ 'style', '&lt;' ] ], [ 'STYLE', '&lt;' ], [ 'svg', [ 'script', '&lt;' ] ], [ 'SCRIPT', '&lt;' ] ]
+            [ 11, [ 'svg', [ 'style', '<' ] ], [ 'STYLE', '<' ], [ 'svg', [ 'script', '<' ] ], [ 'SCRIPT', '<' ] ]
         );
     }
 );
