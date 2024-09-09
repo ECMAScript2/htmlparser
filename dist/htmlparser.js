@@ -117,7 +117,7 @@
             }
           }
         }
-        (D = D || T[b]) || (n[n.length] = w ? B : b);
+        (D = D || !!T[b]) || (n[n.length] = w ? B : b);
         v.ea(w ? B : b, L ? K : null, D, d);
         return d;
       }
@@ -141,7 +141,7 @@
         }
       } else if (a.indexOf("<!DOCTYPE ") === g) {
         if (q(), c = a.indexOf(">"), -1 !== c) {
-          h.ha(a.substring(10, c)), a = a.substring(c + 1);
+          h.ia(a.substring(10, c)), a = a.substring(c + 1);
         } else {
           h.aa(a);
           return;
@@ -206,7 +206,7 @@
   l.TFOOT = l.THEAD = l.TBODY;
   l.RTC = l.RBC;
   I = {xml:!0, svg:!0, math:!0};
-  T = {AREA:!0, BASE:!0, BASEFONT:!0, BR:!0, BGSOUND:!0, COL:!0, FRAME:!0, HR:!0, IMG:!0, INPUT:!0, ISINDEX:!0, KEYGEN:!0, LINK:!0, META:!0, PARAM:!0, SOURCE:!0, TRACK:!0, EMBED:!0, WBR:!0};
+  T = {AREA:!0, BASE:!0, BASEFONT:!0, BR:!0, BGSOUND:!0, COL:!0, fa:!0, FRAME:!0, HR:!0, IMG:!0, INPUT:!0, ISINDEX:!0, KEYGEN:!0, LINK:!0, META:!0, PARAM:!0, SOURCE:!0, TRACK:!0, EMBED:!0, WBR:!0};
   U = {SCRIPT:!0, STYLE:!0, PLAINTEXT:!0, XMP:!0, TEXTAREA:!0};
   S = {action:!0, archive:!0, background:!0, cite:!0, classid:!0, codebase:!0, data:!0, href:!0, longdesc:!0, profile:!0, src:!0, usemap:!0};
   R = {checked:!0, compact:!0, declare:!0, defer:!0, disabled:!0, ismap:!0, multiple:!0, nohref:!0, noresize:!0, noshade:!0, nowrap:!0, readonly:!0, selected:!0};
@@ -224,9 +224,9 @@
     r.$ += "</" + a + ">";
   }, ba:function(a) {
     a.split(" ").join("") && (a = " " === a.charAt(0) ? a.substr(1) : a, a = a.length && " " === a.charAt(a.length - 1) ? a.substr(0, a.length - 1) : a, r.$ += a);
+  }, ha:function() {
   }, ga:function() {
-  }, fa:function() {
-  }, ia:function() {
+  }, ja:function() {
   }};
   O.onload = function() {
     var a = G.all("input"), q = G.all("output");

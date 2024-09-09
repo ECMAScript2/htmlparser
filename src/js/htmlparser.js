@@ -12,9 +12,6 @@ goog.provide( 'htmlparser.DEFINE' );
 
 goog.require( 'OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
 
-/** @const */
-var htmlparser = {};
-
 /** @define {boolean} */
 htmlparser.DEFINE.useXML                   = goog.define( 'htmlparser.DEFINE.useXML' , false );
 /** @define {boolean} */
@@ -545,7 +542,7 @@ goog.scope(
                         };
                     };
 
-                    empty = empty || TAGS_EMPTY[ tagUpper ];
+                    empty = empty || !!TAGS_EMPTY[ tagUpper ];
                     if( !empty ){
                         stack[ stack.length ] = isXML ? tagName : tagUpper;
                     };
