@@ -405,3 +405,14 @@ test('<table>',
         );
     }
 );
+
+test('<html ⚡ amp>',
+    (t) => {
+        t.deepEqual(
+            parser(
+                '<html ⚡ amp>'
+            ),
+            [ 11, [ 'HTML', { '⚡' : true, amp : true } ] ]
+        );
+    }
+);

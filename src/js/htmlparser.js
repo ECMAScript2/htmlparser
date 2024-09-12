@@ -420,12 +420,14 @@ goog.scope(
                 /**
                  * 
                  * @param {string} name 
-                 * @param {string=} opt_value 
+                 * @param {(string | boolean)=} opt_value 
                  */
                 function saveAttr( name, opt_value ){
-                    attrs[ name ] = ATTR_IS_NO_VAL[ name.toLowerCase() ]
-                                  ? ( isXML ? unescapeForHTML( opt_value || name ) : true )
-                                  : ( unescapeForHTML( opt_value || '' ) );
+                    attrs[ name ] = opt_value === true
+                                  ?    true
+                                  : ATTR_IS_NO_VAL[ name.toLowerCase() ]
+                                  ?    ( isXML ? unescapeForHTML( /** @type {string | void} */ (opt_value) || name ) : true )
+                                  :    ( unescapeForHTML( /** @type {string | void} */ (opt_value) || '' ) );
                     ++numAttrs;
                 };
                 function isEmpty(){
@@ -436,26 +438,19 @@ goog.scope(
                     };
                     return empty;
                 };
-                function isAttributePrefixSymbol(){
-                    return htmlparser.DEFINE.attributePrefixSymbol && chr === htmlparser.DEFINE.attributePrefixSymbol;
-                };
 
-                var phase    = 0,
+                var phase    = 1,
+                    start    = 1,
                     l        = html.length,
-                    i        = 1,
+                    i        = 2,
                     attrs    = {},
                     numAttrs = 0,
                     empty    = false,
-                    tagName, chr, start, attrName, quot, escape, tagUpper;
+                    tagName, chr, attrName, quot, escape, tagUpper;
 
                 while( i < l && phase < 9 ){
                     chr = html.charAt( i );
                     switch( phase ){
-                        case 0 : // タグ名の開始を待つ
-                            if( isAlphabet( chr ) ){
-                                phase = 1, start = i;
-                            };
-                            break;
                         case 1 : // タグ名の終わりの空白文字を待つ
                             if( isWhitespace( chr ) ){
                                 phase = 2, tagName = html.substring( start, i );
@@ -464,58 +459,45 @@ goog.scope(
                             };
                             break;
                         case 2 : // 属性名の開始を待つ
-                            if( isAttributePrefixSymbol() ){
-                                phase = 3, start = i;
-                            } else if( isAlphabet( chr ) ){
-                                phase = 4, start = i;
-                            } else if( chr === '>' || isEmpty() ){
+                            if( chr === '>' || isEmpty() ){
                                 phase = 9;
-                            };
-                            break;
-                        case 3 : // 属性の接頭の記号に続くアルファベットを待つ
-                            if( htmlparser.DEFINE.attributePrefixSymbol ){
-                                if( isAlphabet( chr ) ){
-                                    phase = 4;
-                                } else {
-                                    phase = 9;
-                                };
-                            };
-                            break;
-                        case 4 : // 属性名の終わりを待つ
-                            if( chr === '=' ){
-                                phase = 6, attrName = html.substring( start, i );
-                            } else if( isWhitespace( chr ) ){
-                                phase = 5, attrName = html.substring( start, i );
-                            } else if( chr === '>' || isEmpty() ){
-                                phase = 9, saveAttr( /** @type {string} */ (html.substring( start, i )) );
-                            };
-                            break;
-                        case 5 : // 属性名に続くスペースの次に続くものは？
-                            if( isAttributePrefixSymbol() ){
-                                phase = 3, saveAttr( /** @type {string} */ (attrName) ), start = i;
-                            } else if( isAlphabet( chr ) ){
-                                phase = 4, saveAttr( /** @type {string} */ (attrName) ), start = i; // <textarea readonly>
-                            } else if( chr === '=' ){
-                                phase = 6;
-                            } else if( chr === '>' || isEmpty() ){
-                                phase = 9, saveAttr( /** @type {string} */ (attrName) );
-                            };
-                            break;
-                        case 6 : // 属性値の開始 quot を待つ
-                            if( chr === '"' || chr === "'" ){
-                                phase = 7, quot = chr, start = i + 1;
                             } else if( !isWhitespace( chr ) ){
-                                phase = 8, start = i; // no quot
+                                phase = 3, start = i;
+                            };
+                            break;
+                        case 3 : // 属性名の終わりを待つ
+                            if( chr === '=' ){
+                                phase = 5, attrName = html.substring( start, i );
+                            } else if( isWhitespace( chr ) ){
+                                phase = 4, attrName = html.substring( start, i );
+                            } else if( chr === '>' || isEmpty() ){
+                                phase = 9, saveAttr( /** @type {string} */ (html.substring( start, i )), true );
+                            };
+                            break;
+                        case 4 : // 属性名に続くスペースの次に続くものは？
+                            if( chr === '=' ){
+                                phase = 5;
+                            } else if( chr === '>' || isEmpty() ){
+                                phase = 9, saveAttr( /** @type {string} */ (attrName), true );
+                            } else if( !isWhitespace( chr ) ){
+                                phase = 3, saveAttr( /** @type {string} */ (attrName), true ), start = i; // <textarea readonly>
+                            };
+                            break;
+                        case 5 : // 属性値の開始 quot を待つ
+                            if( chr === '"' || chr === "'" ){
+                                phase = 6, quot = chr, start = i + 1;
+                            } else if( !isWhitespace( chr ) ){
+                                phase = 7, start = i; // no quot
                             };
                             escape = false;
                             break;
-                        case 7 : //属性値の閉じ quot を待つ
+                        case 6 : //属性値の閉じ quot を待つ
                             if( !escape && chr === quot ){
                                 phase = 2, saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
                             };
                             escape = chr === '\\' && !escape; // \\\\ is not escape for "
                             break;
-                        case 8 : //閉じ quot のない属性の値
+                        case 7 : //閉じ quot のない属性の値
                             if( isWhitespace( chr ) ){
                                 phase = 2;
                             } else if( chr === '>' ){
@@ -523,7 +505,7 @@ goog.scope(
                             } else if( !ATTR_VAL_IS_URI[ /** @type {string} */ (attrName) ] && isEmpty() ){// attr の val が uri で / で終わりかつ、未対応属性の場合
                                 phase = 9;
                             };
-                            if( phase !== 8 ){
+                            if( phase !== 7 ){
                                 saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
                             };
                             break;
