@@ -223,7 +223,7 @@ goog.scope(
                         return;
                     };
                 // end tag
-                } else if( html.indexOf( '</' ) === pos ){
+                } else if( html.indexOf( '</' ) === pos && isAlphabet( html.charAt( pos + 2 ) ) ){
                     processText();
                     nextIndex = parseEndTag( stack, handler, html );
 
@@ -325,20 +325,14 @@ goog.scope(
              * @return {number} 0:error, 1:Parsing Stop, 4~:success
              */
             function parseEndTag( stack, handler, html ){
-                var phase = 0,
+                var phase = 1,
                     l     = html.length,
-                    i     = 2,
-                    tagName, chr, start;
+                    i     = 3,
+                    tagName, chr;
 
                 while( i < l && phase !== 3 ){
                     chr = html.charAt( i );
                     switch( phase ){
-                        case 0 : // タグ名の開始を待つ
-                            if( isAlphabet( chr ) ){
-                                phase = 1;
-                                start = i;
-                            };
-                            break;
                         case 1 : // タグ名の終わりの空白文字を待つ
                             if( isWhitespace( chr ) ){
                                 phase = 2;
@@ -346,7 +340,7 @@ goog.scope(
                                 phase = 3;
                             };
                             if( phase !== 1 ){
-                                tagName = html.substring( /** @type {number} */ (start), i );
+                                tagName = html.substring( 2, i );
                             };
                             break;
                         case 2 : // タグの終了を待つ
@@ -440,22 +434,21 @@ goog.scope(
                 };
 
                 var phase    = 1,
-                    start    = 1,
                     l        = html.length,
                     i        = 2,
                     attrs    = {},
                     numAttrs = 0,
                     empty    = false,
-                    tagName, chr, attrName, quot, escape, tagUpper;
+                    chr, tagName, start, attrName, quot, escape, tagUpper;
 
                 while( i < l && phase < 9 ){
                     chr = html.charAt( i );
                     switch( phase ){
                         case 1 : // タグ名の終わりの空白文字を待つ
                             if( isWhitespace( chr ) ){
-                                phase = 2, tagName = html.substring( start, i );
+                                phase = 2, tagName = html.substring( 1, i );
                             } else if( chr === '>' || isEmpty() ){
-                                phase = 9, tagName = html.substring( start, i );
+                                phase = 9, tagName = html.substring( 1, i );
                             };
                             break;
                         case 2 : // 属性名の開始を待つ
