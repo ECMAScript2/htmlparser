@@ -11,3 +11,14 @@ test('</close>',
         );
     }
 );
+
+test('</void element>',
+    (t) => {
+        t.deepEqual(
+            parser(
+                '</img><p>Hello, world!'
+            ),
+            [ 11, [ 'P', 'Hello, world!' ] ]
+        );
+    }
+);

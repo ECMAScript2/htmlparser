@@ -1,6 +1,8 @@
 goog.provide( 'OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
 
 /**
+ * @see https://html.spec.whatwg.org/multipage/syntax.html#optional-tags
+ * 
  * Elements that can omit end tag and elements they can make children of.
  * 
  * @const {Object.<string, Object.<string, boolean>>} */

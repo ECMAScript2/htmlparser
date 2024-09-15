@@ -416,3 +416,14 @@ test('<html ⚡ amp>',
         );
     }
 );
+
+test('/>',
+    (t) => {
+        t.deepEqual(
+            parser(
+                '<a href=//example.com/>example.com</a>'
+            ),
+            [ 11, [ 'A', { 'href' : '//example.com/' }, 'example.com' ] ]
+        );
+    }
+);
