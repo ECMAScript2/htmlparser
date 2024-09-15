@@ -84,22 +84,21 @@ goog.scope(
             var isXML      = htmlparser.DEFINE.useXML && !!handler.isXHTML;
             /** @type {number} */
             var lastLength = html.length - pos;
-            var lastTagName, lastTagUpperCased, index, nextIndex, htmlLength;
+            var lastTagName, index, nextIndex, htmlLength;
 
             while( html ){
-                lastTagName = lastTagUpperCased = stack[ stack.length - 1 ];
-
-                if( lastTagName && isXML ){
-                    lastTagUpperCased = lastTagName.toUpperCase();
-                };
+                lastTagName = stack[ stack.length - 1 ];
 
                 // Make sure we're not in a script or style element
-                if( htmlparser.RAW_TEXT_ELEMENTS[ lastTagUpperCased ] ){
-                    if( lastTagUpperCased === 'PLAINTEXT' ){
+                if( htmlparser.RAW_TEXT_ELEMENTS[ lastTagName ] ){
+                    if( lastTagName === 'PLAINTEXT' || lastTagName === 'plaintext' ){
                         handler.onParseText( unescapeForHTML( html ) );
                         html = '';
                     } else {
-                        index = html.toUpperCase().indexOf( '</' + lastTagUpperCased );
+                        index = html.indexOf( '</' + ( isXML ? lastTagName : lastTagName.toLowerCase() ) );
+                        if( index === -1 ){
+                            index = html.indexOf( '</' + ( isXML ? lastTagName.toUpperCase() : lastTagName ) );
+                        };
                         if( 0 <= index ){
                             pos = index;
                             processText();
@@ -278,9 +277,11 @@ goog.scope(
                     ++i;
                 };
                 if( phase === 2 ){
-                    tagName = /** @type {string} */ (isXML ? tagName : tagName.toUpperCase());
-                    if( !htmlparser.VOID_ELEMENTS[ tagName ] && closeTag( stack, handler, tagName, false ) && htmlparser.DEFINE.parsingStop ){
-                        return PARSING_STOP;
+                    tagName = /** @type {string} */ (tagName);
+                    if( !htmlparser.VOID_ELEMENTS[ tagName ] ){
+                        if( closeTag( stack, handler, isXML ? tagName : tagName.toUpperCase(), false ) && htmlparser.DEFINE.parsingStop ){
+                            return PARSING_STOP;
+                        };
                     };
                     return i;
                 };

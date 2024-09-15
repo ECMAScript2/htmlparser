@@ -3,7 +3,6 @@ const pkg             = require('./package.json'),
       ClosureCompiler = require('google-closure-compiler').gulp(),
       postProcessor   = require( 'es2-postprocessor' );
       fs              = require('fs'),
-      externsJs       = './src/js/closure-compiler-externs.js',
       moduleName      = pkg.name,
       tempJsName      = 'temp.js',
       tempDir         = require('os').tmpdir() + '/' + moduleName,
@@ -99,7 +98,7 @@ gulp.task( 'dist', gulp.series(
             ).pipe(
                 ClosureCompiler(
                     {
-                        externs        : [ externsJs ],
+                        externs        : [ './src/js/htmlparser.externs.js' ],
                         warning_level  : 'QUIET',
                         language_in    : 'ECMASCRIPT3',
                         language_out   : 'ECMASCRIPT3'

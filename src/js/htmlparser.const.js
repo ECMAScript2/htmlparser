@@ -44,6 +44,18 @@ htmlparser.isAlphabet = function( chr ){
 };
 
 /**
+ * @see https://html.spec.whatwg.org/multipage/syntax.html#attributes-2
+ *   Empty attribute syntax
+ *     Just the attribute name. The value is implicitly the empty string.
+ * @const {Object.<string, boolean>} */
+htmlparser.BOOLEAN_ATTRIBUTES = {
+	checked  : true, compact  : true, declare  : true, defer    : true,
+	disabled : true, ismap    : true, multiple : true, nohref   : true,
+	noresize : true, noshade  : true, nowrap   : true, readonly : true,
+	selected : true
+};
+
+/**
  * 
  * @const {Object.<string, boolean>} */
 htmlparser.XML_ROOT_ELEMENTS = {
@@ -59,7 +71,12 @@ htmlparser.VOID_ELEMENTS = {
 	AREA    : true, BASE    : true, BASEFONT : true, BR    : true, BGSOUND : true,
 	COL     : true, COMMAND : true, FRAME    : true, HR    : true, IMG     : true,
 	INPUT   : true, ISINDEX : true, KEYGEN   : true, LINK  : true, META    : true,
-	PARAM   : true, SOURCE  : true, TRACK    : true, EMBED : true, WBR     : true
+	PARAM   : true, SOURCE  : true, TRACK    : true, EMBED : true, WBR     : true,
+
+	area    : true, base    : true, basefont : true, br    : true, bgsound : true,
+	col     : true, command : true, frame    : true, hr    : true, img     : true,
+	input   : true, isindex : true, keygen   : true, link  : true, meta    : true,
+	param   : true, source  : true, track    : true, embed : true, wbr     : true
 };
 
 /**
@@ -73,25 +90,16 @@ htmlparser.VOID_ELEMENTS = {
  * 
  * @const {!Object.<string, boolean>} */
 htmlparser.RAW_TEXT_ELEMENTS = {
-	SCRIPT : true, STYLE : true, TEXTAREA : true, TITLE : true, PLAINTEXT : true, XMP : true
-};
-
-/**
- * @see https://html.spec.whatwg.org/multipage/syntax.html#attributes-2
- *   Empty attribute syntax
- *     Just the attribute name. The value is implicitly the empty string.
- * @const {Object.<string, boolean>} */
-htmlparser.BOOLEAN_ATTRIBUTES = {
-	checked  : true, compact  : true, declare  : true, defer    : true,
-	disabled : true, ismap    : true, multiple : true, nohref   : true,
-	noresize : true, noshade  : true, nowrap   : true, readonly : true,
-	selected : true
+	SCRIPT : true, STYLE : true, TEXTAREA : true, TITLE : true, PLAINTEXT : true, XMP : true,
+	script : true, style : true, textarea : true, title : true, plaintext : true, xmp : true
 };
 
 /**
  * @see https://html.spec.whatwg.org/multipage/syntax.html#optional-tags
  * 
  *   Elements that can omit end tag and elements they can make children of.
+ * 
+ *   xhtml では閉じタグを用意できないので小文字は用意しない
  * 
  * @const {Object.<string, Object.<string, boolean>>} */
 var OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN = {
