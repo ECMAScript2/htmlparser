@@ -1,9 +1,97 @@
-goog.provide( 'OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
+goog.provide( 'htmlparser.isWhitespace' );
+goog.provide( 'htmlparser.isAlphabet' );
+goog.provide( 'htmlparser.XML_ROOT_ELEMENTS' );
+goog.provide( 'htmlparser.VOID_ELEMENTS' );
+goog.provide( 'htmlparser.RAW_TEXT_ELEMENTS' );
+goog.provide( 'htmlparser.BOOLEAN_ATTRIBUTES' );
+goog.provide( 'htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
+
+/**
+ * @private
+ * @enum {number}
+ */
+htmlparser._CHAR_KINDS = {
+    IS_UPPERCASE_ALPHABETS : 1,
+    IS_LOWERCASE_ALPHABETS : 2,
+    IS_WHITESPACE          : 4
+};
+
+/**
+ * @private
+ * @const {Object.<string, number>} */
+htmlparser._CHARS = {
+	'a':2,'b':2,'c':2,'d':2,'e':2,'f':2,'g':2,'h':2,'i':2,'j':2,'k':2,'l':2,'m':2,
+	'n':2,'o':2,'p':2,'q':2,'r':2,'s':2,'t':2,'u':2,'v':2,'w':2,'x':2,'y':2,'z':2,
+	'A':1,'B':1,'C':1,'D':1,'E':1,'F':1,'G':1,'H':1,'I':1,'J':1,'K':1,'L':1,'M':1,
+	'N':1,'O':1,'P':1,'Q':1,'R':1,'S':1,'T':1,'U':1,'V':1,'W':1,'X':1,'Y':1,'Z':1,
+	'\b':4,'\f':4,'\n':4,'\r':4,'\t':4,' ':4
+};
+
+/**
+ * @param {string} chr 
+ * @return {number}
+ */
+htmlparser.isWhitespace = function( chr ){
+	return htmlparser._CHARS[ chr ] & htmlparser._CHAR_KINDS.IS_WHITESPACE;
+};
+
+/**
+ * @param {string} chr 
+ * @return {number}
+ */
+htmlparser.isAlphabet = function( chr ){
+	return htmlparser._CHARS[ chr ] & ( htmlparser._CHAR_KINDS.IS_UPPERCASE_ALPHABETS + htmlparser._CHAR_KINDS.IS_LOWERCASE_ALPHABETS );
+};
+
+/**
+ * 
+ * @const {Object.<string, boolean>} */
+htmlparser.XML_ROOT_ELEMENTS = {
+	xml : true, svg : true, math : true
+};
+
+/**
+ * @see https://html.spec.whatwg.org/multipage/syntax.html#void-elements
+ *   Void elements
+ *     area, base, br, col, embed, hr, img, input, link, meta, source, track, wbr
+ * @const {!Object.<string, boolean>} */
+htmlparser.VOID_ELEMENTS = {
+	AREA    : true, BASE    : true, BASEFONT : true, BR    : true, BGSOUND : true,
+	COL     : true, COMMAND : true, FRAME    : true, HR    : true, IMG     : true,
+	INPUT   : true, ISINDEX : true, KEYGEN   : true, LINK  : true, META    : true,
+	PARAM   : true, SOURCE  : true, TRACK    : true, EMBED : true, WBR     : true
+};
+
+/**
+ * @see https://html.spec.whatwg.org/multipage/syntax.html#raw-text-elements
+ *   Raw text elements
+ *     script, style
+ * 
+ * @see https://html.spec.whatwg.org/multipage/syntax.html#escapable-raw-text-elements
+ *   Escapable raw text elements
+ *     textarea, title
+ * 
+ * @const {!Object.<string, boolean>} */
+htmlparser.RAW_TEXT_ELEMENTS = {
+	SCRIPT : true, STYLE : true, TEXTAREA : true, TITLE : true, PLAINTEXT : true, XMP : true
+};
+
+/**
+ * @see https://html.spec.whatwg.org/multipage/syntax.html#attributes-2
+ *   Empty attribute syntax
+ *     Just the attribute name. The value is implicitly the empty string.
+ * @const {Object.<string, boolean>} */
+htmlparser.BOOLEAN_ATTRIBUTES = {
+	checked  : true, compact  : true, declare  : true, defer    : true,
+	disabled : true, ismap    : true, multiple : true, nohref   : true,
+	noresize : true, noshade  : true, nowrap   : true, readonly : true,
+	selected : true
+};
 
 /**
  * @see https://html.spec.whatwg.org/multipage/syntax.html#optional-tags
  * 
- * Elements that can omit end tag and elements they can make children of.
+ *   Elements that can omit end tag and elements they can make children of.
  * 
  * @const {Object.<string, Object.<string, boolean>>} */
 var OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN = {
@@ -23,6 +111,8 @@ var OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN = {
 	TR       : {TH:!0,TD:!0},
     RBC      : {RB:!0,RP:!0,RT:!0} // => RTC
 };
+
+htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN = OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN;
 
 OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN.LI    = OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN.TD    = OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN.DD;
 OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN.TH    = OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN.DT;

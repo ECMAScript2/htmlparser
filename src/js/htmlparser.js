@@ -10,7 +10,11 @@ goog.provide( 'htmlparser.exec' );
 goog.provide( 'htmlparser.typedef.Handler' );
 goog.provide( 'htmlparser.DEFINE' );
 
-goog.require( 'OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
+goog.require( 'htmlparser.XML_ROOT_ELEMENTS' );
+goog.require( 'htmlparser.VOID_ELEMENTS' );
+goog.require( 'htmlparser.RAW_TEXT_ELEMENTS' );
+goog.require( 'htmlparser.BOOLEAN_ATTRIBUTES' );
+goog.require( 'htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
 
 /** @define {boolean} */
 htmlparser.DEFINE.useXML                   = goog.define( 'htmlparser.DEFINE.useXML' , false );
@@ -45,73 +49,8 @@ htmlparser.DEFINE.attributePrefixSymbol    = goog.define( 'htmlparser.DEFINE.att
  */
 htmlparser.typedef.Handler;
 
-/**
- * @private
- * @enum {number}
- */
-var _CHAR_KINDS = {
-    IS_UPPERCASE_ALPHABETS : 1,
-    IS_LOWERCASE_ALPHABETS : 2,
-    IS_WHITESPACE          : 4
-};
-
 goog.scope(
     function(){
-        /**
-         * 
-         * @const {Object.<string, boolean>} */
-        var XML_ROOT_ELEMENTS = {
-            xml : true, svg : true, math : true
-        };
-
-        /**
-         * @see https://html.spec.whatwg.org/multipage/syntax.html#void-elements
-         *   Void elements
-         *     area, base, br, col, embed, hr, img, input, link, meta, source, track, wbr
-         * @const {!Object.<string, boolean>} */
-        var VOID_ELEMENTS = {
-            AREA    : true, BASE    : true, BASEFONT : true, BR    : true, BGSOUND : true,
-            COL     : true, COMMAND : true, FRAME    : true, HR    : true, IMG     : true,
-            INPUT   : true, ISINDEX : true, KEYGEN   : true, LINK  : true, META    : true,
-            PARAM   : true, SOURCE  : true, TRACK    : true, EMBED : true, WBR     : true
-        };
-
-        /**
-         * @see https://html.spec.whatwg.org/multipage/syntax.html#raw-text-elements
-         *   Raw text elements
-         *     script, style
-         * 
-         * @see https://html.spec.whatwg.org/multipage/syntax.html#escapable-raw-text-elements
-         *   Escapable raw text elements
-         *     textarea, title
-         * 
-         * @const {!Object.<string, boolean>} */
-        var RAW_TEXT_ELEMENTS = {
-            SCRIPT : true, STYLE : true, TEXTAREA : true, TITLE : true, PLAINTEXT : true, XMP : true
-        };
-
-        /**
-         * @see https://html.spec.whatwg.org/multipage/syntax.html#attributes-2
-         *   Empty attribute syntax
-         *     Just the attribute name. The value is implicitly the empty string.
-         * @const {Object.<string, boolean>} */
-        var BOOLEAN_ATTR_VALUE = {
-            checked  : true, compact  : true, declare  : true, defer    : true,
-            disabled : true, ismap    : true, multiple : true, nohref   : true,
-            noresize : true, noshade  : true, nowrap   : true, readonly : true,
-            selected : true
-        };
-
-        /**
-         * @const {Object.<string, number>} */
-        var CHARS = {
-            'a':2,'b':2,'c':2,'d':2,'e':2,'f':2,'g':2,'h':2,'i':2,'j':2,'k':2,'l':2,'m':2,
-            'n':2,'o':2,'p':2,'q':2,'r':2,'s':2,'t':2,'u':2,'v':2,'w':2,'x':2,'y':2,'z':2,
-            'A':1,'B':1,'C':1,'D':1,'E':1,'F':1,'G':1,'H':1,'I':1,'J':1,'K':1,'L':1,'M':1,
-            'N':1,'O':1,'P':1,'Q':1,'R':1,'S':1,'T':1,'U':1,'V':1,'W':1,'X':1,'Y':1,'Z':1,
-            '\b':4,'\f':4,'\n':4,'\r':4,'\t':4,' ':4
-        };
-
         /** @const {number} */
         var PARSING_STOP = 1;
 
@@ -155,7 +94,7 @@ goog.scope(
                 };
 
                 // Make sure we're not in a script or style element
-                if( RAW_TEXT_ELEMENTS[ lastTagUpperCased ] ){
+                if( htmlparser.RAW_TEXT_ELEMENTS[ lastTagUpperCased ] ){
                     if( lastTagUpperCased === 'PLAINTEXT' ){
                         handler.onParseText( unescapeForHTML( html ) );
                         html = '';
@@ -224,7 +163,7 @@ goog.scope(
                         return;
                     };
                 // end tag
-                } else if( html.indexOf( '</' ) === pos && isAlphabet( html.charAt( pos + 2 ) ) ){
+                } else if( html.indexOf( '</' ) === pos && htmlparser.isAlphabet( html.charAt( pos + 2 ) ) ){
                     processText();
                     nextIndex = parseEndTag( stack, handler, html );
 
@@ -237,7 +176,7 @@ goog.scope(
                         return;
                     };
                 // start tag
-                } else if( html.charAt( pos ) === '<' && isAlphabet( html.charAt( pos + 1 ) ) ){
+                } else if( html.charAt( pos ) === '<' && htmlparser.isAlphabet( html.charAt( pos + 1 ) ) ){
                     processText();
                     nextIndex = parseStartTag( stack, lastTagName, handler, html );
 
@@ -298,20 +237,6 @@ goog.scope(
                 return + new Date;
             };
             /**
-             * @param {string} chr 
-             * @return {number}
-             */
-            function isWhitespace( chr ){
-                return CHARS[ chr ] & _CHAR_KINDS.IS_WHITESPACE;
-            };
-            /**
-             * @param {string} chr 
-             * @return {number}
-             */
-            function isAlphabet( chr ){
-                return CHARS[ chr ] & ( _CHAR_KINDS.IS_UPPERCASE_ALPHABETS + _CHAR_KINDS.IS_LOWERCASE_ALPHABETS );
-            };
-            /**
              * @param {string} str 
              * @return {string}
              */
@@ -335,7 +260,7 @@ goog.scope(
                     chr = html.charAt( i );
                     switch( phase ){
                         case 0 : // タグ名の終わりの空白文字を待つ
-                            if( isWhitespace( chr ) ){
+                            if( htmlparser.isWhitespace( chr ) ){
                                 phase = 1;
                             } else if( chr === '>' ){
                                 phase = 2;
@@ -354,7 +279,7 @@ goog.scope(
                 };
                 if( phase === 2 ){
                     tagName = /** @type {string} */ (isXML ? tagName : tagName.toUpperCase());
-                    if( !VOID_ELEMENTS[ tagName ] && closeTag( stack, handler, tagName, false ) && htmlparser.DEFINE.parsingStop ){
+                    if( !htmlparser.VOID_ELEMENTS[ tagName ] && closeTag( stack, handler, tagName, false ) && htmlparser.DEFINE.parsingStop ){
                         return PARSING_STOP;
                     };
                     return i;
@@ -371,7 +296,7 @@ goog.scope(
              */
             function closeTag( stack, handler, tagName, closeAutomatically ){
                 function missingEndTag( tagName ){
-                    return closeAutomatically && !OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ tagName ];
+                    return closeAutomatically && !htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ tagName ];
                 };
 
                 var pos = 0, i = stack.length;
@@ -391,7 +316,7 @@ goog.scope(
                         if( handler.onParseEndTag( stack[ --i ], missingEndTag( stack[ i ] ), false ) === true && htmlparser.DEFINE.parsingStop ){
                             return true;
                         };
-                        if( htmlparser.DEFINE.useXML && isXML && XML_ROOT_ELEMENTS[ stack[ i ] ] ){
+                        if( htmlparser.DEFINE.useXML && isXML && htmlparser.XML_ROOT_ELEMENTS[ stack[ i ] ] ){
                             isXML = !!handler.isXHTML;
                         };
                     };
@@ -420,7 +345,7 @@ goog.scope(
                 function saveAttr( name, opt_value ){
                     attrs[ name ] = opt_value === true
                                   ?    true
-                                  : BOOLEAN_ATTR_VALUE[ name.toLowerCase() ]
+                                  : htmlparser.BOOLEAN_ATTRIBUTES[ name.toLowerCase() ]
                                   ?    ( isXML ? unescapeForHTML( /** @type {string | void} */ (opt_value) || name ) : true )
                                   :    ( unescapeForHTML( /** @type {string | void} */ (opt_value) || '' ) );
                     ++numAttrs;
@@ -446,7 +371,7 @@ goog.scope(
                     chr = html.charAt( i );
                     switch( phase ){
                         case 1 : // タグ名の終わりの空白文字を待つ
-                            if( isWhitespace( chr ) ){
+                            if( htmlparser.isWhitespace( chr ) ){
                                 phase = 2, tagName = html.substring( 1, i );
                             } else if( chr === '>' || isEmpty() ){
                                 phase = 9, tagName = html.substring( 1, i );
@@ -455,14 +380,14 @@ goog.scope(
                         case 2 : // 属性名の開始を待つ
                             if( chr === '>' || isEmpty() ){
                                 phase = 9;
-                            } else if( !isWhitespace( chr ) ){
+                            } else if( !htmlparser.isWhitespace( chr ) ){
                                 phase = 3, start = i;
                             };
                             break;
                         case 3 : // 属性名の終わりを待つ
                             if( chr === '=' ){
                                 phase = 5, attrName = html.substring( start, i );
-                            } else if( isWhitespace( chr ) ){
+                            } else if( htmlparser.isWhitespace( chr ) ){
                                 phase = 4, attrName = html.substring( start, i );
                             } else if( chr === '>' || isEmpty() ){
                                 phase = 9, saveAttr( /** @type {string} */ (html.substring( start, i )), true );
@@ -473,14 +398,14 @@ goog.scope(
                                 phase = 5;
                             } else if( chr === '>' || isEmpty() ){
                                 phase = 9, saveAttr( /** @type {string} */ (attrName), true );
-                            } else if( !isWhitespace( chr ) ){
+                            } else if( !htmlparser.isWhitespace( chr ) ){
                                 phase = 3, saveAttr( /** @type {string} */ (attrName), true ), start = i; // <textarea readonly>
                             };
                             break;
                         case 5 : // 属性値の開始 quot を待つ
                             if( chr === '"' || chr === "'" ){
                                 phase = 6, quot = chr, start = i + 1;
-                            } else if( !isWhitespace( chr ) ){
+                            } else if( !htmlparser.isWhitespace( chr ) ){
                                 phase = 7, start = i; // no quot
                             };
                             escape = false;
@@ -492,7 +417,7 @@ goog.scope(
                             escape = chr === '\\' && !escape; // \\\\ is not escape for "
                             break;
                         case 7 : //閉じ quot のない属性の値
-                            if( isWhitespace( chr ) ){
+                            if( htmlparser.isWhitespace( chr ) ){
                                 phase = 2;
                             } else if( chr === '>' ){
                                 phase = 9;
@@ -508,11 +433,11 @@ goog.scope(
                     tagUpper = tagName.toUpperCase();
 
                     if( htmlparser.DEFINE.useXML && !isXML ){
-                        isXML = !!XML_ROOT_ELEMENTS[ tagName ];
+                        isXML = !!htmlparser.XML_ROOT_ELEMENTS[ tagName ];
                     };
                     if( !isXML ){
                         while( lastTagName ){
-                            if( OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ] && !OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ][ tagUpper ] ){
+                            if( htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ] && !htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ][ tagUpper ] ){
                                 if( closeTag( stack, handler, lastTagName, false ) && htmlparser.DEFINE.parsingStop ){
                                     return PARSING_STOP;
                                 };
@@ -523,7 +448,7 @@ goog.scope(
                         };
                     };
 
-                    empty = empty || !!VOID_ELEMENTS[ tagUpper ];
+                    empty = empty || !!htmlparser.VOID_ELEMENTS[ tagUpper ];
                     if( !empty ){
                         stack[ stack.length ] = isXML ? tagName : tagUpper;
                     };
