@@ -13,31 +13,39 @@ pre, listing, xmp, plaintext {border : 2px solid #ccc}
 
 <a title=http://example.com/>&lt;a title=http://example.com/&gt;</a>
 
+<h2>&lt;pre&gt;, &lt;listing&gt;</h2>
+
+<p>Newlines at the beginning and end of the content are treated like optional newline, and ignored.
+
+<pre>
+    This is &lt;pre&gt;. 
+</pre>
+
+<listing>
+    This is &lt;listing&gt;. 
+</listing>
+
 <h2>Raw Text Elements or Escapable Raw Text Elements</h2>
 
-<h3>The leading newline in the contents would be treated like the optional newline, and ignored</h3>
+<h3>&lt;textarea&gt;</h3>
 
-@see <a href="https://html.spec.whatwg.org/multipage/syntax.html#element-restrictions">13.1.2.5 Restrictions on content models</a><br>
+<p>The leading newline in the contents would be treated like the optional newline, and ignored.
+
+<p>@see <a href="https://html.spec.whatwg.org/multipage/syntax.html#element-restrictions">13.1.2.5 Restrictions on content models</a></p>
 
 <textarea>
 This is <textarea>. This is &lt;textarea&gt;. 
 </textarea>
 
-<h3>Newlines at the beginning and end of the content are treated like optional newline, and ignored</h3>
+<h3>&lt;xmp&gt;, &lt;plaintext&gt;</h3>
 
-<pre>
-This is &lt;pre&gt;. 
-</pre>
-
-<listing>
-This is &lt;listing&gt;. 
-</listing>
-
-<h3>Newlines at the end are ignored</h3>
+<p>Newlines at the end are ignored
 
 <xmp>
 This is <xmp>. This is &lt;xmp&gt;. 
 </xmp>
 
 <plaintext>
-This is <plaintext>. This is &lt;plaintext&gt;. 
+This is <plaintext>. This is &lt;plaintext&gt;.
+</body>
+</html>
