@@ -17,6 +17,10 @@ htmlparser._CHAR_KINDS = {
 };
 
 /**
+ * @see https://infra.spec.whatwg.org/#ascii-whitespace
+ *   ASCII whitespace is U+0009, U+000A, U+000C, U+000D, or U+0020.
+ *                       TAB     LF      FF      CR         SPACE
+ *                       \t      \n      \f      \r
  * @private
  * @const {Object.<string, number>} */
 htmlparser._CHARS = {
@@ -24,7 +28,7 @@ htmlparser._CHARS = {
 	'n':2,'o':2,'p':2,'q':2,'r':2,'s':2,'t':2,'u':2,'v':2,'w':2,'x':2,'y':2,'z':2,
 	'A':1,'B':1,'C':1,'D':1,'E':1,'F':1,'G':1,'H':1,'I':1,'J':1,'K':1,'L':1,'M':1,
 	'N':1,'O':1,'P':1,'Q':1,'R':1,'S':1,'T':1,'U':1,'V':1,'W':1,'X':1,'Y':1,'Z':1,
-	'\b':4,'\f':4,'\n':4,'\r':4,'\t':4,' ':4
+	'\t':4,'\n':4,'\f':4,'\r':4,' ':4
 };
 
 /**
