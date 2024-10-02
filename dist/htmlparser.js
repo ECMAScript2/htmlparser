@@ -3,27 +3,27 @@
 (function(R, H, W) {
   function S(a) {
     function q() {
-      e && (g.ba(r(a.substring(0, e))), a = a.substring(e), e = 0);
+      d && (g.ba(r(a.substring(0, d))), a = a.substring(d), d = 0);
     }
     function r(m) {
       return m.split("&lt;").join("<").split("&gt;").join(">").split("&amp;").join("&");
     }
     function z(m, u, w) {
-      for (var d = 0, p = w.length, n = 3, b, A; n < p && 2 !== d;) {
+      for (var e = 0, p = w.length, n = 3, b, A; n < p && 2 !== e;) {
         A = w.charAt(n);
-        switch(d) {
+        switch(e) {
           case 0:
-            x[A] & 4 ? d = 1 : ">" === A && (d = 2);
-            d && (b = w.substring(2, n));
+            x[A] & 4 ? e = 1 : ">" === A && (e = 2);
+            e && (b = w.substring(2, n));
             break;
           case 1:
-            ">" === A && (d = 2);
+            ">" === A && (e = 2);
         }
         ++n;
       }
-      return 2 === d ? (L[b] || I(m, u, v || B ? b : b.toUpperCase(), !1), n) : 0;
+      return 2 === e ? (L[b] || I(m, u, v || B ? b : b.toUpperCase(), !1), n) : 0;
     }
-    function I(m, u, w, d) {
+    function I(m, u, w, e) {
       var p = 0, n = m.length;
       if (w) {
         for (p = n; 0 <= p && m[--p] !== w;) {
@@ -31,30 +31,30 @@
       }
       if (0 <= p) {
         for (; p < n;) {
-          u.ca(m[--n], d && !l[m[n]], !1), v && M[m[n]] && (v = !!u.da);
+          u.ca(m[--n], e && !l[m[n]], !1), v && M[m[n]] && (v = !!u.da);
         }
         m.length = p;
       } else {
         u.ca(w, !1, !0);
       }
     }
-    function T(m, u, w, d) {
+    function T(m, u, w, e) {
       function p(J, K) {
         N[J] = !0 === K ? !0 : U[J.toLowerCase()] ? v ? r(K || J) : !0 : r(K || "");
         ++O;
       }
       function n() {
-        (F = "/>" === d.substr(h, 2)) && ++h;
+        (F = "/>" === e.substr(h, 2)) && ++h;
         return F;
       }
-      for (var b = 1, A = d.length, h = 2, N = {}, O = 0, F = !1, f, C, y, D, P, G; h < A && 9 > b;) {
-        f = d.charAt(h);
+      for (var b = 1, A = e.length, h = 2, N = {}, O = 0, F = !1, f, C, y, D, P, G; h < A && 9 > b;) {
+        f = e.charAt(h);
         switch(b) {
           case 1:
             if (x[f] & 4) {
-              b = 2, C = d.substring(1, h);
+              b = 2, C = e.substring(1, h);
             } else if (">" === f || n()) {
-              b = 9, C = d.substring(1, h);
+              b = 9, C = e.substring(1, h);
             }
             break;
           case 2:
@@ -62,11 +62,11 @@
             break;
           case 3:
             if ("=" === f) {
-              b = 5, D = d.substring(y, h);
+              b = 5, D = e.substring(y, h);
             } else if (x[f] & 4) {
-              b = 4, D = d.substring(y, h);
+              b = 4, D = e.substring(y, h);
             } else if (">" === f || n()) {
-              b = 9, p(d.substring(y, h), !0);
+              b = 9, p(e.substring(y, h), !0);
             }
             break;
           case 4:
@@ -77,11 +77,11 @@
             G = !1;
             break;
           case 6:
-            G || f !== P || (b = 2, p(D, d.substring(y, h)));
+            G || f !== P || (b = 2, p(D, e.substring(y, h)));
             G = "\\" === f && !G;
             break;
           case 7:
-            x[f] & 4 ? b = 2 : ">" === f && (b = 9), 7 !== b && p(D, d.substring(y, h));
+            x[f] & 4 ? b = 2 : ">" === f && (b = 9), 7 !== b && p(D, e.substring(y, h));
         }
         ++h;
       }
@@ -103,13 +103,13 @@
       }
       return 0;
     }
-    for (var g = t, e = 0, E = [], v = !!g.da, B = !1, Q = a.length - e, k, c; a;) {
+    for (var g = t, d = 0, E = [], v = !!g.da, B = !1, Q = a.length - d, k, c; a;) {
       k = E[E.length - 1];
       if (V[k]) {
         if ("PLAINTEXT" === k || "plaintext" === k) {
           g.ba(r(a)), a = "";
         } else if (c = a.indexOf("</" + (v || B ? k : k.toLowerCase())), -1 === c && (c = a.indexOf("</" + (v || B ? k.toUpperCase() : k))), 0 <= c) {
-          if (e = c, q(), k = z(E, g, a)) {
+          if (d = c, q(), k = z(E, g, a)) {
             a = a.substring(k);
           } else {
             g.aa(a);
@@ -119,42 +119,42 @@
           g.aa(a);
           return;
         }
-      } else if (a.indexOf("<!DOCTYPE ") === e) {
+      } else if (a.indexOf("<!DOCTYPE ") === d) {
         if (q(), c = a.indexOf(">"), -1 !== c) {
-          g.ha(a.substring(10, c)), a = a.substring(c + 1);
+          g.ha(a.substring(d, c + 1)), a = a.substring(c + 1);
         } else {
           g.aa(a);
           return;
         }
-      } else if (a.indexOf("<?") === e) {
+      } else if (a.indexOf("<?") === d) {
         if (q(), c = a.indexOf("?>"), -1 !== c) {
           r(a.substring(2, c)), a = a.substring(c + 2);
         } else {
           g.aa(a);
           return;
         }
-      } else if (a.indexOf("<![CDATA[") === e) {
+      } else if (a.indexOf("<![CDATA[") === d) {
         if (q(), c = a.indexOf("]]\x3e"), -1 !== c) {
           r(a.substring(9, c)), a = a.substring(c + 3);
         } else {
           g.aa(a);
           return;
         }
-      } else if (a.indexOf("\x3c!--") === e) {
+      } else if (a.indexOf("\x3c!--") === d) {
         if (q(), c = a.indexOf("--\x3e"), -1 !== c) {
           r(a.substring(4, c)), a = a.substring(c + 3);
         } else {
           g.aa(a);
           return;
         }
-      } else if (a.indexOf("</") === e && x[a.charAt(e + 2)] & 3) {
+      } else if (a.indexOf("</") === d && x[a.charAt(d + 2)] & 3) {
         if (q(), k = z(E, g, a)) {
           a = a.substring(k);
         } else {
           g.aa(a);
           return;
         }
-      } else if ("<" === a.charAt(e) && x[a.charAt(e + 1)] & 3) {
+      } else if ("<" === a.charAt(d) && x[a.charAt(d + 1)] & 3) {
         if (q(), k = T(E, k, g, a)) {
           a = a.substring(k);
         } else {
@@ -162,9 +162,9 @@
           return;
         }
       } else {
-        c = a.indexOf("<", e), -1 === c ? (g.ba(r(a)), a = "") : e < c ? e = c : ++e;
+        c = a.indexOf("<", d), -1 === c ? (g.ba(r(a)), a = "") : d < c ? d = c : ++d;
       }
-      k = a.length - e;
+      k = a.length - d;
       if (k === Q) {
         g.aa(a);
         return;

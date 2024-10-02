@@ -146,7 +146,7 @@ function M(a) {
       }
     } else if (a.indexOf("<!DOCTYPE ") === e) {
       if (y(), d = a.indexOf(">"), -1 !== d) {
-        c.ha(a.substring(10, d)), a = a.substring(d + 1);
+        c.ha(a.substring(e, d + 1)), a = a.substring(d + 1);
       } else {
         c.$(a);
         return;
@@ -209,7 +209,7 @@ function M(a) {
   throw a;
 }, ha:function(a) {
   T[0] = 9;
-  T[1] = "<!DOCTYPE " + a + ">";
+  T[1] = a;
 }, ja:function(a, c, e) {
   a = [a];
   c && (a[1] = c);

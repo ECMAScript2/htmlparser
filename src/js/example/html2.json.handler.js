@@ -26,7 +26,7 @@ htmlparser.example.handler.html2json = {
         },
         onParseDocType : function( doctype ){
             rootNode[ 0 ] = 9;
-            rootNode[ 1 ] = '<!DOCTYPE ' + doctype + '>';
+            rootNode[ 1 ] = doctype;
         },
         onParseStartTag : function( tag, attrs, empty, myIndex ){
             var element = [ tag ];

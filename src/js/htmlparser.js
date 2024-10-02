@@ -189,7 +189,7 @@ goog.scope(
                     processText();
                     index = html.indexOf( '>' );
                     if( index !== -1 ){
-                        handler.onParseDocType( html.substring( 10, index ) );
+                        handler.onParseDocType( html.substring( pos, index + 1 ) );
                         html = html.substring( index + 1 );
                     } else {
                         handler.onParseError( html );
