@@ -7,8 +7,12 @@
 
 goog.provide( 'htmlparser' );
 goog.provide( 'htmlparser.exec' );
-goog.provide( 'htmlparser.typedef.Handler' );
 goog.provide( 'htmlparser.DEFINE' );
+goog.provide( 'htmlparser.typedef.Handler' );
+goog.provide( 'htmlparser.isWhitespace' );
+goog.provide( 'htmlparser.isAlphabet' );
+goog.provide( 'htmlparser.isXMLRootElement' );
+goog.provide( 'htmlparser.isNamespacedTag' );
 
 goog.require( 'htmlparser.XML_ROOT_ELEMENTS' );
 goog.require( 'htmlparser.VOID_ELEMENTS' );
@@ -17,7 +21,9 @@ goog.require( 'htmlparser.BOOLEAN_ATTRIBUTES' );
 goog.require( 'htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
 
 /** @define {boolean} */
-htmlparser.DEFINE.useXML                   = goog.define( 'htmlparser.DEFINE.useXML' , false );
+htmlparser.DEFINE.useXML                   = goog.define( 'htmlparser.DEFINE.useXML' , true );
+/** @define {boolean} */
+htmlparser.DEFINE.useVML                   = goog.define( 'htmlparser.DEFINE.useVML' , false );
 /** @define {boolean} */
 htmlparser.DEFINE.useLazy                  = goog.define( 'htmlparser.DEFINE.useLazy', false );
 /** @define {boolean} */
@@ -49,6 +55,63 @@ htmlparser.DEFINE.attributePrefixSymbol    = goog.define( 'htmlparser.DEFINE.att
  * }}
  */
 htmlparser.typedef.Handler;
+
+/**
+ * @private
+ * @enum {number}
+ */
+htmlparser._CHAR_KINDS = {
+    IS_UPPERCASE_ALPHABETS : 1,
+    IS_LOWERCASE_ALPHABETS : 2,
+    IS_WHITESPACE          : 4
+};
+
+/**
+ * @see https://infra.spec.whatwg.org/#ascii-whitespace
+ *   ASCII whitespace is U+0009, U+000A, U+000C, U+000D, or U+0020.
+ *                       TAB     LF      FF      CR         SPACE
+ *                       \t      \n      \f      \r
+ * @private
+ * @const {Object.<string, number>} */
+htmlparser._CHARS = {
+	'a':2,'b':2,'c':2,'d':2,'e':2,'f':2,'g':2,'h':2,'i':2,'j':2,'k':2,'l':2,'m':2,
+	'n':2,'o':2,'p':2,'q':2,'r':2,'s':2,'t':2,'u':2,'v':2,'w':2,'x':2,'y':2,'z':2,
+	'A':1,'B':1,'C':1,'D':1,'E':1,'F':1,'G':1,'H':1,'I':1,'J':1,'K':1,'L':1,'M':1,
+	'N':1,'O':1,'P':1,'Q':1,'R':1,'S':1,'T':1,'U':1,'V':1,'W':1,'X':1,'Y':1,'Z':1,
+	'\t':4,'\n':4,'\f':4,'\r':4,' ':4
+};
+
+/**
+ * @param {string} chr 
+ * @return {number}
+ */
+htmlparser.isWhitespace = function( chr ){
+	return htmlparser._CHARS[ chr ] & htmlparser._CHAR_KINDS.IS_WHITESPACE;
+};
+
+/**
+ * @param {string} chr 
+ * @return {number}
+ */
+htmlparser.isAlphabet = function( chr ){
+	return htmlparser._CHARS[ chr ] & ( htmlparser._CHAR_KINDS.IS_UPPERCASE_ALPHABETS + htmlparser._CHAR_KINDS.IS_LOWERCASE_ALPHABETS );
+};
+
+/**
+ * @param {string} tagName
+ * @return {boolean}
+ */
+htmlparser.isXMLRootElement = function( tagName ){
+	return !!htmlparser.XML_ROOT_ELEMENTS[ tagName ];
+};
+
+/**
+ * @param {string} tagName
+ * @return {boolean}
+ */
+htmlparser.isNamespacedTag = function( tagName ){
+	return 0 < tagName.indexOf( ':' );
+};
 
 goog.scope(
     function(){
@@ -83,8 +146,11 @@ goog.scope(
 
             /** @type {boolean} */
             var isXML      = htmlparser.DEFINE.useXML && !!handler.isXHTML;
+            /** @type {boolean} */
+            var isInVML    = false;
             /** @type {number} */
             var lastLength = html.length - pos;
+
             var lastTagName, index, nextIndex, htmlLength;
 
             while( html ){
@@ -96,9 +162,9 @@ goog.scope(
                         handler.onParseText( unescapeForHTML( html ) );
                         html = '';
                     } else {
-                        index = html.indexOf( '</' + ( isXML ? lastTagName : lastTagName.toLowerCase() ) );
+                        index = html.indexOf( '</' + ( isXML || isInVML ? lastTagName : lastTagName.toLowerCase() ) );
                         if( index === -1 ){
-                            index = html.indexOf( '</' + ( isXML ? lastTagName.toUpperCase() : lastTagName ) );
+                            index = html.indexOf( '</' + ( isXML || isInVML ? lastTagName.toUpperCase() : lastTagName ) );
                         };
                         if( 0 <= index ){
                             pos = index;
@@ -280,7 +346,7 @@ goog.scope(
                 if( phase === 2 ){
                     tagName = /** @type {string} */ (tagName);
                     if( !htmlparser.VOID_ELEMENTS[ tagName ] ){
-                        if( closeTag( stack, handler, isXML ? tagName : tagName.toUpperCase(), false ) && htmlparser.DEFINE.parsingStop ){
+                        if( closeTag( stack, handler, isXML || isInVML ? tagName : tagName.toUpperCase(), false ) && htmlparser.DEFINE.parsingStop ){
                             return PARSING_STOP;
                         };
                     };
@@ -318,12 +384,22 @@ goog.scope(
                         if( handler.onParseEndTag( stack[ --i ], missingEndTag( stack[ i ] ), false ) === true && htmlparser.DEFINE.parsingStop ){
                             return true;
                         };
-                        if( htmlparser.DEFINE.useXML && isXML && htmlparser.XML_ROOT_ELEMENTS[ stack[ i ] ] ){
+                        if( htmlparser.DEFINE.useXML && isXML && htmlparser.isXMLRootElement( stack[ i ] ) ){
                             isXML = !!handler.isXHTML;
                         };
                     };
                     // Remove the open elements from the stack
                     stack.length = pos;
+                    // Update isInVML
+                    if( htmlparser.DEFINE.useVML && isInVML ){
+                        isInVML = false;
+                        for( i = pos; i; ){
+                            if( htmlparser.isNamespacedTag( stack[ --i ] ) ){
+                                isInVML = true;
+                                break;
+                            };
+                        };
+                    };
                 } else {
                     if( handler.onParseEndTag( tagName, false, true ) === true && htmlparser.DEFINE.parsingStop ){
                         return true;
@@ -435,9 +511,12 @@ goog.scope(
                     tagUpper = tagName.toUpperCase();
 
                     if( htmlparser.DEFINE.useXML && !isXML ){
-                        isXML = !!htmlparser.XML_ROOT_ELEMENTS[ tagName ];
+                        isXML = htmlparser.isXMLRootElement( tagName );
                     };
-                    if( !isXML ){
+                    if( htmlparser.DEFINE.useVML && !isInVML ){
+                        isInVML = htmlparser.isNamespacedTag( tagName );
+                    };
+                    if( !isXML && !isInVML ){
                         while( lastTagName ){
                             if( htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ] && !htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ][ tagUpper ] ){
                                 if( closeTag( stack, handler, lastTagName, false ) && htmlparser.DEFINE.parsingStop ){
@@ -452,10 +531,10 @@ goog.scope(
 
                     empty = empty || !!htmlparser.VOID_ELEMENTS[ tagUpper ];
                     if( !empty ){
-                        stack[ stack.length ] = isXML ? tagName : tagUpper;
+                        stack[ stack.length ] = isXML || isInVML ? tagName : tagUpper;
                     };
 
-                    if( handler.onParseStartTag( isXML ? tagName : tagUpper, numAttrs ? attrs : null, empty, i ) === true && htmlparser.DEFINE.parsingStop ){
+                    if( handler.onParseStartTag( isXML || isInVML ? tagName : tagUpper, numAttrs ? attrs : null, empty, i ) === true && htmlparser.DEFINE.parsingStop ){
                         return PARSING_STOP;
                     };
                     return i;
