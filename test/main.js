@@ -427,3 +427,14 @@ test('/>',
         );
     }
 );
+
+test('quotes',
+    (t) => {
+        t.deepEqual(
+            parser(
+                "<div data-foo='\\\"'></div>"
+            ),
+            [ 11, [ 'DIV', { 'data-foo' : '"' } ] ]
+        );
+    }
+);

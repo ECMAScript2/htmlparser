@@ -424,9 +424,13 @@ goog.scope(
                     attrs[ name ] = opt_value === true
                                   ?    true
                                   : htmlparser.BOOLEAN_ATTRIBUTES[ name.toLowerCase() ]
-                                  ?    ( isXML ? unescapeForHTML( /** @type {string | void} */ (opt_value) || name ) : true )
-                                  :    ( unescapeForHTML( /** @type {string | void} */ (opt_value) || '' ) );
+                                  ?    ( isXML ? normalize( /** @type {string | void} */ (opt_value) || name ) : true )
+                                  :    ( normalize( /** @type {string | void} */ (opt_value) || '' ) );
                     ++numAttrs;
+
+                    function normalize( value ){
+                        return unescapeForHTML( value ).split( '\\"' ).join( '"' ).split( "\\'" ).join( "'" );
+                    };
                 };
                 function isEmpty(){
                     empty = html.substr( i, 2 ) === '/>';
