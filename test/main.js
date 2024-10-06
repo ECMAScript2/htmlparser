@@ -436,5 +436,11 @@ test('quotes',
             ),
             [ 11, [ 'DIV', { 'data-foo' : '"' } ] ]
         );
+        t.deepEqual(
+            parser(
+                "<div data-foo=''></div>"
+            ),
+            [ 11, [ 'DIV', { 'data-foo' : '' } ] ]
+        );
     }
 );
