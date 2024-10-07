@@ -63,7 +63,7 @@ function M(a) {
   function X(n, q, v, f) {
     function p(J, K) {
       function P(Y) {
-        return z(Y).split('\\"').join('"').split("\\'").join("'");
+        return z(Y).split('\\"').join('"').split("\\'").join("'").split("&quot;").join('"').split("&apos;").join("'");
       }
       Q[J] = !0 === K ? !0 : u[J.toLowerCase()] ? r ? P(K || J) : !0 : P(K || "");
       ++R;

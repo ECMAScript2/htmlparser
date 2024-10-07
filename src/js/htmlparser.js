@@ -432,7 +432,10 @@ goog.scope(
                     ++numAttrs;
 
                     function normalize( value ){
-                        return unescapeForHTML( value ).split( '\\"' ).join( '"' ).split( "\\'" ).join( "'" );
+                        return unescapeForHTML( value ).split( '\\"' ).join( '"' )
+                                                       .split( "\\'" ).join( "'" )
+                                                       .split( '&quot;' ).join( '"' )
+                                                       .split( '&apos;' ).join( "'" );
                     };
                 };
                 function isEmpty(){

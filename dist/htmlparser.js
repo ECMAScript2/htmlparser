@@ -41,7 +41,7 @@
     function U(m, u, w, e) {
       function p(J, K) {
         function N(V) {
-          return t(V).split('\\"').join('"').split("\\'").join("'");
+          return t(V).split('\\"').join('"').split("\\'").join("'").split("&quot;").join('"').split("&apos;").join("'");
         }
         O[J] = !0 === K ? !0 : W[J.toLowerCase()] ? v ? N(K || J) : !0 : N(K || "");
         ++P;

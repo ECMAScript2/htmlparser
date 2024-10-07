@@ -74,7 +74,7 @@ test('Attribute value escaping - quotes',
             parser(
                 "<div data-foo=\"&quot;\" id=test1\" class='test2\"'></div>"
             ),
-            [ 11, [ 'DIV', { 'data-foo' : '&quot;', id : 'test1"', class : 'test2"' } ] ]
+            [ 11, [ 'DIV', { 'data-foo' : '"', id : 'test1"', class : 'test2"' } ] ]
         );
         t.deepEqual(
             parser(
@@ -435,6 +435,12 @@ test('quotes',
                 "<div data-foo='\\\"'></div>"
             ),
             [ 11, [ 'DIV', { 'data-foo' : '"' } ] ]
+        );
+        t.deepEqual(
+            parser(
+                "<div data-foo='&quot;&apos;'></div>"
+            ),
+            [ 11, [ 'DIV', { 'data-foo' : '"\'' } ] ]
         );
         t.deepEqual(
             parser(
