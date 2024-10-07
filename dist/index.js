@@ -20,7 +20,7 @@ function M(a) {
     e && (c.aa(z(a.substring(0, e))), a = a.substring(e), e = 0);
   }
   function z(n) {
-    return n.split("&lt;").join("<").split("&gt;").join(">").split("&amp;").join("&");
+    return n.split("&lt;").join("<").split("&gt;").join(">").split("&amp;lt;").join("&lt;").split("&amp;gt;").join("&gt;");
   }
   function O(n, q, v) {
     for (var f = 0, p = v.length, g = 3, b, B; g < p && 2 !== f;) {

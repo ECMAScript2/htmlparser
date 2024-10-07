@@ -6,7 +6,7 @@
       d && (g.ba(t(a.substring(0, d))), a = a.substring(d), d = 0);
     }
     function t(m) {
-      return m.split("&lt;").join("<").split("&gt;").join(">").split("&amp;").join("&");
+      return m.split("&lt;").join("<").split("&gt;").join(">").split("&amp;lt;").join("&lt;").split("&amp;gt;").join("&gt;");
     }
     function z(m, u, w) {
       for (var e = 0, p = w.length, n = 3, b, A; n < p && 2 !== e;) {

@@ -307,7 +307,10 @@ goog.scope(
              * @return {string}
              */
             function unescapeForHTML( str ){
-                return str.split( '&lt;' ).join( '<' ).split( '&gt;' ).join( '>' ).split( '&amp;' ).join( '&' );
+                return str.split( '&lt;' ).join( '<' )
+                          .split( '&gt;' ).join( '>' )
+                          .split( '&amp;lt;' ).join( '&lt;' )
+                          .split( '&amp;gt;' ).join( '&gt;' );
             };
             /**
              * 
