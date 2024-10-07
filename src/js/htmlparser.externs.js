@@ -3,13 +3,11 @@
  */
 var __avoidRenamingTagNamesAndAttributes__ = [
     {
-        checked   : true, compact   : true, declare  : true, defer      : true,
-        disabled  : true, ismap     : true, multiple : true, nohref     : true,
-        noresize  : true, noshade   : true, nowrap   : true, readonly   : true,
-        selected  : true,
-        itemscope : true, loop      : true, reversed : true, async      : true,
-        scoped    : true, draggable : true, hidden   : true, novalidate : true,
-        autofocus : true, required  : true, amp      : true
+        async      : true, autofocus : true, checked   : true, compact  : true, declare  : true,
+        defer      : true, disabled  : true, draggable : true, hidden   : true, ismap    : true,
+        loop       : true, multiple  : true, nohref    : true, noresize : true, noshade  : true,
+        novalidate : true, nowrap    : true, readonly  : true, required : true, reversed : true,
+        scoped     : true, selected  : true
     },
     {
         xml : true, svg : true, math : true
