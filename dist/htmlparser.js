@@ -1,6 +1,6 @@
 /* es2-html-parser@0.0.1
 (c) 2024-2024 itozyun <itozyun@gmail.com> (https://outcloud.blogspot.com/)(undefined), MIT. */
-(function(S, H, Y) {
+(function(G, I, Y) {
   function T(a) {
     function q() {
       d && (g.ba(t(a.substring(0, d))), a = a.substring(d), d = 0);
@@ -21,9 +21,9 @@
         }
         ++n;
       }
-      return 2 === e ? (L[b] || I(m, u, v || B ? b : b.toUpperCase(), !1), n) : 0;
+      return 2 === e ? (M[b] || J(m, u, v || B ? b : b.toUpperCase(), !1), n) : 0;
     }
-    function I(m, u, w, e) {
+    function J(m, u, w, e) {
       var p = 0, n = m.length;
       if (w) {
         for (p = n; 0 <= p && m[--p] !== w;) {
@@ -31,7 +31,7 @@
       }
       if (0 <= p) {
         for (; p < n;) {
-          u.ca(m[--n], e && !l[m[n]], !1), v && M[m[n]] && (v = !!u.da);
+          u.ca(m[--n], e && !l[m[n]], !1), v && N[m[n]] && (v = !!u.da);
         }
         m.length = p;
       } else {
@@ -39,18 +39,18 @@
       }
     }
     function U(m, u, w, e) {
-      function p(J, K) {
-        function N(V) {
+      function p(K, L) {
+        function O(V) {
           return t(V).split('\\"').join('"').split("\\'").join("'").split("&quot;").join('"').split("&apos;").join("'");
         }
-        O[J] = !0 === K ? !0 : W[J.toLowerCase()] ? v ? N(K || J) : !0 : N(K || "");
-        ++P;
+        P[K] = !0 === L ? !0 : W[K.toLowerCase()] ? v ? O(L || K) : !0 : O(L || "");
+        ++Q;
       }
       function n() {
         (F = "/>" === e.substr(h, 2)) && ++h;
         return F;
       }
-      for (var b = 1, A = e.length, h = 2, O = {}, P = 0, F = !1, f, C, y, D, Q, G; h < A && 9 > b;) {
+      for (var b = 1, A = e.length, h = 2, P = {}, Q = 0, F = !1, f, C, y, D, R, H; h < A && 9 > b;) {
         f = e.charAt(h);
         switch(b) {
           case 1:
@@ -76,12 +76,12 @@
             "=" === f ? b = 5 : ">" === f || n() ? (b = 9, p(D, !0)) : x[f] & 4 || (b = 3, p(D, !0), y = h);
             break;
           case 5:
-            '"' === f || "'" === f ? (b = 6, Q = f, y = h + 1) : x[f] & 4 || (b = 7, y = h);
-            G = !1;
+            '"' === f || "'" === f ? (b = 6, R = f, y = h + 1) : x[f] & 4 || (b = 7, y = h);
+            H = !1;
             break;
           case 6:
-            G || f !== Q || (b = 2, p(D, e.substring(y, h)));
-            G = "\\" === f && !G;
+            H || f !== R || (b = 2, p(D, e.substring(y, h)));
+            H = "\\" === f && !H;
             break;
           case 7:
             x[f] & 4 ? b = 2 : ">" === f && (b = 9), 7 !== b && p(D, e.substring(y, h));
@@ -90,23 +90,23 @@
       }
       if (9 === b) {
         b = C.toUpperCase();
-        v || (v = !!M[C]);
+        v || (v = !!N[C]);
         if (!v && !B) {
           for (; u;) {
             if (l[u] && !l[u][b]) {
-              I(m, w, u, !1), u = m[m.length - 1];
+              J(m, w, u, !1), u = m[m.length - 1];
             } else {
               break;
             }
           }
         }
-        (F = F || !!L[b]) || (m[m.length] = v || B ? C : b);
-        w.ea(v || B ? C : b, P ? O : null, F, h);
+        (F = F || !!M[b]) || (m[m.length] = v || B ? C : b);
+        w.ea(v || B ? C : b, Q ? P : null, F, h);
         return h;
       }
       return 0;
     }
-    for (var g = r, d = 0, E = [], v = !!g.da, B = !1, R = a.length - d, k, c; a;) {
+    for (var g = r, d = 0, E = [], v = !!g.da, B = !1, S = a.length - d, k, c; a;) {
       k = E[E.length - 1];
       if (X[k]) {
         if ("PLAINTEXT" === k || "plaintext" === k) {
@@ -168,16 +168,16 @@
         c = a.indexOf("<", d), -1 === c ? (g.ba(t(a)), a = "") : d < c ? d = c : ++d;
       }
       k = a.length - d;
-      if (k === R) {
+      if (k === S) {
         g.aa(a);
         return;
       }
-      R = k;
+      S = k;
     }
     q();
-    I(E, g, "", !0);
+    J(E, g, "", !0);
   }
-  var M = {xml:!0, svg:!0, math:!0}, W = {async:!0, autofocus:!0, checked:!0, compact:!0, declare:!0, defer:!0, disabled:!0, draggable:!0, hidden:!0, ismap:!0, loop:!0, multiple:!0, nohref:!0, noresize:!0, noshade:!0, novalidate:!0, nowrap:!0, readonly:!0, required:!0, reversed:!0, scoped:!0, selected:!0}, L = {AREA:!0, BASE:!0, BASEFONT:!0, BR:!0, BGSOUND:!0, COL:!0, COMMAND:!0, FRAME:!0, HR:!0, IMG:!0, INPUT:!0, ISINDEX:!0, KEYGEN:!0, LINK:!0, META:!0, PARAM:!0, SOURCE:!0, TRACK:!0, EMBED:!0, WBR:!0, 
+  var N = {xml:!0, svg:!0, math:!0}, W = {async:!0, autofocus:!0, checked:!0, compact:!0, declare:!0, defer:!0, disabled:!0, draggable:!0, hidden:!0, ismap:!0, loop:!0, multiple:!0, nohref:!0, noresize:!0, noshade:!0, novalidate:!0, nowrap:!0, readonly:!0, required:!0, reversed:!0, scoped:!0, selected:!0}, M = {AREA:!0, BASE:!0, BASEFONT:!0, BR:!0, BGSOUND:!0, COL:!0, COMMAND:!0, FRAME:!0, HR:!0, IMG:!0, INPUT:!0, ISINDEX:!0, KEYGEN:!0, LINK:!0, META:!0, PARAM:!0, SOURCE:!0, TRACK:!0, EMBED:!0, WBR:!0, 
   area:!0, base:!0, basefont:!0, br:!0, bgsound:!0, col:!0, command:!0, frame:!0, hr:!0, img:!0, input:!0, isindex:!0, keygen:!0, link:!0, meta:!0, param:!0, source:!0, track:!0, embed:!0, wbr:!0}, X = {SCRIPT:!0, STYLE:!0, TEXTAREA:!0, TITLE:!0, PLAINTEXT:!0, XMP:!0, script:!0, style:!0, textarea:!0, title:!0, plaintext:!0, xmp:!0}, l = {CAPTION:{ARTICLE:!0, SECTION:!0, NAV:!0, ASIDE:!0, H1:!0, H2:!0, H3:!0, H4:!0, H5:!0, H6:!0, HEADER:!0, FOOTER:!0, ADDRESS:!0, P:!0, HR:!0, PRE:!0, BLOCKQUOTE:!0, 
   OL:!0, UL:!0, DL:!0, FIGURE:!0, DIV:!0, A:!0, EM:!0, STRONG:!0, SMALL:!0, S:!0, CITE:!0, Q:!0, DFN:!0, ABBR:!0, DATA:!0, TIME:!0, CODE:!0, VAR:!0, SAMP:!0, KBD:!0, SUB:!0, SUP:!0, I:!0, B:!0, U:!0, MARK:!0, RUBY:!0, BDI:!0, BDO:!0, SPAN:!0, BR:!0, WBR:!0, INS:!0, DEL:!0, PICTURE:!0, IMG:!0, IFRAME:!0, EMBED:!0, OBJECT:!0, VIDEO:!0, AUDIO:!0, MAP:!0, AREA:!0, math:!0, svg:!0, FORM:!0, LABEL:!0, INPUT:!0, BUTTON:!0, SELECT:!0, DATALIST:!0, TEXTAREA:!0, KEYGEN:!0, OUTPUT:!0, PROGRESS:!0, METER:!0, 
   FIELDSET:!0, DETAILS:!0, DIALOG:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0, CANVAS:!0}, DD:{ARTICLE:!0, SECTION:!0, NAV:!0, ASIDE:!0, H1:!0, H2:!0, H3:!0, H4:!0, H5:!0, H6:!0, HEADER:!0, FOOTER:!0, ADDRESS:!0, P:!0, HR:!0, PRE:!0, BLOCKQUOTE:!0, OL:!0, UL:!0, DL:!0, FIGURE:!0, DIV:!0, A:!0, EM:!0, STRONG:!0, SMALL:!0, S:!0, CITE:!0, Q:!0, DFN:!0, ABBR:!0, DATA:!0, TIME:!0, CODE:!0, VAR:!0, SAMP:!0, KBD:!0, SUB:!0, SUP:!0, I:!0, B:!0, U:!0, MARK:!0, RUBY:!0, BDI:!0, BDO:!0, SPAN:!0, BR:!0, WBR:!0, 
@@ -208,9 +208,9 @@
   }, fa:function() {
   }, ia:function() {
   }};
-  S.onload = function() {
-    var a = H.all("input"), q = H.all("output");
-    H.all("form").onsubmit = bz;
+  G.onload = function() {
+    var a = G.input || I.all("input"), q = G.output || I.all("output");
+    (G.form || I.all("form")).onsubmit = bz;
     function bz(t) {
       t && t.preventDefault();
       "undefined" != typeof event && (event.returnValue = !1);

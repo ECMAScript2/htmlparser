@@ -12,9 +12,9 @@ function HTMLtoXML( html ){
 };
 
 window.onload = function(){
-    var input  = document.all("input");
-    var output = document.all("output");
-    var form   = document.all("form");
+    var input  = window[ 'input' ] || document.all("input");
+    var output = window[ 'output' ] || document.all("output");
+    var form   = window[ 'form' ] || document.all("form");
 
 /*
     if( 5 <= X.UA.IE && X.UA.IE < 5.5 ){
