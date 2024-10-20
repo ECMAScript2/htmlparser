@@ -66,7 +66,7 @@ var OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN = {
 	P        : {                                                                                                                                                                            A:!0,EM:!0,STRONG:!0,SMALL:!0,S:!0,CITE:!0,Q:!0,DFN:!0,ABBR:!0,DATA:!0,TIME:!0,CODE:!0,VAR:!0,SAMP:!0,KBD:!0,SUB:!0,SUP:!0,I:!0,B:!0,U:!0,MARK:!0,RUBY:!0,BDI:!0,BDO:!0,SPAN:!0,BR:!0,WBR:!0,INS:!0,DEL:!0,PICTURE:!0,IMG:!0,IFRAME:!0,EMBED:!0,OBJECT:!0,VIDEO:!0,AUDIO:!0,MAP:!0,AREA:!0,math:!0,svg:!0,                 LABEL:!0,INPUT:!0,BUTTON:!0,SELECT:!0,DATALIST:!0,TEXTAREA:!0,KEYGEN:!0,OUTPUT:!0,PROGRESS:!0,METER:!0,                                 SCRIPT:!0,NOSCRIPT:!0,TEMPLATE:!0,CANVAS:!0},
 	           // => RB, RP, RT 
     HTML     : {HEAD:!0,BODY:!0},
-    HEAD     : {TITLE:!0,BASE:!0,BGSOUND:!0,LINK:!0,META:!0,STYLE:!0,SCRIPT:!0,NOSCRIPT:!0,TEMPLETE:!0},
+    HEAD     : {TITLE:!0,BASE:!0,BGSOUND:!0,LINK:!0,META:!0,STYLE:!0,SCRIPT:!0,NOSCRIPT:!0,TEMPLATE:!0},
     COLGROUP : {COL:!0},
     OPTGROUP : {OPTION:!0},
 	OPTION   : {},

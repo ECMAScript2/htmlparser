@@ -450,3 +450,14 @@ test('quotes',
         );
     }
 );
+
+test('0',
+    (t) => {
+        t.deepEqual(
+            parser(
+                '<a>0</a>'
+            ),
+            [ 11, [ 'A', '0' ] ]
+        );
+    }
+);
