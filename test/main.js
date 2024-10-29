@@ -234,6 +234,17 @@ test('Comment nodes',
     }
 );
 
+test('CDATA section',
+    (t) => {
+        t.deepEqual(
+            parser(
+                "<![CDATA[&\u00A0><]]>"
+            ),
+            [ 11, [ 4, '&\u00A0><' ] ]
+        );
+    }
+);
+
 test('Doctype without systemId and publicId',
     (t) => {
         t.deepEqual(

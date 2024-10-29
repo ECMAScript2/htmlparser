@@ -21,22 +21,20 @@ goog.require( 'htmlparser.BOOLEAN_ATTRIBUTES' );
 goog.require( 'htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
 
 /** @define {boolean} */
-htmlparser.DEFINE.useXML                   = goog.define( 'htmlparser.DEFINE.useXML' , true );
+htmlparser.DEFINE.USE_XML                    = goog.define( 'htmlparser.DEFINE.USE_XML'                   , true );
 /** @define {boolean} */
-htmlparser.DEFINE.useVML                   = goog.define( 'htmlparser.DEFINE.useVML' , false );
+htmlparser.DEFINE.USE_VML                    = goog.define( 'htmlparser.DEFINE.USE_VML'                   , false );
 /** @define {boolean} */
-htmlparser.DEFINE.useLazy                  = goog.define( 'htmlparser.DEFINE.useLazy', false );
+htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE     = goog.define( 'htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE'    , false );
 /** @define {boolean} */
-htmlparser.DEFINE.parsingStop              = goog.define( 'htmlparser.DEFINE.parsingStop', true );
+htmlparser.DEFINE.USE_CDATA_SECTION          = goog.define( 'htmlparser.DEFINE.USE_CDATA_SECTION'         , true );
+/** @define {boolean} */
+htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION = goog.define( 'htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION', false );
 
 /** @define {boolean} */
-htmlparser.DEFINE.useDocTypeNode           = goog.define( 'htmlparser.DEFINE.useDocTypeNode' , false );
+htmlparser.DEFINE.TIME_SLICE_EXECUTION       = goog.define( 'htmlparser.DEFINE.TIME_SLICE_EXECUTION'      , false );
 /** @define {boolean} */
-htmlparser.DEFINE.useProcessingInstruction = goog.define( 'htmlparser.DEFINE.useProcessingInstruction', false );
-/** @define {boolean} */
-htmlparser.DEFINE.useCDATASection          = goog.define( 'htmlparser.DEFINE.useCDATASection', true );
-/** @define {string} */
-htmlparser.DEFINE.attributePrefixSymbol    = goog.define( 'htmlparser.DEFINE.attributePrefixSymbol', '' );
+htmlparser.DEFINE.STOP_PARSING               = goog.define( 'htmlparser.DEFINE.STOP_PARSING'              , true );
 
 /**
  * @typedef {{
@@ -124,7 +122,7 @@ goog.scope(
          * @param {htmlparser.typedef.Handler} handler
          */
         htmlparser.exec = function( html, handler ){
-            exec( html, 0, handler, htmlparser.DEFINE.useLazy && !!handler.onComplete, html.length );
+            exec( html, 0, handler, htmlparser.DEFINE.TIME_SLICE_EXECUTION && !!handler.onComplete, html.length, htmlparser.DEFINE.USE_XML && !!handler.isXHTML, false, [] );
         };
 
         /**
@@ -133,21 +131,17 @@ goog.scope(
          * @param {number} pos
          * @param {htmlparser.typedef.Handler} handler
          * @param {boolean} lazy 
-         * @param {number} originalHTMLLength 
-         * @param {!Array.<string>=} opt_stack
+         * @param {number} originalHTMLLength
+         * @param {boolean} isXML 
+         * @param {boolean} isInVML 
+         * @param {!Array.<string>} stack
          */
-        function exec( html, pos, handler, lazy, originalHTMLLength, opt_stack ){
+        function exec( html, pos, handler, lazy, originalHTMLLength, isXML, isInVML, stack ){
             /** @const {number} */
             var startTime  = lazy ? now() : 0;
             /** @const {number} */
             var intervalMs = handler.intervalMs || 16;
-            /** @const {!Array.<string>} */
-            var stack      = opt_stack || [];
 
-            /** @type {boolean} */
-            var isXML      = htmlparser.DEFINE.useXML && !!handler.isXHTML;
-            /** @type {boolean} */
-            var isInVML    = false;
             /** @type {number} */
             var lastLength = html.length - pos;
 
@@ -171,50 +165,50 @@ goog.scope(
                             processText();
                             nextIndex = parseEndTag( stack, handler, html );
     
-                            if( nextIndex === PARSING_STOP && htmlparser.DEFINE.parsingStop ){
+                            if( nextIndex === PARSING_STOP && htmlparser.DEFINE.STOP_PARSING ){
                                 return;
                             } else if( nextIndex ){
                                 html = html.substring( nextIndex );
                             } else {
-                                handler.onParseError( html );
+                                onError( html );
                                 return;
                             };
                         } else {
-                            handler.onParseError( html );
+                            onError( html );
                             return;
                         };
                     };
                 // DocType
-                } else if( htmlparser.DEFINE.useDocTypeNode && html.indexOf( '<!DOCTYPE ' ) === pos ){
+                } else if( htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE && html.indexOf( '<!DOCTYPE ' ) === pos ){
                     processText();
                     index = html.indexOf( '>' );
                     if( index !== -1 ){
                         handler.onParseDocType( html.substring( pos, index + 1 ) );
                         html = html.substring( index + 1 );
                     } else {
-                        handler.onParseError( html );
+                        onError( html );
                         return;
                     };
                 // ProcessingInstruction
-                } else if( htmlparser.DEFINE.useProcessingInstruction && html.indexOf( '<?' ) === pos ){
+                } else if( htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION && html.indexOf( '<?' ) === pos ){
                     processText();
                     index = html.indexOf( '?>' );
                     if( index !== -1 ){
                         handler.onParseProcessingInstruction( unescapeForHTML( html.substring( 2, index ) ) );
                         html = html.substring( index + 2 );
                     } else {
-                        handler.onParseError( html );
+                        onError( html );
                         return;
                     };
                 // CDATASection
-                } else if( htmlparser.DEFINE.useCDATASection && html.indexOf( '<![CDATA[' ) === pos ){
+                } else if( htmlparser.DEFINE.USE_CDATA_SECTION && html.indexOf( '<![CDATA[' ) === pos ){
                     processText();
                     index = html.indexOf( ']]>' );
                     if( index !== -1 ){
                         handler.onParseCDATASection( unescapeForHTML( html.substring( 9, index ) ) );
                         html = html.substring( index + 3 );
                     } else {
-                        handler.onParseError( html );
+                        onError( html );
                         return;
                     };
                 // Comment
@@ -225,7 +219,7 @@ goog.scope(
                         handler.onParseComment( unescapeForHTML( html.substring( 4, index ) ) );
                         html = html.substring( index + 3 );
                     } else {
-                        handler.onParseError( html );
+                        onError( html );
                         return;
                     };
                 // end tag
@@ -233,12 +227,12 @@ goog.scope(
                     processText();
                     nextIndex = parseEndTag( stack, handler, html );
 
-                    if( htmlparser.DEFINE.parsingStop && nextIndex === PARSING_STOP ){
+                    if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
                         return;
                     } else if( nextIndex ){
                         html = html.substring( nextIndex );
                     } else {
-                        handler.onParseError( html );
+                        onError( html );
                         return;
                     };
                 // start tag
@@ -246,12 +240,12 @@ goog.scope(
                     processText();
                     nextIndex = parseStartTag( stack, lastTagName, handler, html );
 
-                    if( htmlparser.DEFINE.parsingStop && nextIndex === PARSING_STOP ){
+                    if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
                         return;
                     } else if( nextIndex ){
                         html = html.substring( nextIndex );
                     } else {
-                        handler.onParseError( html );
+                        onError( html );
                         return;
                     };
                 } else {
@@ -269,12 +263,12 @@ goog.scope(
                 htmlLength = html.length - pos;
 
                 if( htmlLength === lastLength ){
-                    handler.onParseError( html );
+                    onError( html );
                     return;
                 };
 
-                if( htmlparser.DEFINE.useLazy && lazy && html && ( startTime + intervalMs <= now() ) ){
-                    handler.onParseProgress( 1 - htmlLength / originalHTMLLength, exec, [ html, pos, handler, lazy, originalHTMLLength, stack ] );
+                if( htmlparser.DEFINE.TIME_SLICE_EXECUTION && lazy && html && ( startTime + intervalMs <= now() ) ){
+                    handler.onParseProgress( 1 - htmlLength / originalHTMLLength, exec, [ html, pos, handler, lazy, originalHTMLLength, isXML, isInVML, stack ] );
                     return;
                 };
 
@@ -286,7 +280,7 @@ goog.scope(
             // Clean up any remaining tags
             closeTag( stack, handler, '', true );
 
-            htmlparser.DEFINE.useLazy && lazy && handler.onComplete();
+            htmlparser.DEFINE.TIME_SLICE_EXECUTION && lazy && handler.onComplete();
 
             function processText(){
                 if( pos ){
@@ -294,6 +288,10 @@ goog.scope(
                     html = html.substring( pos );
                     pos = 0;
                 };
+            };
+
+            function onError( msg ){
+                handler.onParseError && handler.onParseError( msg );
             };
 
             /**
@@ -349,7 +347,7 @@ goog.scope(
                 if( phase === 2 ){
                     tagName = /** @type {string} */ (tagName);
                     if( !htmlparser.VOID_ELEMENTS[ tagName ] ){
-                        if( closeTag( stack, handler, isXML || isInVML ? tagName : tagName.toUpperCase(), false ) && htmlparser.DEFINE.parsingStop ){
+                        if( closeTag( stack, handler, isXML || isInVML ? tagName : tagName.toUpperCase(), false ) && htmlparser.DEFINE.STOP_PARSING ){
                             return PARSING_STOP;
                         };
                     };
@@ -362,12 +360,12 @@ goog.scope(
              * @param {!Array.<string>} stack 
              * @param {htmlparser.typedef.Handler} handler 
              * @param {string} tagName
-             * @param {boolean} closeAutomatically
+             * @param {boolean} isClosingAutomatically
              * @return {boolean | void}
              */
-            function closeTag( stack, handler, tagName, closeAutomatically ){
+            function closeTag( stack, handler, tagName, isClosingAutomatically ){
                 function missingEndTag( tagName ){
-                    return closeAutomatically && !htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ tagName ];
+                    return isClosingAutomatically && !htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ tagName ];
                 };
 
                 var pos = 0, i = stack.length;
@@ -384,17 +382,17 @@ goog.scope(
                 if( 0 <= pos ){
                     // Close all the open elements, up the stack
                     for( ; pos < i; ){
-                        if( handler.onParseEndTag( stack[ --i ], missingEndTag( stack[ i ] ), false ) === true && htmlparser.DEFINE.parsingStop ){
+                        if( handler.onParseEndTag( stack[ --i ], missingEndTag( stack[ i ] ), false ) === true && htmlparser.DEFINE.STOP_PARSING ){
                             return true;
                         };
-                        if( htmlparser.DEFINE.useXML && isXML && htmlparser.isXMLRootElement( stack[ i ] ) ){
+                        if( htmlparser.DEFINE.USE_XML && isXML && htmlparser.isXMLRootElement( stack[ i ] ) ){
                             isXML = !!handler.isXHTML;
                         };
                     };
                     // Remove the open elements from the stack
                     stack.length = pos;
                     // Update isInVML
-                    if( htmlparser.DEFINE.useVML && isInVML ){
+                    if( htmlparser.DEFINE.USE_VML && isInVML ){
                         isInVML = false;
                         for( i = pos; i; ){
                             if( htmlparser.isNamespacedTag( stack[ --i ] ) ){
@@ -404,7 +402,7 @@ goog.scope(
                         };
                     };
                 } else {
-                    if( handler.onParseEndTag( tagName, false, true ) === true && htmlparser.DEFINE.parsingStop ){
+                    if( handler.onParseEndTag( tagName, false, true ) === true && htmlparser.DEFINE.STOP_PARSING ){
                         return true;
                     };
                 };
@@ -520,16 +518,16 @@ goog.scope(
                 if( phase === 9 ){
                     tagUpper = tagName.toUpperCase();
 
-                    if( htmlparser.DEFINE.useXML && !isXML ){
+                    if( htmlparser.DEFINE.USE_XML && !isXML ){
                         isXML = htmlparser.isXMLRootElement( tagName );
                     };
-                    if( htmlparser.DEFINE.useVML && !isInVML ){
+                    if( htmlparser.DEFINE.USE_VML && !isInVML ){
                         isInVML = htmlparser.isNamespacedTag( tagName );
                     };
                     if( !isXML && !isInVML ){
                         while( lastTagName ){
                             if( htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ] && !htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ][ tagUpper ] ){
-                                if( closeTag( stack, handler, lastTagName, false ) && htmlparser.DEFINE.parsingStop ){
+                                if( closeTag( stack, handler, lastTagName, false ) && htmlparser.DEFINE.STOP_PARSING ){
                                     return PARSING_STOP;
                                 };
                                 lastTagName = stack[ stack.length - 1 ];
@@ -544,7 +542,7 @@ goog.scope(
                         stack[ stack.length ] = isXML || isInVML ? tagName : tagUpper;
                     };
 
-                    if( handler.onParseStartTag( isXML || isInVML ? tagName : tagUpper, numAttrs ? attrs : null, empty, i ) === true && htmlparser.DEFINE.parsingStop ){
+                    if( handler.onParseStartTag( isXML || isInVML ? tagName : tagUpper, numAttrs ? attrs : null, empty, i ) === true && htmlparser.DEFINE.STOP_PARSING ){
                         return PARSING_STOP;
                     };
                     return i;

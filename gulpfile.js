@@ -19,36 +19,22 @@ gulp.task( 'dist', gulp.series(
     function(){
         return gulp
             .src(
-                [ './src/closure-primitives/base.js', './src/js/**/*.js' ]
+                [ './src/closure-primitives/base.js', './src/js/**/*.js', './node_modules/@externs/nodejs/**/*.js' ]
             ).pipe(
                 ClosureCompiler(
                     {
-                        externs           : [
-                            //'./node_modules/@externs/nodejs/v8/nodejs.js',
-                            //'./node_modules/@externs/nodejs/v8/global.js',
-                            //'./node_modules/@externs/nodejs/v8/fs.js',
-                            //'./node_modules/@externs/nodejs/v8/http.js',
-                            //'./node_modules/@externs/nodejs/v8/https.js',
-                            //'./node_modules/@externs/nodejs/v8/net.js',
-                            //'./node_modules/@externs/nodejs/v8/events.js',
-                            //'./node_modules/@externs/nodejs/v8/global/buffer.js',
-                            //'./node_modules/@externs/nodejs/v8/stream.js',
-                            //'./node_modules/@externs/nodejs/v8/zlib.js',
-                            //'./node_modules/@externs/nodejs/v8/path.js',
-                        ],
                         // env               : 'CUSTOM',
                         dependency_mode   : 'PRUNE',
                         entry_point       : 'goog:example.node',
                         compilation_level : 'ADVANCED',
                         define            : [
-                            'htmlparser.DEFINE.useXML=' + true,
-                            'htmlparser.DEFINE.useVML=' + true,
-                            'htmlparser.DEFINE.useDocTypeNode=' + true,
-                            'htmlparser.DEFINE.useProcessingInstruction=' + true,
-                            'htmlparser.DEFINE.useLazy=' + false,
-                            'htmlparser.DEFINE.parsingStop=' + false,
-                            'htmlparser.DEFINE.useCDATASection=' + true,
-                            'htmlparser.DEFINE.attributePrefixSymbol=":"'
+                            'htmlparser.DEFINE.USE_XML=' + true,
+                            'htmlparser.DEFINE.USE_VML=' + true,
+                            'htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE=' + true,
+                            'htmlparser.DEFINE.USE_CDATA_SECTION=' + true,
+                            'htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION=' + true,
+                            'htmlparser.DEFINE.TIME_SLICE_EXECUTION=' + false,
+                            'htmlparser.DEFINE.STOP_PARSING=' + false
                         ],
                         warning_level     : 'VERBOSE',
                         language_in       : 'ECMASCRIPT6',
@@ -73,13 +59,12 @@ gulp.task( 'dist', gulp.series(
                         entry_point       : 'goog:example.browser',
                         compilation_level : 'ADVANCED',
                         define            : [
-                            'htmlparser.DEFINE.useXML=' + true,
-                            'htmlparser.DEFINE.useDocTypeNode=' + true,
-                            'htmlparser.DEFINE.useProcessingInstruction=' + true,
-                            'htmlparser.DEFINE.useLazy=' + false,
-                            'htmlparser.DEFINE.parsingStop=' + false,
-                            'htmlparser.DEFINE.useCDATASection=' + true,
-                            'htmlparser.DEFINE.attributePrefixSymbol=":"'
+                            'htmlparser.DEFINE.USE_XML=' + true,
+                            'htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE=' + true,
+                            'htmlparser.DEFINE.USE_CDATA_SECTION=' + true,
+                            'htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION=' + true,
+                            'htmlparser.DEFINE.TIME_SLICE_EXECUTION=' + false,
+                            'htmlparser.DEFINE.STOP_PARSING=' + false
                         ],
                         warning_level     : 'VERBOSE',
                         language_in       : 'ECMASCRIPT3',
@@ -99,7 +84,7 @@ gulp.task( 'dist', gulp.series(
             ).pipe(
                 ClosureCompiler(
                     {
-                        externs        : [ './src/js/htmlparser.externs.js' ],
+                        // externs        : [ './src/js/htmlparser.externs.js' ],
                         warning_level  : 'QUIET',
                         language_in    : 'ECMASCRIPT3',
                         language_out   : 'ECMASCRIPT3'

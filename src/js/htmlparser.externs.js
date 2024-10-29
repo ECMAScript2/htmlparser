@@ -51,5 +51,3 @@ __avoidRenamingTagNamesAndAttributes__.TH    = __avoidRenamingTagNamesAndAttribu
 __avoidRenamingTagNamesAndAttributes__.RB    = __avoidRenamingTagNamesAndAttributes__.RP    = __avoidRenamingTagNamesAndAttributes__.RT = __avoidRenamingTagNamesAndAttributes__.P;
 __avoidRenamingTagNamesAndAttributes__.TFOOT = __avoidRenamingTagNamesAndAttributes__.THEAD = __avoidRenamingTagNamesAndAttributes__.TBODY;
 __avoidRenamingTagNamesAndAttributes__.RTC   = __avoidRenamingTagNamesAndAttributes__.RBC;
-
-var module = { exports : function(){} };
