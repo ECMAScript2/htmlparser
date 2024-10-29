@@ -1,29 +1,61 @@
 # ES2 HTML Parser
 
-仕様に合致した HTML 文書断片について、正しく動作する事を狙った、コンパクトな HTML パーサー(ハンドラー込みで 7KB 程度)．
+Compact JavaScript HTML parser.
 
-省略可能な閉じタグ(`caption,dd,li,td,dt,p,rb,rp,rt,html,head,colgroup,optgroup,option,tbody,thead,tfoot,tr,rbc,rtc`)を省略した場合でも、正しく文書ツリーを構築できる．
+1. Target and Development Environments
+2. Functions and Features
+3. Development and test
+4. Links
+5. License
 
-条件付きコメント内などに現れる不完全な HTML 文書断片のパースができる．
+## 1. Target and Development Environments
 
-他のパーサー(ex:[parse5](https://www.npmjs.com/package/parse5))のように、`<html><head><body>` を補って完全な HTML 文書にすることはしない．
+1. Works in a wide range of environments (but is slow) because it does not use `RegExp`
+2. Written in Closure Script
+   * About 7KB including handler
 
-1. Closure Script で書かれている
-2. `RegExp` 不使用なので、広範な環境で動作する(ただし遅い)
-4. `<table><p>` などの不正な文書から作られるツリーの構造が仕様と異なる
-4. `pre,listing,textarea` の先頭の改行文字を削除しない
-5. XHTML のサポートは不十分
-6. 条件付きコメント内の、壊れた文書フラグメントもパースできる `<!--[if IE 8]> </div><br clear=both> <![endif]-->` 閉じタグだけ, 開始タグだけ
-7. `<html><head><body>` を補って完全な HTML 文書にすることはしない
-8. 文書中に存在せず、閉じタグを省略できず、他の開始タグによって閉じられてもいない「自動で閉じた閉じタグ」は `missingEndTag` フラグで判明する
-9. `noStartTag` フラグは開始タグが無い場合に立つ．
+## 2. Functions and Features
 
-## Links
+HTML document fragments written by web designers generally work correctly.
 
-1. [Original code by Erik John Resig (ejohn.org)](http://ejohn.org/blog/pure-javascript-html-parser/) 初期の JavaScript 製 HTML パーサー、コンパクトなコードながら大抵のケースで実用に供する
-2. [pettanR / webframework / js / 02_Dom / 09_HTMLParser.js](https://github.com/pettanR/webframework/blob/38d5bab145631f33b0e9988dfb704252884b5986/js/02_dom/09_XHTMLParser.js) John Resig のコードを元に正規表現を不使用にしたもの
+1. The document tree can be constructed correctly even if the optional closing tag is omitted.
+   * `caption,dd,li,td,dt,th,p,rb,rp,rt,html,head,colgroup,optgroup,option,tbody,thead,tfoot,tr,rbc,rtc`
+2. Broken document fragments in conditional comments can also be parsed.
+   * `<!--[if IE 8]> </div><br clear=both><div> <![endif]-->`
+   * Element missing end tag
+     * An “auto-closing end tag” that is not present in the document, cannot omit the end tag, and is not closed by another starting tag is identified by the `isImplicit` flag. (`onParseEndTag`)
+   * Element missing start tag
+     * `isMissingStartTag` flag is true (`onParseEndTag`)
+3. Time Slice Execution
+4. Parsing Stop
+5. `<html><head><body>` is not a supplement to create a complete HTML document like [parse5](https://www.npmjs.com/package/parse5).
+6. `<table><p>` and other invalid documents, the structure of the tree created from them differs from the specification.
+7. XHTML is not well tested.
+8. Do not remove newline characters in `<pre>, <listing>, <textarea>`.
 
-## License
+## 3. Development and test
+
+~~~sh
+git clone https://github.com/ECMAScript2/es2-html-parser
+cd es2-html-parser
+npm i
+
+gulp dist
+
+npm run test
+~~~
+
+See [src/js/example/*.js](./src/js/example/*.js) for how to write the handler. A SAX Style API is provided.
+
+See [test/*.js](./test/*.js) for how to use the parser.
+
+## 4. Links
+
+1. [Original code by Erik John Resig (ejohn.org)](http://ejohn.org/blog/pure-javascript-html-parser/) Early JavaScript HTML parser, compact code but useful in most cases
+2. [pettanR / webframework / js / 02_Dom / 09_HTMLParser.js](https://github.com/pettanR/webframework/blob/38d5bab145631f33b0e9988dfb704252884b5986/js/02_dom/09_XHTMLParser.js) Based on John Resig's code, without regular expressions
+3. [html.json](https://github.com/itozyun/html.json) Project using es2-html-parser
+
+## 5. License
 
 [ES2 HTML Parser](https://github.com/ECMAScript2/es2-html-parser) is licensed under MIT license.
 

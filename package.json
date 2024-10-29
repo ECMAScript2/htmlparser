@@ -1,7 +1,7 @@
 {
   "name": "es2-html-parser",
   "version": "0.0.1",
-  "description": "RegExp free HTML parser",
+  "description": "Compact JavaScript HTML parser. Regexp free.",
   "main": "index.js",
   "scripts": {
     "make": "gulp dist",
@@ -16,11 +16,9 @@
   "license": "MIT",
   "devDependencies": {
     "@externs/nodejs": "^1.5.0",
+    "ava": "^6.1.3",
     "es2-postprocessor": "^0.13.1",
     "google-closure-compiler": "^20240317.0.0",
     "gulp": "^5.0.0"
-  },
-  "dependencies": {
-    "ava": "^6.1.3"
   }
 }

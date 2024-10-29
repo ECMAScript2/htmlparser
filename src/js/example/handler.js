@@ -23,7 +23,7 @@ var handler =
             };
             handler._result += ( empty ? '/' : '' ) + '>';
         },
-        onParseEndTag : function( tag, missingEndTag, noStartTag ){
+        onParseEndTag : function( tag, isImplicit, isMissingStartTag ){
             handler._result += '</' + tag + '>';
         },
         onParseText : function( text ){
