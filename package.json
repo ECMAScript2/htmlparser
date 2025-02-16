@@ -2,7 +2,7 @@
   "name": "es2-html-parser",
   "version": "1.0.0",
   "description": "Compact JavaScript HTML parser. Regexp free.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "make": "gulp dist",
     "test": "ava"
