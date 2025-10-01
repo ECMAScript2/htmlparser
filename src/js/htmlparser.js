@@ -172,7 +172,9 @@ goog.scope(
                         if( lastTagName === 'PLAINTEXT' || lastTagName === 'plaintext' ){
                             ignoreEndTag = true;
                         } else {
-                            if( html.indexOf( lastTagName.toLowerCase(), pos ) !== pos + 2 && html.indexOf( lastTagName.toUpperCase(), pos ) !== pos + 2 ){
+                            if( html.indexOf( lastTagName.toLowerCase(), pos ) !== pos + 2 &&
+                                html.indexOf( lastTagName.toUpperCase(), pos ) !== pos + 2
+                            ){
                                 ignoreEndTag = true;
                             };
                         };
@@ -195,24 +197,15 @@ goog.scope(
                     };
                 } else if( isRawElement ){
                     incrementPosition();
-                // DocType
-                } else if( htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE && html.indexOf( '<!DOCTYPE ' ) === pos ){
+                // start tag
+                } else if( html.charAt( pos ) === '<' && htmlparser.isAlphabet( html.charAt( pos + 1 ) ) ){
                     processText();
-                    index = html.indexOf( '>' );
-                    if( index !== -1 ){
-                        handler.onParseDocType( html.substring( pos, index + 1 ) );
-                        html = html.substring( index + 1 );
-                    } else {
-                        onError( html );
+                    nextIndex = parseStartTag( stack, lastTagName, handler, html );
+
+                    if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
                         return;
-                    };
-                // CDATASection
-                } else if( htmlparser.DEFINE.USE_CDATA_SECTION && html.indexOf( '<![CDATA[' ) === pos ){
-                    processText();
-                    index = html.indexOf( ']]>' );
-                    if( index !== -1 ){
-                        handler.onParseCDATASection( unescapeForHTML( html.substring( 9, index ) ) );
-                        html = html.substring( index + 3 );
+                    } else if( nextIndex ){
+                        html = html.substring( nextIndex );
                     } else {
                         onError( html );
                         return;
@@ -228,15 +221,24 @@ goog.scope(
                         onError( html );
                         return;
                     };
-                // start tag
-                } else if( html.charAt( pos ) === '<' && htmlparser.isAlphabet( html.charAt( pos + 1 ) ) ){
+                // CDATASection
+                } else if( htmlparser.DEFINE.USE_CDATA_SECTION && html.indexOf( '<![CDATA[' ) === pos ){
                     processText();
-                    nextIndex = parseStartTag( stack, lastTagName, handler, html );
-
-                    if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
+                    index = html.indexOf( ']]>' );
+                    if( index !== -1 ){
+                        handler.onParseCDATASection( unescapeForHTML( html.substring( 9, index ) ) );
+                        html = html.substring( index + 3 );
+                    } else {
+                        onError( html );
                         return;
-                    } else if( nextIndex ){
-                        html = html.substring( nextIndex );
+                    };
+                // DocType
+                } else if( htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE && html.indexOf( '<!DOCTYPE ' ) === pos ){
+                    processText();
+                    index = html.indexOf( '>' );
+                    if( index !== -1 ){
+                        handler.onParseDocType( html.substring( pos, index + 1 ) );
+                        html = html.substring( index + 1 );
                     } else {
                         onError( html );
                         return;

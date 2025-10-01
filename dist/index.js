@@ -1,4 +1,4 @@
-/* es2-html-parser@1.1.0
+/* es2-html-parser@1.1.1
 (c) 2024-2025 itozyun <itozyun@gmail.com>(https://outcloud.blogspot.com/), MIT. */
 var l = {xml:!0, svg:!0, math:!0}, q = {async:!0, autofocus:!0, checked:!0, compact:!0, declare:!0, defer:!0, disabled:!0, draggable:!0, hidden:!0, ismap:!0, loop:!0, multiple:!0, nohref:!0, noresize:!0, noshade:!0, novalidate:!0, nowrap:!0, readonly:!0, required:!0, reversed:!0, scoped:!0, selected:!0}, u = {AREA:!0, BASE:!0, BASEFONT:!0, BR:!0, BGSOUND:!0, COL:!0, COMMAND:!0, FRAME:!0, HR:!0, IMG:!0, INPUT:!0, ISINDEX:!0, KEYGEN:!0, LINK:!0, META:!0, PARAM:!0, SOURCE:!0, TRACK:!0, EMBED:!0, WBR:!0, 
 area:!0, base:!0, basefont:!0, br:!0, bgsound:!0, col:!0, command:!0, frame:!0, hr:!0, img:!0, input:!0, isindex:!0, keygen:!0, link:!0, meta:!0, param:!0, source:!0, track:!0, embed:!0, wbr:!0}, E = {SCRIPT:!0, STYLE:!0, TEXTAREA:!0, TITLE:!0, PLAINTEXT:!0, XMP:!0, LISTING:!0, script:!0, style:!0, textarea:!0, title:!0, plaintext:!0, xmp:!0, listing:!0}, K = {TEXTAREA:!0, TITLE:!0, textarea:!0, title:!0}, P = {CAPTION:{ARTICLE:!0, SECTION:!0, NAV:!0, ASIDE:!0, H1:!0, H2:!0, H3:!0, H4:!0, H5:!0, 
@@ -163,16 +163,9 @@ function aa(a) {
       }
     } else if (I) {
       y();
-    } else if (a.indexOf("<!DOCTYPE ") === c) {
-      if (n(), d = a.indexOf(">"), -1 !== d) {
-        r.ha(a.substring(c, d + 1)), a = a.substring(d + 1);
-      } else {
-        A(a);
-        return;
-      }
-    } else if (a.indexOf("<![CDATA[") === c) {
-      if (n(), d = a.indexOf("]]\x3e"), -1 !== d) {
-        r.fa(F(a.substring(9, d))), a = a.substring(d + 3);
+    } else if ("<" === a.charAt(c) && Q[a.charAt(c + 1)] & 3) {
+      if (n(), d = ca(H, z, r, a)) {
+        a = a.substring(d);
       } else {
         A(a);
         return;
@@ -184,9 +177,16 @@ function aa(a) {
         A(a);
         return;
       }
-    } else if ("<" === a.charAt(c) && Q[a.charAt(c + 1)] & 3) {
-      if (n(), d = ca(H, z, r, a)) {
-        a = a.substring(d);
+    } else if (a.indexOf("<![CDATA[") === c) {
+      if (n(), d = a.indexOf("]]\x3e"), -1 !== d) {
+        r.fa(F(a.substring(9, d))), a = a.substring(d + 3);
+      } else {
+        A(a);
+        return;
+      }
+    } else if (a.indexOf("<!DOCTYPE ") === c) {
+      if (n(), d = a.indexOf(">"), -1 !== d) {
+        r.ha(a.substring(c, d + 1)), a = a.substring(d + 1);
       } else {
         A(a);
         return;

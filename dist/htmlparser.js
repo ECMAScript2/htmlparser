@@ -1,4 +1,4 @@
-/* es2-html-parser@1.1.0
+/* es2-html-parser@1.1.1
 (c) 2024-2025 itozyun <itozyun@gmail.com>(https://outcloud.blogspot.com/), MIT. */
 (function(G, L, da) {
   function W(a, q, k) {
@@ -140,16 +140,9 @@
         }
       } else if (H) {
         x();
-      } else if (a.indexOf("<!DOCTYPE ") === c) {
-        if (y(), d = a.indexOf(">"), -1 !== d) {
-          q.ha(a.substring(c, d + 1)), a = a.substring(d + 1);
-        } else {
-          z(a);
-          return;
-        }
-      } else if (a.indexOf("<![CDATA[") === c) {
-        if (y(), d = a.indexOf("]]\x3e"), -1 !== d) {
-          D(a.substring(9, d)), a = a.substring(d + 3);
+      } else if ("<" === a.charAt(c) && u[a.charAt(c + 1)] & 3) {
+        if (y(), d = Z(F, w, q, a)) {
+          a = a.substring(d);
         } else {
           z(a);
           return;
@@ -161,9 +154,16 @@
           z(a);
           return;
         }
-      } else if ("<" === a.charAt(c) && u[a.charAt(c + 1)] & 3) {
-        if (y(), d = Z(F, w, q, a)) {
-          a = a.substring(d);
+      } else if (a.indexOf("<![CDATA[") === c) {
+        if (y(), d = a.indexOf("]]\x3e"), -1 !== d) {
+          D(a.substring(9, d)), a = a.substring(d + 3);
+        } else {
+          z(a);
+          return;
+        }
+      } else if (a.indexOf("<!DOCTYPE ") === c) {
+        if (y(), d = a.indexOf(">"), -1 !== d) {
+          q.ha(a.substring(c, d + 1)), a = a.substring(d + 1);
         } else {
           z(a);
           return;
