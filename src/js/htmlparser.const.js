@@ -53,8 +53,8 @@ htmlparser.VOID_ELEMENTS = {
  * 
  * @const {!Object.<string, boolean>} */
 htmlparser.RAW_TEXT_ELEMENTS = {
-    SCRIPT : true, STYLE : true, TEXTAREA : true, TITLE : true, PLAINTEXT : true, XMP : true,
-    script : true, style : true, textarea : true, title : true, plaintext : true, xmp : true
+    SCRIPT : true, STYLE : true, TEXTAREA : true, TITLE : true, PLAINTEXT : true, XMP : true, LISTING : true,
+    script : true, style : true, textarea : true, title : true, plaintext : true, xmp : true, listing : true
 };
 
 /**

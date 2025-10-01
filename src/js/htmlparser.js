@@ -153,6 +153,8 @@ goog.scope(
 
                 isRawElement = htmlparser.RAW_TEXT_ELEMENTS[ lastTagName ];
 
+                // console.log( pos, html, lastTagName || '.' );
+
                 // ProcessingInstruction
                 if( htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION && html.indexOf( '<?' ) === pos ){
                     processText();
@@ -165,23 +167,18 @@ goog.scope(
                         return;
                     };
                 // end tag
-                } else if( html.indexOf( '</' ) === pos && htmlparser.isAlphabet( html.charAt( pos + 2 ) ) ){
+                } else if( html.indexOf( '</', pos ) === pos && htmlparser.isAlphabet( html.charAt( pos + 2 ) ) ){
                     if( isRawElement ){
                         if( lastTagName === 'PLAINTEXT' || lastTagName === 'plaintext' ){
-                            incrementPosition();
                             ignoreEndTag = true;
                         } else {
-                            index = html.indexOf( '</' + ( isXML || isInVML ? lastTagName : lastTagName.toLowerCase() ) );
-                            if( index === -1 ){
-                                index = html.indexOf( '</' + ( isXML || isInVML ? lastTagName.toUpperCase() : lastTagName ) );
-                            };
-                            if( index === -1 ){
-                                incrementPosition();
+                            if( html.indexOf( lastTagName.toLowerCase(), pos ) !== pos + 2 && html.indexOf( lastTagName.toUpperCase(), pos ) !== pos + 2 ){
                                 ignoreEndTag = true;
                             };
                         };
                     };
                     if( ignoreEndTag ){
+                        incrementPosition();
                         ignoreEndTag = false;
                     } else {
                         processText();
@@ -196,55 +193,53 @@ goog.scope(
                             return;
                         };
                     };
-                } else if( !isRawElement ){
-                    // DocType
-                    if( htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE && html.indexOf( '<!DOCTYPE ' ) === pos ){
-                        processText();
-                        index = html.indexOf( '>' );
-                        if( index !== -1 ){
-                            handler.onParseDocType( html.substring( pos, index + 1 ) );
-                            html = html.substring( index + 1 );
-                        } else {
-                            onError( html );
-                            return;
-                        };
-                    // CDATASection
-                    } else if( htmlparser.DEFINE.USE_CDATA_SECTION && html.indexOf( '<![CDATA[' ) === pos ){
-                        processText();
-                        index = html.indexOf( ']]>' );
-                        if( index !== -1 ){
-                            handler.onParseCDATASection( unescapeForHTML( html.substring( 9, index ) ) );
-                            html = html.substring( index + 3 );
-                        } else {
-                            onError( html );
-                            return;
-                        };
-                    // Comment
-                    } else if( html.indexOf( '<!--' ) === pos ){
-                        processText();
-                        index = html.indexOf( '-->' );
-                        if( index !== -1 ){
-                            handler.onParseComment( unescapeForHTML( html.substring( 4, index ) ) );
-                            html = html.substring( index + 3 );
-                        } else {
-                            onError( html );
-                            return;
-                        };
-                    // start tag
-                    } else if( html.charAt( pos ) === '<' && htmlparser.isAlphabet( html.charAt( pos + 1 ) ) ){
-                        processText();
-                        nextIndex = parseStartTag( stack, lastTagName, handler, html );
-
-                        if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
-                            return;
-                        } else if( nextIndex ){
-                            html = html.substring( nextIndex );
-                        } else {
-                            onError( html );
-                            return;
-                        };
+                } else if( isRawElement ){
+                    incrementPosition();
+                // DocType
+                } else if( htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE && html.indexOf( '<!DOCTYPE ' ) === pos ){
+                    processText();
+                    index = html.indexOf( '>' );
+                    if( index !== -1 ){
+                        handler.onParseDocType( html.substring( pos, index + 1 ) );
+                        html = html.substring( index + 1 );
                     } else {
-                        incrementPosition();
+                        onError( html );
+                        return;
+                    };
+                // CDATASection
+                } else if( htmlparser.DEFINE.USE_CDATA_SECTION && html.indexOf( '<![CDATA[' ) === pos ){
+                    processText();
+                    index = html.indexOf( ']]>' );
+                    if( index !== -1 ){
+                        handler.onParseCDATASection( unescapeForHTML( html.substring( 9, index ) ) );
+                        html = html.substring( index + 3 );
+                    } else {
+                        onError( html );
+                        return;
+                    };
+                // Comment
+                } else if( html.indexOf( '<!--' ) === pos ){
+                    processText();
+                    index = html.indexOf( '-->' );
+                    if( index !== -1 ){
+                        handler.onParseComment( unescapeForHTML( html.substring( 4, index ) ) );
+                        html = html.substring( index + 3 );
+                    } else {
+                        onError( html );
+                        return;
+                    };
+                // start tag
+                } else if( html.charAt( pos ) === '<' && htmlparser.isAlphabet( html.charAt( pos + 1 ) ) ){
+                    processText();
+                    nextIndex = parseStartTag( stack, lastTagName, handler, html );
+
+                    if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
+                        return;
+                    } else if( nextIndex ){
+                        html = html.substring( nextIndex );
+                    } else {
+                        onError( html );
+                        return;
                     };
                 } else {
                     incrementPosition();
@@ -271,15 +266,11 @@ goog.scope(
             htmlparser.DEFINE.TIME_SLICE_EXECUTION && lazy && handler.onComplete();
 
             function incrementPosition(){
-                var index = html.indexOf( '<', pos + 1 );
+                pos = html.indexOf( '<', pos + 1 );
 
-                if( index === -1 ){
+                if( pos === -1 ){
                     pos = html.length;
                     processText();
-                } else if( pos < index ){
-                    pos = index;
-                } else {
-                    ++pos;
                 };
             };
 

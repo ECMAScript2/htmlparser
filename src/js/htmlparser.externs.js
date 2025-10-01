@@ -41,8 +41,8 @@ var __avoidRenamingTagNamesAndAttributes__ = [
         RBC      : {RB:!0,RP:!0,RT:!0} // => RTC
     },
     {
-        SCRIPT : true, STYLE : true, TEXTAREA : true, TITLE : true, PLAINTEXT : true, XMP : true,
-        script : true, style : true, textarea : true, title : true, plaintext : true, xmp : true
+        SCRIPT : true, STYLE : true, TEXTAREA : true, TITLE : true, PLAINTEXT : true, XMP : true, LISTING : true,
+        script : true, style : true, textarea : true, title : true, plaintext : true, xmp : true, listing : true
     }
 ];
 

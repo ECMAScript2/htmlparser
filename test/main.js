@@ -483,3 +483,14 @@ test('#1 RAW_TEXT_ELEMENTS can contain PROCESSING_INSTRUCTION',
         );
     }
 );
+
+test('json',
+    (t) => {
+        t.deepEqual(
+            parser(
+                "<script>{ a:\"</span>\" }</script>"
+            ),
+            [ 11, [ 'SCRIPT', '{ a:"</span>" }' ] ]
+        );
+    }
+);
