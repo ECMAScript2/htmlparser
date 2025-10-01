@@ -17,6 +17,7 @@ goog.provide( 'htmlparser.isNamespacedTag' );
 goog.require( 'htmlparser.XML_ROOT_ELEMENTS' );
 goog.require( 'htmlparser.VOID_ELEMENTS' );
 goog.require( 'htmlparser.RAW_TEXT_ELEMENTS' );
+goog.require( 'htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS' );
 goog.require( 'htmlparser.BOOLEAN_ATTRIBUTES' );
 goog.require( 'htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
 
@@ -145,52 +146,15 @@ goog.scope(
             /** @type {number} */
             var lastLength = html.length - pos;
 
-            var lastTagName, index, nextIndex, htmlLength;
+            var lastTagName, isRawElement, index, ignoreEndTag, nextIndex, htmlLength;
 
             while( html ){
                 lastTagName = stack[ stack.length - 1 ];
 
-                // Make sure we're not in a script or style element
-                if( htmlparser.RAW_TEXT_ELEMENTS[ lastTagName ] ){
-                    if( lastTagName === 'PLAINTEXT' || lastTagName === 'plaintext' ){
-                        handler.onParseText( unescapeForHTML( html ) );
-                        html = '';
-                    } else {
-                        index = html.indexOf( '</' + ( isXML || isInVML ? lastTagName : lastTagName.toLowerCase() ) );
-                        if( index === -1 ){
-                            index = html.indexOf( '</' + ( isXML || isInVML ? lastTagName.toUpperCase() : lastTagName ) );
-                        };
-                        if( 0 <= index ){
-                            pos = index;
-                            processText();
-                            nextIndex = parseEndTag( stack, handler, html );
-    
-                            if( nextIndex === PARSING_STOP && htmlparser.DEFINE.STOP_PARSING ){
-                                return;
-                            } else if( nextIndex ){
-                                html = html.substring( nextIndex );
-                            } else {
-                                onError( html );
-                                return;
-                            };
-                        } else {
-                            onError( html );
-                            return;
-                        };
-                    };
-                // DocType
-                } else if( htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE && html.indexOf( '<!DOCTYPE ' ) === pos ){
-                    processText();
-                    index = html.indexOf( '>' );
-                    if( index !== -1 ){
-                        handler.onParseDocType( html.substring( pos, index + 1 ) );
-                        html = html.substring( index + 1 );
-                    } else {
-                        onError( html );
-                        return;
-                    };
+                isRawElement = htmlparser.RAW_TEXT_ELEMENTS[ lastTagName ];
+
                 // ProcessingInstruction
-                } else if( htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION && html.indexOf( '<?' ) === pos ){
+                if( htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION && html.indexOf( '<?' ) === pos ){
                     processText();
                     index = html.indexOf( '?>' );
                     if( index !== -1 ){
@@ -200,64 +164,90 @@ goog.scope(
                         onError( html );
                         return;
                     };
-                // CDATASection
-                } else if( htmlparser.DEFINE.USE_CDATA_SECTION && html.indexOf( '<![CDATA[' ) === pos ){
-                    processText();
-                    index = html.indexOf( ']]>' );
-                    if( index !== -1 ){
-                        handler.onParseCDATASection( unescapeForHTML( html.substring( 9, index ) ) );
-                        html = html.substring( index + 3 );
-                    } else {
-                        onError( html );
-                        return;
-                    };
-                // Comment
-                } else if( html.indexOf( '<!--' ) === pos ){
-                    processText();
-                    index = html.indexOf( '-->' );
-                    if( index !== -1 ){
-                        handler.onParseComment( unescapeForHTML( html.substring( 4, index ) ) );
-                        html = html.substring( index + 3 );
-                    } else {
-                        onError( html );
-                        return;
-                    };
                 // end tag
                 } else if( html.indexOf( '</' ) === pos && htmlparser.isAlphabet( html.charAt( pos + 2 ) ) ){
-                    processText();
-                    nextIndex = parseEndTag( stack, handler, html );
-
-                    if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
-                        return;
-                    } else if( nextIndex ){
-                        html = html.substring( nextIndex );
-                    } else {
-                        onError( html );
-                        return;
+                    if( isRawElement ){
+                        if( lastTagName === 'PLAINTEXT' || lastTagName === 'plaintext' ){
+                            incrementPosition();
+                            ignoreEndTag = true;
+                        } else {
+                            index = html.indexOf( '</' + ( isXML || isInVML ? lastTagName : lastTagName.toLowerCase() ) );
+                            if( index === -1 ){
+                                index = html.indexOf( '</' + ( isXML || isInVML ? lastTagName.toUpperCase() : lastTagName ) );
+                            };
+                            if( index === -1 ){
+                                incrementPosition();
+                                ignoreEndTag = true;
+                            };
+                        };
                     };
-                // start tag
-                } else if( html.charAt( pos ) === '<' && htmlparser.isAlphabet( html.charAt( pos + 1 ) ) ){
-                    processText();
-                    nextIndex = parseStartTag( stack, lastTagName, handler, html );
-
-                    if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
-                        return;
-                    } else if( nextIndex ){
-                        html = html.substring( nextIndex );
+                    if( ignoreEndTag ){
+                        ignoreEndTag = false;
                     } else {
-                        onError( html );
-                        return;
+                        processText();
+                        nextIndex = parseEndTag( stack, handler, html );
+
+                        if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
+                            return;
+                        } else if( nextIndex ){
+                            html = html.substring( nextIndex );
+                        } else {
+                            onError( html );
+                            return;
+                        };
+                    };
+                } else if( !isRawElement ){
+                    // DocType
+                    if( htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE && html.indexOf( '<!DOCTYPE ' ) === pos ){
+                        processText();
+                        index = html.indexOf( '>' );
+                        if( index !== -1 ){
+                            handler.onParseDocType( html.substring( pos, index + 1 ) );
+                            html = html.substring( index + 1 );
+                        } else {
+                            onError( html );
+                            return;
+                        };
+                    // CDATASection
+                    } else if( htmlparser.DEFINE.USE_CDATA_SECTION && html.indexOf( '<![CDATA[' ) === pos ){
+                        processText();
+                        index = html.indexOf( ']]>' );
+                        if( index !== -1 ){
+                            handler.onParseCDATASection( unescapeForHTML( html.substring( 9, index ) ) );
+                            html = html.substring( index + 3 );
+                        } else {
+                            onError( html );
+                            return;
+                        };
+                    // Comment
+                    } else if( html.indexOf( '<!--' ) === pos ){
+                        processText();
+                        index = html.indexOf( '-->' );
+                        if( index !== -1 ){
+                            handler.onParseComment( unescapeForHTML( html.substring( 4, index ) ) );
+                            html = html.substring( index + 3 );
+                        } else {
+                            onError( html );
+                            return;
+                        };
+                    // start tag
+                    } else if( html.charAt( pos ) === '<' && htmlparser.isAlphabet( html.charAt( pos + 1 ) ) ){
+                        processText();
+                        nextIndex = parseStartTag( stack, lastTagName, handler, html );
+
+                        if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
+                            return;
+                        } else if( nextIndex ){
+                            html = html.substring( nextIndex );
+                        } else {
+                            onError( html );
+                            return;
+                        };
+                    } else {
+                        incrementPosition();
                     };
                 } else {
-                    index = html.indexOf( '<', pos );
-                    if( index === -1 ){
-                        handler.onParseText( unescapeForHTML( html ) );
-                        html = '';
-                    } else if( pos < index ){
-                        pos = index;
-                    } else {
-                        ++pos;
-                    };
+                    incrementPosition();
                 };
 
                 htmlLength = html.length - pos;
@@ -275,16 +265,29 @@ goog.scope(
                 lastLength = htmlLength;
             };
 
-            processText();
-
             // Clean up any remaining tags
             closeTag( stack, handler, '', true );
 
             htmlparser.DEFINE.TIME_SLICE_EXECUTION && lazy && handler.onComplete();
 
+            function incrementPosition(){
+                var index = html.indexOf( '<', pos + 1 );
+
+                if( index === -1 ){
+                    pos = html.length;
+                    processText();
+                } else if( pos < index ){
+                    pos = index;
+                } else {
+                    ++pos;
+                };
+            };
+
             function processText(){
                 if( pos ){
-                    handler.onParseText( unescapeForHTML( html.substring( 0, pos ) ) );
+                    var text = html.substring( 0, pos );
+
+                    handler.onParseText( isRawElement && !htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS[ lastTagName ] ? text : unescapeForHTML( text ) );
                     html = html.substring( pos );
                     pos = 0;
                 };

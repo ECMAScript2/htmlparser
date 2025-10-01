@@ -2,6 +2,7 @@ goog.provide( 'htmlparser.XML_ROOT_ELEMENTS' );
 goog.provide( 'htmlparser.BOOLEAN_ATTRIBUTES' );
 goog.provide( 'htmlparser.VOID_ELEMENTS' );
 goog.provide( 'htmlparser.RAW_TEXT_ELEMENTS' );
+goog.provide( 'htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS' );
 goog.provide( 'htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
 
 /**
@@ -54,6 +55,13 @@ htmlparser.VOID_ELEMENTS = {
 htmlparser.RAW_TEXT_ELEMENTS = {
     SCRIPT : true, STYLE : true, TEXTAREA : true, TITLE : true, PLAINTEXT : true, XMP : true,
     script : true, style : true, textarea : true, title : true, plaintext : true, xmp : true
+};
+
+/**
+ * @const {!Object.<string, boolean>} */
+htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS = {
+    TEXTAREA : true, TITLE : true,
+    textarea : true, title : true
 };
 
 goog.scope(

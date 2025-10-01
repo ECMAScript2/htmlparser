@@ -59,4 +59,4 @@ See [test/*.js](./test/*.js) for how to use the parser.
 
 [ES2 HTML Parser](https://github.com/ECMAScript2/es2-html-parser) is licensed under MIT license.
 
-(C) 2024 [itozyun](https://github.com/itozyun)([blog](//outcloud.blogspot.com/))
+(C) 2024-2025 [itozyun](https://github.com/itozyun)([blog](//outcloud.blogspot.com/))

@@ -317,9 +317,9 @@ test('Mixed content (GH-333)',
     (t) => {
         t.deepEqual(
             parser(
-                "<svg><style>&lt;</style></svg><style>&lt;</style><svg><script>&lt;</script></svg><script>&lt;</script>"
+                "<svg><span>&lt;</span></svg><style><</style><svg><script><</script></svg><script><</script>"
             ),
-            [ 11, [ 'svg', [ 'style', '<' ] ], [ 'STYLE', '<' ], [ 'svg', [ 'script', '<' ] ], [ 'SCRIPT', '<' ] ]
+            [ 11, [ 'svg', [ 'span', '<' ] ], [ 'STYLE', '<' ], [ 'svg', [ 'script', '<' ] ], [ 'SCRIPT', '<' ] ]
         );
     }
 );
@@ -469,6 +469,17 @@ test('0',
                 '<a>0</a>'
             ),
             [ 11, [ 'A', '0' ] ]
+        );
+    }
+);
+
+test('#1 RAW_TEXT_ELEMENTS can contain PROCESSING_INSTRUCTION',
+    (t) => {
+        t.deepEqual(
+            parser(
+                "<script>var time=<?now?>;</script>"
+            ),
+            [ 11, [ 'SCRIPT', 'var time=', [ 7, 'now' ], ';' ] ]
         );
     }
 );
