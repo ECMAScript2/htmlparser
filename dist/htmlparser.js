@@ -1,5 +1,5 @@
 /* es2-html-parser@1.1.0
-(c) 2024-2025 itozyun <itozyun@gmail.com> (https://outcloud.blogspot.com/)(undefined), MIT. */
+(c) 2024-2025 itozyun <itozyun@gmail.com>(https://outcloud.blogspot.com/), MIT. */
 (function(G, L, da) {
   function W(a, q, k) {
     function x() {

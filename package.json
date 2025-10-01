@@ -12,7 +12,8 @@
       "test/**/*"
     ]
   },
-  "author": "itozyun <itozyun@gmail.com> (https://outcloud.blogspot.com/)",
+  "author": "itozyun <itozyun@gmail.com>",
+  "homepage": "https://outcloud.blogspot.com/",
   "license": "MIT",
   "devDependencies": {
     "@externs/nodejs": "^1.5.0",
