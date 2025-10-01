@@ -32,6 +32,7 @@ HTML document fragments written by web designers generally work correctly.
 6. `<table><p>` and other invalid documents, the structure of the tree created from them differs from the specification.
 7. XHTML is not well tested.
 8. Do not remove newline characters in `<pre>, <listing>, <textarea>`.
+9. [RawTextElements](https://github.com/ECMAScript2/htmlparser/blob/8051886c29c94b23a2fa9ac2fc528c712349c5e9/src/js/htmlparser.const.js#L55)(`<script>, <style>, <textarea>, <title>, <plaintext>, <xmp>, <listing>`) can contain ProcessingInstruction. ([#1](https://github.com/ECMAScript2/htmlparser/issues/1))
 
 ## 3. Development and test
 
@@ -45,15 +46,16 @@ gulp dist
 npm run test
 ~~~
 
-See [src/js/example/*.js](./src/js/example/*.js) for how to write the handler. A SAX Style API is provided.
+See [src/js/example/*.js](./src/js/example/) for how to write the handler. A SAX Style API is provided.
 
-See [test/*.js](./test/*.js) for how to use the parser.
+See [test/*.js](./test/) for how to use the parser.
 
 ## 4. Links
 
 1. [Original code by Erik John Resig (ejohn.org)](http://ejohn.org/blog/pure-javascript-html-parser/) Early JavaScript HTML parser, compact code but useful in most cases
 2. [pettanR / webframework / js / 02_Dom / 09_HTMLParser.js](https://github.com/pettanR/webframework/blob/38d5bab145631f33b0e9988dfb704252884b5986/js/02_dom/09_XHTMLParser.js) Based on John Resig's code, without regular expressions
 3. [html.json](https://github.com/itozyun/html.json) Project using es2-html-parser
+4. [クラウド番外地 / 7KB 弱の JavaScript 製 HTML パーサーを書いた](https://outcloud.blogspot.com/2024/12/7kb-html-parser.html)
 
 ## 5. License
 
