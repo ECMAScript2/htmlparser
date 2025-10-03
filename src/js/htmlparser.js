@@ -13,6 +13,9 @@ goog.provide( 'htmlparser.isWhitespace' );
 goog.provide( 'htmlparser.isAlphabet' );
 goog.provide( 'htmlparser.isXMLRootElement' );
 goog.provide( 'htmlparser.isNamespacedTag' );
+goog.provide( 'htmlparser.unescapeHTML' );
+goog.provide( 'htmlparser.escapeHTML' );
+goog.provide( 'htmlparser.unescapeAttrValue' );
 
 goog.require( 'htmlparser.XML_ROOT_ELEMENTS' );
 goog.require( 'htmlparser.VOID_ELEMENTS' );
@@ -112,6 +115,39 @@ htmlparser.isNamespacedTag = function( tagName ){
 	return 0 < tagName.indexOf( ':' );
 };
 
+/**
+ * @param {string} str 
+ * @return {string}
+ */
+htmlparser.unescapeHTML = function( str ){
+    return str.split( '&lt;' ).join( '<' )
+              .split( '&gt;' ).join( '>' )
+              .split( '&amp;lt;' ).join( '&lt;' )
+              .split( '&amp;gt;' ).join( '&gt;' );
+};
+
+/**
+ * @param {string} str 
+ * @return {string}
+ */
+htmlparser.escapeHTML = function ( str ){
+    return str.split( '&lt;' ).join( '&amp;lt;' )
+              .split( '&gt;' ).join( '&amp;gt;' )
+              .split( '<' ).join( '&lt;' )
+              .split( '>' ).join( '&gt;' );
+};
+
+/**
+ * @param {string} str 
+ * @return {string}
+ */
+htmlparser.unescapeAttrValue = function normalize( str ){
+    return htmlparser.unescapeHTML( str ).split( '\\"' ).join( '"' )
+                                         .split( "\\'" ).join( "'" )
+                                         .split( '&quot;' ).join( '"' )
+                                         .split( '&apos;' ).join( "'" );
+};
+
 goog.scope(
     function(){
         /** @const {number} */
@@ -160,8 +196,8 @@ goog.scope(
                     processText();
                     index = html.indexOf( '?>' );
                     if( index !== -1 ){
-                        handler.onParseProcessingInstruction( unescapeForHTML( html.substring( 2, index ) ) );
-                        html = html.substring( index + 2 );
+                        handler.onParseProcessingInstruction( htmlparser.unescapeHTML( html.substring( 2, index ) ) );
+                        html = html.substr( index + 2 );
                     } else {
                         onError( html );
                         return;
@@ -189,7 +225,7 @@ goog.scope(
                         if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
                             return;
                         } else if( nextIndex ){
-                            html = html.substring( nextIndex );
+                            html = html.substr( nextIndex );
                         } else {
                             onError( html );
                             return;
@@ -205,7 +241,7 @@ goog.scope(
                     if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
                         return;
                     } else if( nextIndex ){
-                        html = html.substring( nextIndex );
+                        html = html.substr( nextIndex );
                     } else {
                         onError( html );
                         return;
@@ -215,8 +251,8 @@ goog.scope(
                     processText();
                     index = html.indexOf( '-->' );
                     if( index !== -1 ){
-                        handler.onParseComment( unescapeForHTML( html.substring( 4, index ) ) );
-                        html = html.substring( index + 3 );
+                        handler.onParseComment( htmlparser.unescapeHTML( html.substring( 4, index ) ) );
+                        html = html.substr( index + 3 );
                     } else {
                         onError( html );
                         return;
@@ -226,8 +262,8 @@ goog.scope(
                     processText();
                     index = html.indexOf( ']]>' );
                     if( index !== -1 ){
-                        handler.onParseCDATASection( unescapeForHTML( html.substring( 9, index ) ) );
-                        html = html.substring( index + 3 );
+                        handler.onParseCDATASection( htmlparser.unescapeHTML( html.substring( 9, index ) ) );
+                        html = html.substr( index + 3 );
                     } else {
                         onError( html );
                         return;
@@ -238,7 +274,7 @@ goog.scope(
                     index = html.indexOf( '>' );
                     if( index !== -1 ){
                         handler.onParseDocType( html.substring( pos, index + 1 ) );
-                        html = html.substring( index + 1 );
+                        html = html.substr( index + 1 );
                     } else {
                         onError( html );
                         return;
@@ -278,10 +314,10 @@ goog.scope(
 
             function processText(){
                 if( pos ){
-                    var text = html.substring( 0, pos );
+                    var text = html.substr( 0, pos );
 
-                    handler.onParseText( isRawElement && !htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS[ lastTagName ] ? text : unescapeForHTML( text ) );
-                    html = html.substring( pos );
+                    handler.onParseText( isRawElement && !htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS[ lastTagName ] ? text : htmlparser.unescapeHTML( text ) );
+                    html = html.substr( pos );
                     pos = 0;
                 };
             };
@@ -295,16 +331,6 @@ goog.scope(
              */
             function now(){
                 return + new Date;
-            };
-            /**
-             * @param {string} str 
-             * @return {string}
-             */
-            function unescapeForHTML( str ){
-                return str.split( '&lt;' ).join( '<' )
-                          .split( '&gt;' ).join( '>' )
-                          .split( '&amp;lt;' ).join( '&lt;' )
-                          .split( '&amp;gt;' ).join( '&gt;' );
             };
             /**
              * 
@@ -421,16 +447,9 @@ goog.scope(
                     attrs[ name ] = opt_value === true
                                   ?    true
                                   : htmlparser.BOOLEAN_ATTRIBUTES[ name.toLowerCase() ]
-                                  ?    ( isXML ? normalize( /** @type {string | void} */ (opt_value) || name ) : true )
-                                  :    ( normalize( /** @type {string | void} */ (opt_value) || '' ) );
+                                  ?    ( isXML ? htmlparser.unescapeAttrValue( /** @type {string | void} */ (opt_value) || name ) : true )
+                                  :    ( htmlparser.unescapeAttrValue( /** @type {string | void} */ (opt_value) || '' ) );
                     ++numAttrs;
-
-                    function normalize( value ){
-                        return unescapeForHTML( value ).split( '\\"' ).join( '"' )
-                                                       .split( "\\'" ).join( "'" )
-                                                       .split( '&quot;' ).join( '"' )
-                                                       .split( '&apos;' ).join( "'" );
-                    };
                 };
                 function isEmpty(){
                     empty = html.substr( i, 2 ) === '/>';
