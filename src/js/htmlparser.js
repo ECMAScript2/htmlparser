@@ -47,7 +47,7 @@ htmlparser.DEFINE.STOP_PARSING               = goog.define( 'htmlparser.DEFINE.S
  *   onParseError                 : (function(string) | void),
  *   onParseDocType               : (function(string):(boolean | void) | void),
  *   onParseStartTag              : function(string, Object.<string, (string | boolean)>, boolean, number):(boolean | void),
- *   onParseEndTag                : function(string, boolean, boolean):(boolean | void),
+ *   onParseEndTag                : function(string, boolean, boolean),
  *   onParseText                  : function(string):(boolean | void),
  *   onParseComment               : function(string):(boolean | void),
  *   onParseCDATASection          : (function(string):(boolean | void) | void),
@@ -148,66 +148,62 @@ htmlparser.unescapeAttrValue = function normalize( str ){
 
 goog.scope(
     function(){
-        /** @const {number} */
-        var PARSING_STOP = 1;
-
         /**
          * 
          * @param {string} html 
          * @param {htmlparser.typedef.Handler} handler
          */
         htmlparser.exec = function( html, handler ){
-            exec( html, handler, [], html.length, 0, htmlparser.DEFINE.TIME_SLICE_EXECUTION && !!handler.onParseProgress, htmlparser.DEFINE.USE_XML && !!handler.isXHTML, false );
+            exec( html, handler, [], html.length, htmlparser.DEFINE.USE_XML && !!handler.isXHTML, false );
         };
 
         /**
          * 
-         * @param {string} html
+         * @param {string} unpersedHTML
          * @param {htmlparser.typedef.Handler} handler
          * @param {!Array.<string>} stack
          * @param {number} originalHTMLLength
-         * @param {number} pos
-         * @param {boolean} lazy 
          * @param {boolean} isXML 
          * @param {boolean} isInVML */
-        function exec( html, handler, stack, originalHTMLLength, pos, lazy, isXML, isInVML ){
+        function exec( unpersedHTML, handler, stack, originalHTMLLength, isXML, isInVML ){
+            /** @const {boolean} */
+            var isTimeSliceExe = htmlparser.DEFINE.TIME_SLICE_EXECUTION && !!handler.onParseProgress;
             /** @const {number} */
-            var startTime  = lazy ? now() : 0;
+            var startTime      = isTimeSliceExe ? now() : 0;
             /** @const {number} */
-            var intervalMs = handler.intervalMs || 16;
+            var intervalMs     = handler.intervalMs || 16;
 
-            var lastTagName, isRawElement, index, ignoreEndTag, nextIndex;
+            var pointer = 0, lastTagName, isRawElement, index, nodeValue, ignoreEndTag;
 
-            while( html ){
-                lastTagName = stack[ stack.length - 1 ];
-
+            while( unpersedHTML ){
+                lastTagName  = stack[ stack.length - 1 ];
                 isRawElement = htmlparser.RAW_TEXT_ELEMENTS[ lastTagName ];
 
-                // console.log( pos, html, lastTagName || '.' );
-
                 // ProcessingInstruction
-                if( htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION && html.indexOf( '<?' ) === pos ){
+                if( htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION && unpersedHTML.indexOf( '<?' ) === pointer ){
                     if( processText() && htmlparser.DEFINE.STOP_PARSING ){
                         return;
                     };
-                    index = html.indexOf( '?>' );
+                    index = unpersedHTML.indexOf( '?>' );
                     if( index !== -1 ){
-                        if( handler.onParseProcessingInstruction( htmlparser.unescapeHTML( html.substring( 2, index ) ) ) === true && htmlparser.DEFINE.STOP_PARSING ){
+                        nodeValue    = unpersedHTML.substring( 2, index );
+                        unpersedHTML = unpersedHTML.substr( index + 2 );
+                        if( handler.onParseProcessingInstruction( htmlparser.unescapeHTML( nodeValue ) ) === true && htmlparser.DEFINE.STOP_PARSING ){
+                            onProgress();
                             return;
                         };
-                        html = html.substr( index + 2 );
                     } else {
-                        onError( html );
+                        onError( unpersedHTML );
                         return;
                     };
                 // end tag
-                } else if( html.indexOf( '</', pos ) === pos && htmlparser.isAlphabet( html.charAt( pos + 2 ) ) ){
+                } else if( unpersedHTML.indexOf( '</', pointer ) === pointer && htmlparser.isAlphabet( unpersedHTML.charAt( pointer + 2 ) ) ){
                     if( isRawElement ){
                         if( lastTagName === 'PLAINTEXT' || lastTagName === 'plaintext' ){
                             ignoreEndTag = true;
                         } else {
-                            if( html.indexOf( lastTagName.toLowerCase(), pos ) !== pos + 2 &&
-                                html.indexOf( lastTagName.toUpperCase(), pos ) !== pos + 2
+                            if( unpersedHTML.indexOf( lastTagName.toLowerCase(), pointer ) !== pointer + 2 &&
+                                unpersedHTML.indexOf( lastTagName.toUpperCase(), pointer ) !== pointer + 2
                             ){
                                 ignoreEndTag = true;
                             };
@@ -222,14 +218,7 @@ goog.scope(
                         if( processText() && htmlparser.DEFINE.STOP_PARSING ){
                             return;
                         };
-                        nextIndex = parseEndTag( stack, handler, html );
-
-                        if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
-                            return;
-                        } else if( nextIndex ){
-                            html = html.substr( nextIndex );
-                        } else {
-                            onError( html );
+                        if( parseEndTag( stack ) ){
                             return;
                         };
                     };
@@ -238,63 +227,62 @@ goog.scope(
                         return;
                     };
                 // start tag
-                } else if( html.charAt( pos ) === '<' && htmlparser.isAlphabet( html.charAt( pos + 1 ) ) ){
+                } else if( unpersedHTML.charAt( pointer ) === '<' && htmlparser.isAlphabet( unpersedHTML.charAt( pointer + 1 ) ) ){
                     if( processText() && htmlparser.DEFINE.STOP_PARSING ){
                         return;
                     };
-                    nextIndex = parseStartTag( stack, lastTagName, handler, html );
-
-                    if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
-                        return;
-                    } else if( nextIndex ){
-                        html = html.substr( nextIndex );
-                    } else {
-                        onError( html );
+                    if( parseStartTag( stack, lastTagName ) ){
                         return;
                     };
                 // Comment
-                } else if( html.indexOf( '<!--' ) === pos ){
+                } else if( unpersedHTML.indexOf( '<!--' ) === pointer ){
                     if( processText() && htmlparser.DEFINE.STOP_PARSING ){
                         return;
                     };
-                    index = html.indexOf( '-->' );
+                    index = unpersedHTML.indexOf( '-->' );
                     if( index !== -1 ){
-                        if( handler.onParseComment( htmlparser.unescapeHTML( html.substring( 4, index ) ) ) === true && htmlparser.DEFINE.STOP_PARSING ){
+                        nodeValue    = unpersedHTML.substring( 4, index );
+                        unpersedHTML = unpersedHTML.substr( index + 3 );
+                        if( handler.onParseComment( htmlparser.unescapeHTML( nodeValue ) ) === true && htmlparser.DEFINE.STOP_PARSING ){
+                            onProgress();
                             return;
                         };
-                        html = html.substr( index + 3 );
                     } else {
-                        onError( html );
+                        onError( unpersedHTML );
                         return;
                     };
                 // CDATASection
-                } else if( htmlparser.DEFINE.USE_CDATA_SECTION && html.indexOf( '<![CDATA[' ) === pos ){
+                } else if( htmlparser.DEFINE.USE_CDATA_SECTION && unpersedHTML.indexOf( '<![CDATA[' ) === pointer ){
                     if( processText() && htmlparser.DEFINE.STOP_PARSING ){
                         return;
                     };
-                    index = html.indexOf( ']]>' );
+                    index = unpersedHTML.indexOf( ']]>' );
                     if( index !== -1 ){
-                        if( handler.onParseCDATASection( htmlparser.unescapeHTML( html.substring( 9, index ) ) ) === true && htmlparser.DEFINE.STOP_PARSING ){
+                        nodeValue    = unpersedHTML.substring( 9, index );
+                        unpersedHTML = unpersedHTML.substr( index + 3 );
+                        if( handler.onParseCDATASection( htmlparser.unescapeHTML( nodeValue ) ) === true && htmlparser.DEFINE.STOP_PARSING ){
+                            onProgress();
                             return;
                         };
-                        html = html.substr( index + 3 );
                     } else {
-                        onError( html );
+                        onError( unpersedHTML );
                         return;
                     };
                 // DocType
-                } else if( htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE && html.indexOf( '<!DOCTYPE ' ) === pos ){
+                } else if( htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE && unpersedHTML.indexOf( '<!DOCTYPE ' ) === pointer ){
                     if( processText() && htmlparser.DEFINE.STOP_PARSING ){
                         return;
                     };
-                    index = html.indexOf( '>' );
+                    index = unpersedHTML.indexOf( '>' );
                     if( index !== -1 ){
-                        if( handler.onParseDocType( html.substring( pos, index + 1 ) ) === true && htmlparser.DEFINE.STOP_PARSING ){
+                        nodeValue    = unpersedHTML.substring( pointer, index + 1 );
+                        unpersedHTML = unpersedHTML.substr( index + 1 );
+                        if( handler.onParseDocType( nodeValue ) === true && htmlparser.DEFINE.STOP_PARSING ){
+                            onProgress();
                             return;
                         };
-                        html = html.substr( index + 1 );
                     } else {
-                        onError( html );
+                        onError( unpersedHTML );
                         return;
                     };
                 } else {
@@ -303,40 +291,49 @@ goog.scope(
                     };
                 };
 
-                if( htmlparser.DEFINE.TIME_SLICE_EXECUTION && lazy && html && ( startTime + intervalMs <= now() ) ){
-                    handler.onParseProgress( 1 - ( html.length - pos ) / originalHTMLLength, exec, [ html, handler, stack, originalHTMLLength, pos, lazy, isXML, isInVML ] );
+                if( htmlparser.DEFINE.TIME_SLICE_EXECUTION && isTimeSliceExe && unpersedHTML && ( startTime + intervalMs <= now() ) ){
+                    onProgress();
                     return;
                 };
             };
 
             // Clean up any remaining tags
-            closeTag( stack, handler, '', true );
+            closeTag( stack, '', true );
 
-            htmlparser.DEFINE.TIME_SLICE_EXECUTION && lazy && handler.onParseComplete && handler.onParseComplete();
+            htmlparser.DEFINE.TIME_SLICE_EXECUTION && isTimeSliceExe && handler.onParseComplete && handler.onParseComplete();
 
+            /** @return {boolean | void} true:stopped */
             function incrementPosition(){
-                pos = html.indexOf( '<', pos + 1 );
+                pointer = unpersedHTML.indexOf( '<', pointer + 1 );
 
-                if( pos === -1 ){
-                    pos = html.length;
+                if( pointer === -1 ){
+                    pointer = unpersedHTML.length;
                     if( processText() && htmlparser.DEFINE.STOP_PARSING ){
                         return true;
                     };
                 };
             };
 
+            /** @return {boolean | void} true:stopped */
             function processText(){
-                if( pos ){
-                    var text = html.substr( 0, pos );
+                if( pointer ){
+                    var text = unpersedHTML.substr( 0, pointer );
+
+                    unpersedHTML = unpersedHTML.substr( pointer );
+                    pointer      = 0;
 
                     if( handler.onParseText(
                             isRawElement && !htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS[ lastTagName ] ? text : htmlparser.unescapeHTML( text )
                         ) === true && htmlparser.DEFINE.STOP_PARSING ){
+                        onProgress();
                         return true;
                     };
-                    html = html.substr( pos );
-                    pos = 0;
                 };
+            };
+
+            function onProgress(){
+                handler.onParseProgress &&
+                handler.onParseProgress( 1 - ( unpersedHTML.length ) / originalHTMLLength, exec, [ unpersedHTML, handler, stack, originalHTMLLength, isXML, isInVML ] );
             };
 
             function onError( msg ){
@@ -351,18 +348,16 @@ goog.scope(
             };
             /**
              * 
-             * @param {!Array.<string>} stack 
-             * @param {htmlparser.typedef.Handler} handler 
-             * @param {string} html "</" で始まる HTML 文字列
-             * @return {number} 0:error, 1:Parsing Stop, 4~:success */
-            function parseEndTag( stack, handler, html ){
+             * @param {!Array.<string>} stack
+             * @return {boolean | void} true:error */
+            function parseEndTag( stack ){
                 var phase = 0,
-                    l     = html.length,
+                    l     = unpersedHTML.length,
                     i     = 3,
                     tagName, chr;
 
                 while( i < l && phase !== 2 ){
-                    chr = html.charAt( i );
+                    chr = unpersedHTML.charAt( i );
                     switch( phase ){
                         case 0 : // タグ名の終わりの空白文字を待つ
                             if( htmlparser.isWhitespace( chr ) ){
@@ -371,7 +366,7 @@ goog.scope(
                                 phase = 2;
                             };
                             if( phase ){
-                                tagName = html.substring( 2, i );
+                                tagName = unpersedHTML.substring( 2, i );
                             };
                             break;
                         case 1 : // タグの終了を待つ
@@ -383,24 +378,22 @@ goog.scope(
                     ++i;
                 };
                 if( phase === 2 ){
-                    tagName = /** @type {string} */ (tagName);
+                    unpersedHTML = unpersedHTML.substr( i );
+                    tagName      = /** @type {string} */ (tagName);
                     if( !htmlparser.VOID_ELEMENTS[ tagName ] ){
-                        if( closeTag( stack, handler, isXML || isInVML ? tagName : tagName.toUpperCase(), false ) && htmlparser.DEFINE.STOP_PARSING ){
-                            return PARSING_STOP;
-                        };
+                        closeTag( stack, isXML || isInVML ? tagName : tagName.toUpperCase(), false );
                     };
-                    return i;
+                } else {
+                    onError( unpersedHTML );
+                    return true;
                 };
-                return 0; // error!
             };
             /**
              * If return true:Parsing Stop
              * @param {!Array.<string>} stack 
-             * @param {htmlparser.typedef.Handler} handler 
              * @param {string} tagName
-             * @param {boolean} isClosingAutomatically
-             * @return {boolean | void} */
-            function closeTag( stack, handler, tagName, isClosingAutomatically ){
+             * @param {boolean} isClosingAutomatically */
+            function closeTag( stack, tagName, isClosingAutomatically ){
                 function missingEndTag( tagName ){
                     return isClosingAutomatically && !htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ tagName ];
                 };
@@ -419,9 +412,8 @@ goog.scope(
                 if( 0 <= pos ){
                     // Close all the open elements, up the stack
                     for( ; pos < i; ){
-                        if( handler.onParseEndTag( stack[ --i ], missingEndTag( stack[ i ] ), false ) === true && htmlparser.DEFINE.STOP_PARSING ){
-                            return true;
-                        };
+                        handler.onParseEndTag( stack[ --i ], missingEndTag( stack[ i ] ), false );
+
                         if( htmlparser.DEFINE.USE_XML && isXML && htmlparser.isXMLRootElement( stack[ i ] ) ){
                             isXML = !!handler.isXHTML;
                         };
@@ -439,19 +431,15 @@ goog.scope(
                         };
                     };
                 } else {
-                    if( handler.onParseEndTag( tagName, false, true ) === true && htmlparser.DEFINE.STOP_PARSING ){
-                        return true;
-                    };
+                    handler.onParseEndTag( tagName, false, true );
                 };
             };
             /**
              * 
              * @param {!Array.<string>} stack 
-             * @param {string} lastTagName 
-             * @param {htmlparser.typedef.Handler} handler 
-             * @param {string} html "<" で始まる HTML 文字列
-             * @return {number} 0:error, 1:Parsing Stop, 3~:success */
-            function parseStartTag( stack, lastTagName, handler, html ){
+             * @param {string} lastTagName
+             * @return {boolean | void} true:stopped or error */
+            function parseStartTag( stack, lastTagName ){
                 /**
                  * 
                  * @param {string} name 
@@ -466,7 +454,7 @@ goog.scope(
                     ++numAttrs;
                 };
                 function isEmpty(){
-                    empty = html.substr( i, 2 ) === '/>';
+                    empty = unpersedHTML.substr( i, 2 ) === '/>';
 
                     if( empty ){
                         ++i;
@@ -475,7 +463,7 @@ goog.scope(
                 };
 
                 var phase    = 1,
-                    l        = html.length,
+                    l        = unpersedHTML.length,
                     i        = 2,
                     attrs    = {},
                     numAttrs = 0,
@@ -483,13 +471,13 @@ goog.scope(
                     chr, tagName, start, attrName, quot, escape, tagUpper, isXMLOrVML;
 
                 while( i < l && phase < 9 ){
-                    chr = html.charAt( i );
+                    chr = unpersedHTML.charAt( i );
                     switch( phase ){
                         case 1 : // タグ名の終わりの空白文字を待つ
                             if( htmlparser.isWhitespace( chr ) ){
-                                phase = 2, tagName = html.substring( 1, i );
+                                phase = 2, tagName = unpersedHTML.substring( 1, i );
                             } else if( chr === '>' || isEmpty() ){
-                                phase = 9, tagName = html.substring( 1, i );
+                                phase = 9, tagName = unpersedHTML.substring( 1, i );
                             };
                             break;
                         case 2 : // 属性名の開始を待つ
@@ -501,11 +489,11 @@ goog.scope(
                             break;
                         case 3 : // 属性名の終わりを待つ
                             if( chr === '=' ){
-                                phase = 5, attrName = html.substring( start, i );
+                                phase = 5, attrName = unpersedHTML.substring( start, i );
                             } else if( htmlparser.isWhitespace( chr ) ){
-                                phase = 4, attrName = html.substring( start, i );
+                                phase = 4, attrName = unpersedHTML.substring( start, i );
                             } else if( chr === '>' || isEmpty() ){
-                                phase = 9, saveAttr( /** @type {string} */ (html.substring( start, i )), true );
+                                phase = 9, saveAttr( /** @type {string} */  (unpersedHTML.substring( start, i )), true );
                             };
                             break;
                         case 4 : // 属性名に続くスペースの次に続くものは？
@@ -527,7 +515,7 @@ goog.scope(
                             break;
                         case 6 : //属性値の閉じ quot を待つ
                             if( !escape && chr === quot ){
-                                phase = 2, saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
+                                phase = 2, saveAttr( /** @type {string} */ (attrName), /** @type {string} */  (unpersedHTML.substring( start, i )) );
                             };
                             escape = chr === '\\' && !escape; // \\\\ is not escape for "
                             break;
@@ -538,7 +526,7 @@ goog.scope(
                                 phase = 9;
                             };
                             if( phase !== 7 ){
-                                saveAttr( /** @type {string} */ (attrName), /** @type {string} */ (html.substring( start, i )) );
+                                saveAttr( /** @type {string} */ (attrName), /** @type {string} */  (unpersedHTML.substring( start, i )) );
                             };
                             break;
                     };
@@ -557,9 +545,7 @@ goog.scope(
                     if( !isXMLOrVML ){
                         while( lastTagName ){
                             if( htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ] && !htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ][ tagUpper ] ){
-                                if( closeTag( stack, handler, lastTagName, false ) && htmlparser.DEFINE.STOP_PARSING ){
-                                    return PARSING_STOP;
-                                };
+                                closeTag( stack, lastTagName, false );
                                 lastTagName = stack[ stack.length - 1 ];
                             } else {
                                 break;
@@ -572,12 +558,16 @@ goog.scope(
                         stack[ stack.length ] = isXMLOrVML ? tagName : tagUpper;
                     };
 
+                    unpersedHTML = unpersedHTML.substr( i );
+
                     if( handler.onParseStartTag( isXMLOrVML ? tagName : tagUpper, numAttrs ? attrs : null, empty, i ) === true && htmlparser.DEFINE.STOP_PARSING ){
-                        return PARSING_STOP;
+                        onProgress();
+                        return true;
                     };
-                    return i;
+                } else {
+                    onError( unpersedHTML );
+                    return true;
                 };
-                return 0; // error
             };
         };
     }
