@@ -45,15 +45,15 @@ htmlparser.DEFINE.STOP_PARSING               = goog.define( 'htmlparser.DEFINE.S
  *   isXHTML                      : (boolean | void),
  *   intervalMs                   : (number | void),
  *   onParseError                 : (function(string) | void),
- *   onParseDocType               : (function(string) | void),
+ *   onParseDocType               : (function(string):(boolean | void) | void),
  *   onParseStartTag              : function(string, Object.<string, (string | boolean)>, boolean, number):(boolean | void),
  *   onParseEndTag                : function(string, boolean, boolean):(boolean | void),
- *   onParseText                  : function(string),
- *   onParseComment               : function(string),
- *   onParseCDATASection          : (function(string) | void),
- *   onParseProcessingInstruction : (function(string) | void),
+ *   onParseText                  : function(string):(boolean | void),
+ *   onParseComment               : function(string):(boolean | void),
+ *   onParseCDATASection          : (function(string):(boolean | void) | void),
+ *   onParseProcessingInstruction : (function(string):(boolean | void) | void),
  *   onParseProgress              : (function(number, !Function, !Array) | void),
- *   onComplete                   : (function() | void)
+ *   onParseComplete              : (function() | void)
  * }}
  */
 htmlparser.typedef.Handler;
@@ -157,21 +157,20 @@ goog.scope(
          * @param {htmlparser.typedef.Handler} handler
          */
         htmlparser.exec = function( html, handler ){
-            exec( html, 0, handler, htmlparser.DEFINE.TIME_SLICE_EXECUTION && !!handler.onComplete, html.length, htmlparser.DEFINE.USE_XML && !!handler.isXHTML, false, [] );
+            exec( html, handler, [], html.length, 0, htmlparser.DEFINE.TIME_SLICE_EXECUTION && !!handler.onParseProgress, htmlparser.DEFINE.USE_XML && !!handler.isXHTML, false );
         };
 
         /**
          * 
-         * @param {string} html 
-         * @param {number} pos
+         * @param {string} html
          * @param {htmlparser.typedef.Handler} handler
-         * @param {boolean} lazy 
-         * @param {number} originalHTMLLength
-         * @param {boolean} isXML 
-         * @param {boolean} isInVML 
          * @param {!Array.<string>} stack
-         */
-        function exec( html, pos, handler, lazy, originalHTMLLength, isXML, isInVML, stack ){
+         * @param {number} originalHTMLLength
+         * @param {number} pos
+         * @param {boolean} lazy 
+         * @param {boolean} isXML 
+         * @param {boolean} isInVML */
+        function exec( html, handler, stack, originalHTMLLength, pos, lazy, isXML, isInVML ){
             /** @const {number} */
             var startTime  = lazy ? now() : 0;
             /** @const {number} */
@@ -191,10 +190,14 @@ goog.scope(
 
                 // ProcessingInstruction
                 if( htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION && html.indexOf( '<?' ) === pos ){
-                    processText();
+                    if( processText() && htmlparser.DEFINE.STOP_PARSING ){
+                        return;
+                    };
                     index = html.indexOf( '?>' );
                     if( index !== -1 ){
-                        handler.onParseProcessingInstruction( htmlparser.unescapeHTML( html.substring( 2, index ) ) );
+                        if( handler.onParseProcessingInstruction( htmlparser.unescapeHTML( html.substring( 2, index ) ) ) === true && htmlparser.DEFINE.STOP_PARSING ){
+                            return;
+                        };
                         html = html.substr( index + 2 );
                     } else {
                         onError( html );
@@ -214,10 +217,14 @@ goog.scope(
                         };
                     };
                     if( ignoreEndTag ){
-                        incrementPosition();
+                        if( incrementPosition() && htmlparser.DEFINE.STOP_PARSING ){
+                            return;
+                        };
                         ignoreEndTag = false;
                     } else {
-                        processText();
+                        if( processText() && htmlparser.DEFINE.STOP_PARSING ){
+                            return;
+                        };
                         nextIndex = parseEndTag( stack, handler, html );
 
                         if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
@@ -230,10 +237,14 @@ goog.scope(
                         };
                     };
                 } else if( isRawElement ){
-                    incrementPosition();
+                    if( incrementPosition() && htmlparser.DEFINE.STOP_PARSING ){
+                        return;
+                    };
                 // start tag
                 } else if( html.charAt( pos ) === '<' && htmlparser.isAlphabet( html.charAt( pos + 1 ) ) ){
-                    processText();
+                    if( processText() && htmlparser.DEFINE.STOP_PARSING ){
+                        return;
+                    };
                     nextIndex = parseStartTag( stack, lastTagName, handler, html );
 
                     if( htmlparser.DEFINE.STOP_PARSING && nextIndex === PARSING_STOP ){
@@ -246,10 +257,14 @@ goog.scope(
                     };
                 // Comment
                 } else if( html.indexOf( '<!--' ) === pos ){
-                    processText();
+                    if( processText() && htmlparser.DEFINE.STOP_PARSING ){
+                        return;
+                    };
                     index = html.indexOf( '-->' );
                     if( index !== -1 ){
-                        handler.onParseComment( htmlparser.unescapeHTML( html.substring( 4, index ) ) );
+                        if( handler.onParseComment( htmlparser.unescapeHTML( html.substring( 4, index ) ) ) === true && htmlparser.DEFINE.STOP_PARSING ){
+                            return;
+                        };
                         html = html.substr( index + 3 );
                     } else {
                         onError( html );
@@ -257,10 +272,14 @@ goog.scope(
                     };
                 // CDATASection
                 } else if( htmlparser.DEFINE.USE_CDATA_SECTION && html.indexOf( '<![CDATA[' ) === pos ){
-                    processText();
+                    if( processText() && htmlparser.DEFINE.STOP_PARSING ){
+                        return;
+                    };
                     index = html.indexOf( ']]>' );
                     if( index !== -1 ){
-                        handler.onParseCDATASection( htmlparser.unescapeHTML( html.substring( 9, index ) ) );
+                        if( handler.onParseCDATASection( htmlparser.unescapeHTML( html.substring( 9, index ) ) ) === true && htmlparser.DEFINE.STOP_PARSING ){
+                            return;
+                        };
                         html = html.substr( index + 3 );
                     } else {
                         onError( html );
@@ -268,17 +287,23 @@ goog.scope(
                     };
                 // DocType
                 } else if( htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE && html.indexOf( '<!DOCTYPE ' ) === pos ){
-                    processText();
+                    if( processText() && htmlparser.DEFINE.STOP_PARSING ){
+                        return;
+                    };
                     index = html.indexOf( '>' );
                     if( index !== -1 ){
-                        handler.onParseDocType( html.substring( pos, index + 1 ) );
+                        if( handler.onParseDocType( html.substring( pos, index + 1 ) ) === true && htmlparser.DEFINE.STOP_PARSING ){
+                            return;
+                        };
                         html = html.substr( index + 1 );
                     } else {
                         onError( html );
                         return;
                     };
                 } else {
-                    incrementPosition();
+                    if( incrementPosition() && htmlparser.DEFINE.STOP_PARSING ){
+                        return;
+                    };
                 };
 
                 htmlLength = html.length - pos;
@@ -289,7 +314,7 @@ goog.scope(
                 };
 
                 if( htmlparser.DEFINE.TIME_SLICE_EXECUTION && lazy && html && ( startTime + intervalMs <= now() ) ){
-                    handler.onParseProgress( 1 - htmlLength / originalHTMLLength, exec, [ html, pos, handler, lazy, originalHTMLLength, isXML, isInVML, stack ] );
+                    handler.onParseProgress( 1 - htmlLength / originalHTMLLength, exec, [ html, handler, stack, originalHTMLLength, pos, lazy, isXML, isInVML ] );
                     return;
                 };
 
@@ -299,14 +324,16 @@ goog.scope(
             // Clean up any remaining tags
             closeTag( stack, handler, '', true );
 
-            htmlparser.DEFINE.TIME_SLICE_EXECUTION && lazy && handler.onComplete();
+            htmlparser.DEFINE.TIME_SLICE_EXECUTION && lazy && handler.onParseComplete && handler.onParseComplete();
 
             function incrementPosition(){
                 pos = html.indexOf( '<', pos + 1 );
 
                 if( pos === -1 ){
                     pos = html.length;
-                    processText();
+                    if( processText() && htmlparser.DEFINE.STOP_PARSING ){
+                        return true;
+                    };
                 };
             };
 
@@ -314,7 +341,11 @@ goog.scope(
                 if( pos ){
                     var text = html.substr( 0, pos );
 
-                    handler.onParseText( isRawElement && !htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS[ lastTagName ] ? text : htmlparser.unescapeHTML( text ) );
+                    if( handler.onParseText(
+                            isRawElement && !htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS[ lastTagName ] ? text : htmlparser.unescapeHTML( text )
+                        ) === true && htmlparser.DEFINE.STOP_PARSING ){
+                        return true;
+                    };
                     html = html.substr( pos );
                     pos = 0;
                 };
@@ -335,8 +366,7 @@ goog.scope(
              * @param {!Array.<string>} stack 
              * @param {htmlparser.typedef.Handler} handler 
              * @param {string} html "</" で始まる HTML 文字列
-             * @return {number} 0:error, 1:Parsing Stop, 4~:success
-             */
+             * @return {number} 0:error, 1:Parsing Stop, 4~:success */
             function parseEndTag( stack, handler, html ){
                 var phase = 0,
                     l     = html.length,
@@ -381,8 +411,7 @@ goog.scope(
              * @param {htmlparser.typedef.Handler} handler 
              * @param {string} tagName
              * @param {boolean} isClosingAutomatically
-             * @return {boolean | void}
-             */
+             * @return {boolean | void} */
             function closeTag( stack, handler, tagName, isClosingAutomatically ){
                 function missingEndTag( tagName ){
                     return isClosingAutomatically && !htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ tagName ];
@@ -433,8 +462,7 @@ goog.scope(
              * @param {string} lastTagName 
              * @param {htmlparser.typedef.Handler} handler 
              * @param {string} html "<" で始まる HTML 文字列
-             * @return {number} 0:error, 1:Parsing Stop, 3~:success
-             */
+             * @return {number} 0:error, 1:Parsing Stop, 3~:success */
             function parseStartTag( stack, lastTagName, handler, html ){
                 /**
                  * 

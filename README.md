@@ -22,17 +22,18 @@ HTML document fragments written by web designers generally work correctly.
    * `caption,dd,li,td,dt,th,p,rb,rp,rt,html,head,colgroup,optgroup,option,tbody,thead,tfoot,tr,rbc,rtc`
 2. Broken document fragments in conditional comments can also be parsed.
    * `<!--[if IE 8]> </div><br clear=both><div> <![endif]-->`
+     * Retrieve and parse the comment text [@see](https://github.com/itozyun/html.json/blob/a8b395e34676e0594fd9421f13bfe674997e544c/src/js/html2json/html2json.js#L240)
    * Element missing end tag
-     * An “auto-closing end tag” that is not present in the document, cannot omit the end tag, and is not closed by another starting tag is identified by the `isImplicit` flag. (`onParseEndTag`)
+     * An“auto-closing end tag”that is not present in the document, cannot omit the end tag, and is not closed by another starting tag is identified by the `isImplicit` flag. (`onParseEndTag`)
    * Element missing start tag
      * `isMissingStartTag` flag is true (`onParseEndTag`)
-3. Time Slice Execution
-4. Parsing Stop
-5. `<html><head><body>` is not a supplement to create a complete HTML document like [parse5](https://www.npmjs.com/package/parse5).
-6. `<table><p>` and other invalid documents, the structure of the tree created from them differs from the specification.
-7. XHTML is not well tested.
-8. Do not remove newline characters in `<pre>, <listing>, <textarea>`.
-9. [RawTextElements](https://github.com/ECMAScript2/htmlparser/blob/8051886c29c94b23a2fa9ac2fc528c712349c5e9/src/js/htmlparser.const.js#L55)(`<script>, <style>, <textarea>, <title>, <plaintext>, <xmp>, <listing>`) can contain ProcessingInstruction. ([#1](https://github.com/ECMAScript2/htmlparser/issues/1))
+3. `<html><head><body>` is not a supplement to create a complete HTML document like [parse5](https://www.npmjs.com/package/parse5).
+4. ⚠️ `<table><p>` and other invalid documents, the structure of the tree created from them differs from the specification.
+5. ⚠️ Do not remove newline characters in `<script>, <style>, <textarea>, <title>, <plaintext>, <xmp>, <listing>`.
+6. [RawTextElements](https://github.com/ECMAScript2/htmlparser/blob/8051886c29c94b23a2fa9ac2fc528c712349c5e9/src/js/htmlparser.const.js#L55)(`<script>, <style>, <textarea>, <title>, <plaintext>, <xmp>, <listing>`) can contain ProcessingInstruction. ([#1](https://github.com/ECMAScript2/htmlparser/issues/1))
+7. Parsing Stop
+8. ⚠️ Time Slice Execution is not tested.
+9. ⚠️ XHTML is not tested.
 
 ## 3. Development and test
 
