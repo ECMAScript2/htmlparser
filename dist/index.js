@@ -18,7 +18,7 @@ function Q(a) {
   return a.split("&lt;").join("<").split("&gt;").join(">").split("&amp;lt;").join("&lt;").split("&amp;gt;").join("&gt;");
 }
 function R(a) {
-  return Q(a).split('\\"').join('"').split("\\'").join("'").split("&quot;").join('"').split("&apos;").join("'");
+  return Q(a).split('\\"').join('"').split("\\'").join("'");
 }
 function aa(a) {
   function y() {

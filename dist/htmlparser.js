@@ -5,7 +5,7 @@
     return a.split("&lt;").join("<").split("&gt;").join(">").split("&amp;lt;").join("&lt;").split("&amp;gt;").join("&gt;");
   }
   function P(a) {
-    return O(a).split('\\"').join('"').split("\\'").join("'").split("&quot;").join('"').split("&apos;").join("'");
+    return O(a).split('\\"').join('"').split("\\'").join("'");
   }
   function W(a, q, k) {
     function x() {
