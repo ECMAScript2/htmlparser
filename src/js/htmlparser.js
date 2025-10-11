@@ -176,10 +176,7 @@ goog.scope(
             /** @const {number} */
             var intervalMs = handler.intervalMs || 16;
 
-            /** @type {number} */
-            var lastLength = html.length - pos;
-
-            var lastTagName, isRawElement, index, ignoreEndTag, nextIndex, htmlLength;
+            var lastTagName, isRawElement, index, ignoreEndTag, nextIndex;
 
             while( html ){
                 lastTagName = stack[ stack.length - 1 ];
@@ -306,19 +303,10 @@ goog.scope(
                     };
                 };
 
-                htmlLength = html.length - pos;
-
-                if( htmlLength === lastLength ){
-                    onError( html );
-                    return;
-                };
-
                 if( htmlparser.DEFINE.TIME_SLICE_EXECUTION && lazy && html && ( startTime + intervalMs <= now() ) ){
-                    handler.onParseProgress( 1 - htmlLength / originalHTMLLength, exec, [ html, handler, stack, originalHTMLLength, pos, lazy, isXML, isInVML ] );
+                    handler.onParseProgress( 1 - ( html.length - pos ) / originalHTMLLength, exec, [ html, handler, stack, originalHTMLLength, pos, lazy, isXML, isInVML ] );
                     return;
                 };
-
-                lastLength = htmlLength;
             };
 
             // Clean up any remaining tags
@@ -492,7 +480,7 @@ goog.scope(
                     attrs    = {},
                     numAttrs = 0,
                     empty    = false,
-                    chr, tagName, start, attrName, quot, escape, tagUpper;
+                    chr, tagName, start, attrName, quot, escape, tagUpper, isXMLOrVML;
 
                 while( i < l && phase < 9 ){
                     chr = html.charAt( i );
@@ -565,7 +553,8 @@ goog.scope(
                     if( htmlparser.DEFINE.USE_VML && !isInVML ){
                         isInVML = htmlparser.isNamespacedTag( tagName );
                     };
-                    if( !isXML && !isInVML ){
+                    isXMLOrVML = isXML || isInVML;
+                    if( !isXMLOrVML ){
                         while( lastTagName ){
                             if( htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ] && !htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ][ tagUpper ] ){
                                 if( closeTag( stack, handler, lastTagName, false ) && htmlparser.DEFINE.STOP_PARSING ){
@@ -580,10 +569,10 @@ goog.scope(
 
                     empty = empty || !!htmlparser.VOID_ELEMENTS[ tagUpper ];
                     if( !empty ){
-                        stack[ stack.length ] = isXML || isInVML ? tagName : tagUpper;
+                        stack[ stack.length ] = isXMLOrVML ? tagName : tagUpper;
                     };
 
-                    if( handler.onParseStartTag( isXML || isInVML ? tagName : tagUpper, numAttrs ? attrs : null, empty, i ) === true && htmlparser.DEFINE.STOP_PARSING ){
+                    if( handler.onParseStartTag( isXMLOrVML ? tagName : tagUpper, numAttrs ? attrs : null, empty, i ) === true && htmlparser.DEFINE.STOP_PARSING ){
                         return PARSING_STOP;
                     };
                     return i;
