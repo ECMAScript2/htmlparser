@@ -31,9 +31,8 @@ HTML document fragments written by web designers generally work correctly.
 4. ⚠️ `<table><p>` and other invalid documents, the structure of the tree created from them differs from the specification.
 5. ⚠️ Do not remove newline characters in `<script>, <style>, <textarea>, <title>, <plaintext>, <xmp>, <listing>`.
 6. [RawTextElements](https://github.com/ECMAScript2/htmlparser/blob/8051886c29c94b23a2fa9ac2fc528c712349c5e9/src/js/htmlparser.const.js#L55)(`<script>, <style>, <textarea>, <title>, <plaintext>, <xmp>, <listing>`) can contain ProcessingInstruction. ([#1](https://github.com/ECMAScript2/htmlparser/issues/1))
-7. Parsing Stop
-8. ⚠️ Time Slice Execution is not tested.
-9. ⚠️ XHTML is not tested.
+7. ⚠️ Pause parsing is not tested.
+8. ⚠️ XHTML is not tested.
 
 ## 3. Development and test
 

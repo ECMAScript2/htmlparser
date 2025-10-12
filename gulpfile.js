@@ -33,8 +33,7 @@ gulp.task( 'dist', gulp.series(
                             'htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE=' + true,
                             'htmlparser.DEFINE.USE_CDATA_SECTION=' + true,
                             'htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION=' + true,
-                            'htmlparser.DEFINE.TIME_SLICE_EXECUTION=' + false,
-                            'htmlparser.DEFINE.STOP_PARSING=' + false
+                            'htmlparser.DEFINE.USE_PAUSE=' + false
                         ],
                         warning_level     : 'VERBOSE',
                         language_in       : 'ECMASCRIPT6',
@@ -63,8 +62,7 @@ gulp.task( 'dist', gulp.series(
                             'htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE=' + true,
                             'htmlparser.DEFINE.USE_CDATA_SECTION=' + true,
                             'htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION=' + true,
-                            'htmlparser.DEFINE.TIME_SLICE_EXECUTION=' + false,
-                            'htmlparser.DEFINE.STOP_PARSING=' + false
+                            'htmlparser.DEFINE.USE_PAUSE=' + false
                         ],
                         warning_level     : 'VERBOSE',
                         language_in       : 'ECMASCRIPT3',
