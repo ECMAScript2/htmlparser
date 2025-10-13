@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:v="urn:schemas-microsoft-com:vml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>XHTML Cleaner | ES2 HTML Parser</title>
+<meta name="msapplication-tap-highlight" content="no">
+<meta name="HandheldFriendly" content="true">
+<meta name="mobileoptimized" content="0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta http-equiv="imagetoolbar" content="no">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width,target-densitydpi=medium-dpi,initial-scale=1,minimum-scale=1,shrink-to-fit=no">
+<style>textarea{font-size:12px}
+</style>
+<!--[if lt IE 5.5000]><script>window.__isIE5=true</script><![endif]-->
+<script>
+/* es2-html-parser@1.1.1
+(c) 2024-2025 itozyun <itozyun@gmail.com>(https://outcloud.blogspot.com/), MIT. */
+(function(C, M, fa) {
+  function N(a) {
+    return a.split("&lt;").join("<").split("&gt;").join(">").split("&amp;lt;").join("&lt;").split("&amp;gt;").join("&gt;");
+  }
+  function Q(a) {
+    return N(a).split('\\"').join('"').split("\\'").join("'");
+  }
+  function Y(a, y) {
+    function q() {
+      c = a.indexOf("<", c + 1);
+      -1 === c && (c = a.length, p());
+    }
+    function p() {
+      var f;
+      if (c) {
+        f = a.substr(0, c);
+        a = a.substr(c);
+        c = 0;
+        (D || n && !Z[n]) && v.ha(O && !aa[n] ? f : N(f));
+      }
+    }
+    function r(f) {
+      v.ca && v.ca(f);
+    }
+    function ba(f) {
+      for (var h = 0, w = a.length, b = 3, l, d; b < w && 2 !== h; ++b) {
+        switch(l = a.charAt(b), h) {
+          case 0:
+            t[l] & 4 ? h = 1 : ">" === l && (h = 2);
+            h && (d = a.substring(2, b));
+            break;
+          case 1:
+            ">" === l && (h = 2);
+        }
+      }
+      if (2 === h) {
+        a = a.substr(b), R[d] || P(f, E || x || S ? d : d.toUpperCase(), !1);
+      } else {
+        return r(a), !0;
+      }
+    }
+    function P(f, h, w) {
+      var b = 0, l = f.length;
+      if (h) {
+        for (b = l; 0 <= b && f[--b] !== h;) {
+        }
+      }
+      if (0 <= b) {
+        for (; b < l;) {
+          v.ba(f[--l], w && !k[f[l]], !1), x && T[f[l]] && (x = !1);
+        }
+        f.length = b;
+      } else {
+        v.ba(h, !1, !0);
+      }
+      n = f[f.length - 1];
+    }
+    function ca(f) {
+      function h(H, I) {
+        U[H] = !0 === I ? x ? H : I : da[H.toLowerCase()] ? x ? Q(I || H) : !0 : Q(I || "");
+        ++V;
+      }
+      function w() {
+        (F = "/>" === a.substr(d, 2)) && ++d;
+        return F;
+      }
+      for (var b = 1, l = a.length, d = 2, U = {}, V = 0, F = !1, g, z, u, A, W, J, K; d < l && 9 > b; ++d) {
+        switch(g = a.charAt(d), b) {
+          case 1:
+            if (t[g] & 4) {
+              b = 2, z = a.substring(1, d);
+            } else if (">" === g || w()) {
+              b = 9, z = a.substring(1, d);
+            }
+            break;
+          case 2:
+            ">" === g || w() ? b = 9 : t[g] & 4 || (b = 3, u = d);
+            break;
+          case 3:
+            if ("=" === g) {
+              b = 5, A = a.substring(u, d);
+            } else if (t[g] & 4) {
+              b = 4, A = a.substring(u, d);
+            } else if (">" === g || w()) {
+              b = 9, h(a.substring(u, d), !0);
+            }
+            break;
+          case 4:
+            "=" === g ? b = 5 : ">" === g || w() ? (b = 9, h(A, !0)) : t[g] & 4 || (b = 3, h(A, !0), u = d);
+            break;
+          case 5:
+            '"' === g || "'" === g ? (b = 6, W = g, u = d + 1) : t[g] & 4 || (b = 7, u = d);
+            J = !1;
+            break;
+          case 6:
+            J || g !== W || (b = 2, h(A, a.substring(u, d)));
+            J = "\\" === g && !J;
+            break;
+          case 7:
+            t[g] & 4 ? b = 2 : ">" === g && (b = 9), 7 !== b && h(A, a.substring(u, d));
+        }
+      }
+      if (9 === b) {
+        x || (x = !!T[z]);
+        b = x || S;
+        if (!b) {
+          for (K = z.toUpperCase(); n;) {
+            if (l = n.toUpperCase(), k[l] && !k[l][K]) {
+              P(f, n, !1);
+            } else {
+              break;
+            }
+          }
+        }
+        (F = F || !!R[z]) || (n = f[f.length] = E || b ? z : K);
+        a = a.substr(d);
+        v.ga(E || b ? z : K, V ? U : null, F, d);
+      } else {
+        return r(a), !0;
+      }
+    }
+    var v = e, E = !1, x = !1, G = [], D = !0, S = !1, c = -1, n = G[G.length - 1], L, O, m, B;
+    for (q(); a;) {
+      O = ea[n];
+      if (a.indexOf("\x3c?") === c) {
+        D && a.length === y && a.indexOf("\x3c?xml ") === c && (D = !1, E = !0);
+        p();
+        m = a.indexOf("?>");
+        if (-1 !== m) {
+          B = a.substring(2, m);
+          a = a.substr(m + 2);
+          v.fa(N(B));
+        } else {
+          r(a);
+          return;
+        }
+      } else if (a.indexOf("</", c) === c && t[a.charAt(c + 2)] & 3) {
+        if (O && ("PLAINTEXT" === n || "plaintext" === n ? L = !0 : a.indexOf(n.toLowerCase(), c) !== c + 2 && a.indexOf(n.toUpperCase(), c) !== c + 2 && (L = !0)), L) {
+          q(), L = !1;
+        } else {
+          if (p(), ba(G)) {
+            return;
+          }
+        }
+      } else if (O) {
+        q();
+      } else if ("<" === a.charAt(c) && t[a.charAt(c + 1)] & 3) {
+        if (p(), ca(G)) {
+          return;
+        }
+      } else if (a.indexOf("\x3c!--") === c) {
+        if (p(), m = a.indexOf("--\x3e"), -1 !== m) {
+          B = a.substring(4, m), a = a.substr(m + 3);
+        } else {
+          r(a);
+          return;
+        }
+      } else if (a.indexOf("<![CDATA[") === c) {
+        if (p(), m = a.indexOf("]]\x3e"), -1 !== m) {
+          B = a.substring(9, m), a = a.substr(m + 3);
+        } else {
+          r(a);
+          return;
+        }
+      } else if (a.indexOf("<!DOCTYPE ") === c) {
+        if (a = a.substr(c), c = 0, m = a.indexOf(">"), -1 !== m) {
+          B = a.substring(0, m + 1), a = a.substr(m + 1), D && (E = 0 < B.indexOf("-//W3C//DTD XHTML ")), D = !1, v.ea(B);
+        } else {
+          r(a);
+          return;
+        }
+      } else {
+        q();
+      }
+    }
+    P(G, "", !0);
+  }
+  function X(a) {
+    e.da();
+    Y(a, a.length);
+    return e.$;
+  }
+  var T = {xml:!0, svg:!0, math:!0}, da = {async:!0, autofocus:!0, checked:!0, compact:!0, declare:!0, defer:!0, disabled:!0, draggable:!0, hidden:!0, ismap:!0, loop:!0, multiple:!0, nohref:!0, noresize:!0, noshade:!0, novalidate:!0, nowrap:!0, readonly:!0, required:!0, reversed:!0, scoped:!0, selected:!0}, R = {AREA:!0, BASE:!0, BASEFONT:!0, BR:!0, BGSOUND:!0, COL:!0, COMMAND:!0, FRAME:!0, HR:!0, IMG:!0, INPUT:!0, ISINDEX:!0, KEYGEN:!0, LINK:!0, META:!0, PARAM:!0, SOURCE:!0, TRACK:!0, EMBED:!0, 
+  WBR:!0, area:!0, base:!0, basefont:!0, br:!0, bgsound:!0, col:!0, command:!0, frame:!0, hr:!0, img:!0, input:!0, isindex:!0, keygen:!0, link:!0, meta:!0, param:!0, source:!0, track:!0, embed:!0, wbr:!0}, Z = {MAP:!0, DL:!0, OL:!0, UL:!0, SELECT:!0, OPTGROUP:!0, TABLE:!0, THEAD:!0, TFOOT:!0, TBODY:!0, COLGROUP:!0, TR:!0, HEAD:!0, MENU:!0, map:!0, dl:!0, ol:!0, ul:!0, select:!0, optgroup:!0, table:!0, thead:!0, tfoot:!0, tbody:!0, colgroup:!0, tr:!0, head:!0, menu:!0}, ea = {SCRIPT:!0, STYLE:!0, 
+  TEXTAREA:!0, TITLE:!0, PLAINTEXT:!0, XMP:!0, LISTING:!0, script:!0, style:!0, textarea:!0, title:!0, plaintext:!0, xmp:!0, listing:!0}, aa = {TEXTAREA:!0, TITLE:!0, LISTING:!0, textarea:!0, title:!0, listing:!0}, k = {CAPTION:{ARTICLE:!0, SECTION:!0, NAV:!0, ASIDE:!0, H1:!0, H2:!0, H3:!0, H4:!0, H5:!0, H6:!0, HEADER:!0, FOOTER:!0, ADDRESS:!0, P:!0, HR:!0, PRE:!0, BLOCKQUOTE:!0, OL:!0, UL:!0, DL:!0, FIGURE:!0, DIV:!0, A:!0, EM:!0, STRONG:!0, SMALL:!0, S:!0, CITE:!0, Q:!0, DFN:!0, ABBR:!0, DATA:!0, 
+  TIME:!0, CODE:!0, VAR:!0, SAMP:!0, KBD:!0, SUB:!0, SUP:!0, I:!0, B:!0, U:!0, MARK:!0, RUBY:!0, BDI:!0, BDO:!0, SPAN:!0, BR:!0, WBR:!0, INS:!0, DEL:!0, PICTURE:!0, IMG:!0, IFRAME:!0, EMBED:!0, OBJECT:!0, VIDEO:!0, AUDIO:!0, MAP:!0, AREA:!0, math:!0, svg:!0, FORM:!0, LABEL:!0, INPUT:!0, BUTTON:!0, SELECT:!0, DATALIST:!0, TEXTAREA:!0, KEYGEN:!0, OUTPUT:!0, PROGRESS:!0, METER:!0, FIELDSET:!0, DETAILS:!0, DIALOG:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0, CANVAS:!0}, DD:{ARTICLE:!0, SECTION:!0, NAV:!0, 
+  ASIDE:!0, H1:!0, H2:!0, H3:!0, H4:!0, H5:!0, H6:!0, HEADER:!0, FOOTER:!0, ADDRESS:!0, P:!0, HR:!0, PRE:!0, BLOCKQUOTE:!0, OL:!0, UL:!0, DL:!0, FIGURE:!0, DIV:!0, A:!0, EM:!0, STRONG:!0, SMALL:!0, S:!0, CITE:!0, Q:!0, DFN:!0, ABBR:!0, DATA:!0, TIME:!0, CODE:!0, VAR:!0, SAMP:!0, KBD:!0, SUB:!0, SUP:!0, I:!0, B:!0, U:!0, MARK:!0, RUBY:!0, BDI:!0, BDO:!0, SPAN:!0, BR:!0, WBR:!0, INS:!0, DEL:!0, PICTURE:!0, IMG:!0, IFRAME:!0, EMBED:!0, OBJECT:!0, VIDEO:!0, AUDIO:!0, MAP:!0, AREA:!0, math:!0, svg:!0, 
+  TABLE:!0, FORM:!0, LABEL:!0, INPUT:!0, BUTTON:!0, SELECT:!0, DATALIST:!0, TEXTAREA:!0, KEYGEN:!0, OUTPUT:!0, PROGRESS:!0, METER:!0, FIELDSET:!0, DETAILS:!0, DIALOG:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0, CANVAS:!0}, DT:{ADDRESS:!0, P:!0, HR:!0, PRE:!0, BLOCKQUOTE:!0, OL:!0, UL:!0, DL:!0, FIGURE:!0, DIV:!0, A:!0, EM:!0, STRONG:!0, SMALL:!0, S:!0, CITE:!0, Q:!0, DFN:!0, ABBR:!0, DATA:!0, TIME:!0, CODE:!0, VAR:!0, SAMP:!0, KBD:!0, SUB:!0, SUP:!0, I:!0, B:!0, U:!0, MARK:!0, RUBY:!0, BDI:!0, BDO:!0, 
+  SPAN:!0, BR:!0, WBR:!0, INS:!0, DEL:!0, PICTURE:!0, IMG:!0, IFRAME:!0, EMBED:!0, OBJECT:!0, VIDEO:!0, AUDIO:!0, MAP:!0, AREA:!0, math:!0, svg:!0, TABLE:!0, FORM:!0, LABEL:!0, INPUT:!0, BUTTON:!0, SELECT:!0, DATALIST:!0, TEXTAREA:!0, KEYGEN:!0, OUTPUT:!0, PROGRESS:!0, METER:!0, FIELDSET:!0, DETAILS:!0, DIALOG:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0, CANVAS:!0}, P:{A:!0, EM:!0, STRONG:!0, SMALL:!0, S:!0, CITE:!0, Q:!0, DFN:!0, ABBR:!0, DATA:!0, TIME:!0, CODE:!0, VAR:!0, SAMP:!0, KBD:!0, SUB:!0, SUP:!0, 
+  I:!0, B:!0, U:!0, MARK:!0, RUBY:!0, BDI:!0, BDO:!0, SPAN:!0, BR:!0, WBR:!0, INS:!0, DEL:!0, PICTURE:!0, IMG:!0, IFRAME:!0, EMBED:!0, OBJECT:!0, VIDEO:!0, AUDIO:!0, MAP:!0, AREA:!0, math:!0, svg:!0, LABEL:!0, INPUT:!0, BUTTON:!0, SELECT:!0, DATALIST:!0, TEXTAREA:!0, KEYGEN:!0, OUTPUT:!0, PROGRESS:!0, METER:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0, CANVAS:!0}, HTML:{HEAD:!0, BODY:!0}, HEAD:{TITLE:!0, BASE:!0, BGSOUND:!0, LINK:!0, META:!0, STYLE:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0}, COLGROUP:{COL:!0}, 
+  OPTGROUP:{OPTION:!0}, OPTION:{}, TBODY:{TR:!0}, TR:{TH:!0, TD:!0}, RBC:{RB:!0, RP:!0, RT:!0}}, t, e;
+  k.LI = k.TD = k.DD;
+  k.TH = k.DT;
+  k.RB = k.RP = k.RT = k.P;
+  k.TFOOT = k.THEAD = k.TBODY;
+  k.RTC = k.RBC;
+  t = {a:2, b:2, c:2, d:2, e:2, f:2, g:2, h:2, i:2, j:2, k:2, l:2, m:2, n:2, o:2, p:2, q:2, r:2, s:2, t:2, u:2, v:2, w:2, x:2, y:2, z:2, A:1, B:1, C:1, D:1, E:1, F:1, G:1, H:1, I:1, J:1, K:1, L:1, M:1, N:1, O:1, P:1, Q:1, R:1, S:1, T:1, U:1, V:1, W:1, X:1, Y:1, Z:1, "\t":4, "\n":4, "\f":4, "\r":4, " ":4};
+  e = {$:"", aa:"", da:function() {
+    e.$ = e.aa = "";
+  }, ca:function(a) {
+    e.$ = a;
+  }, ea:function(a) {
+    e.$ = e.aa + a;
+    e.aa = "";
+  }, ga:function(a, y, q) {
+    var p;
+    e.$ += "<" + a;
+    for (p in y) {
+      a = y[p], e.$ += " " + p + (!0 !== a ? '="' + a.split('"').join('\\"').split('\\\\"').join('\\"') + '"' : "");
+    }
+    e.$ += (q ? "/" : "") + ">";
+  }, ba:function(a) {
+    e.$ += "</" + a + ">";
+  }, ha:function(a) {
+    e.aa ? e.aa += a : a.split(" ").join("") && (a = " " === a.charAt(0) ? a.substr(1) : a, a = a.length && " " === a.charAt(a.length - 1) ? a.substr(0, a.length - 1) : a, e.$ += a);
+  }, ja:function() {
+  }, ia:function() {
+  }, fa:function(a) {
+    0 === a.indexOf("xml ") && (e.aa = "\x3c?" + a + "?>");
+  }};
+  C.onload = function() {
+    var a = !!C.__isIE5, y = C.input || M.all("input"), q = C.output || M.all("output"), p = C.form || M.all("form");
+    a ? q.firstChild.data = "" : q.value = "";
+    p.onsubmit = bz;
+    function bz(r) {
+      r && r.preventDefault();
+      "undefined" != typeof event && (event.returnValue = !1);
+      a ? q.firstChild.data = X(y.value) : q.value = X(y.value);
+      return !1;
+    }
+    bz = !1;
+  };
+})(this, document, Date);
+
+</script>
+<body>
+<nav><a href="https://github.com/">github</a> / <a href="https://github.com/ECMAScript2/htmlparser">ES2 HTML Parser</a> / XML Cleaner</nav>
+
+<h1>XML Cleaner</h1>
+
+<form id="form">
+<label for="input">Input (XML):</label><br/>
+<textarea cols="60" rows="10" id="input" spellcheck="false" autocomplete="off">&lt;p&gt;Hello, world!</textarea><br/>
+<input type="submit" value="Run" />
+</form>
+
+<label for="output">Output (XML):</label><br/>
+<textarea cols="60" rows="10" id="output" spellcheck="false" autocomplete="off">&lt;p&gt;Hello, world!&lt;/p&gt;</textarea>
+
+<hr>
+
+<address>(C) 2024-2025 <a href="https://github.com/itozyun">itozyun</a>(<a href="//outcloud.blogspot.com/">blog</a>)</address>

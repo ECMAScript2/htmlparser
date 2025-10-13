@@ -9,8 +9,18 @@ goog.requireType( 'htmlparser.typedef.Handler' );
 var handler =
     {
         _result : '',
+
+        _xmlDeclaration : '',
+
+        _init : function(){
+            handler._result = handler._xmlDeclaration = '';
+        },
         onParseError : function( msg ){
             handler._result = msg;
+        },
+        onParseDocType : function( doctype ){
+            handler._result = handler._xmlDeclaration + doctype;
+            handler._xmlDeclaration = '';
         },
         onParseStartTag : function( tag, attrs, empty, myIndex ){
             var name, value;
@@ -28,7 +38,9 @@ var handler =
         },
         onParseText : function( text ){
             // text = X.String.cleanupWhiteSpace( text );
-            if( text.split( ' ' ).join( '' ) ){
+            if( handler._xmlDeclaration ){
+                handler._xmlDeclaration += text;
+            } else if( text.split( ' ' ).join( '' ) ){
                 text = text.charAt( 0 ) === ' ' ? text.substr( 1 ) : text;
                 text = text.length && text.charAt( text.length - 1 ) === ' ' ? text.substr( 0, text.length - 1 ) : text;
                 handler._result += text;
@@ -40,8 +52,10 @@ var handler =
         onParseCDATASection : function( data ){
             //handler._result += '<![CDATA[' + data + ']]>';
         },
-        onParseProcessingInstruction : function(){
-
+        onParseProcessingInstruction : function( data ){
+            if( data.indexOf( 'xml ' ) === 0 ){
+                handler._xmlDeclaration = '<?' + data + '?>';
+            };
         }
     };
 

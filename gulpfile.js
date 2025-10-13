@@ -82,7 +82,6 @@ gulp.task( 'dist', gulp.series(
             ).pipe(
                 ClosureCompiler(
                     {
-                        // externs        : [ './src/js/htmlparser.externs.js' ],
                         warning_level  : 'QUIET',
                         language_in    : 'ECMASCRIPT3',
                         language_out   : 'ECMASCRIPT3'
@@ -103,11 +102,34 @@ gulp.task( 'dist', gulp.series(
                         warning_level     : 'QUIET',
                         formatting        : formatting,
                         js_output_file    : fileName,
-                        output_wrapper    : '\/* ' + copyright + ' *\/\n' + '%output%'
+                        output_wrapper    : '\n\/* ' + copyright + ' *\/\n' + '%output%'
                     }
                 )
             ).pipe(
-                gulp.dest( outputDir )
+                gulp.dest( tempDir )
             );
+    },
+    function( cb ){
+        const fs = require( 'fs' );
+
+        fs.readFile(
+            'src/html/index.html',
+            ( error, buffer ) => {
+                if( error ) throw error;
+
+                const html = buffer.toString();
+
+                fs.readFile(
+                    tempDir + '/' + fileName,
+                    ( error, buffer ) => {
+                        if( error ) throw error;
+
+                        const js = buffer.toString().split( '<?' ).join( '\\x3c?' );//.split( '>' ).join( '\\x3e' );
+
+                        fs.writeFile( 'docs/index.html', html.split( '<script></script>' ).join( '<script>' + js + '</script>' ), cb );
+                    }
+                );
+            }
+        )
     }
 ));

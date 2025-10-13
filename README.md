@@ -3,6 +3,7 @@
 Compact JavaScript HTML parser.
 
 1. Target and Development Environments
+2. Demo
 2. Functions and Features
 3. Development and test
 4. Links
@@ -14,7 +15,11 @@ Compact JavaScript HTML parser.
 2. Written in Closure Script
    * About 7KB including handler
 
-## 2. Functions and Features
+## 2. Demo
+
+[XHTML Cleaner](https://ecmascript2.github.io/htmlparser/)
+
+## 3. Functions and Features
 
 HTML document fragments written by web designers generally work correctly.
 
@@ -34,7 +39,7 @@ HTML document fragments written by web designers generally work correctly.
 7. ⚠️ Pause parsing is not tested.
 8. ⚠️ XHTML is not tested.
 
-## 3. Development and test
+## 4. Development and test
 
 ~~~sh
 git clone https://github.com/ECMAScript2/es2-html-parser
@@ -50,14 +55,14 @@ See [src/js/example/*.js](./src/js/example/) for how to write the handler. A SAX
 
 See [test/*.js](./test/) for how to use the parser.
 
-## 4. Links
+## 5. Links
 
 1. [Original code by Erik John Resig (ejohn.org)](http://ejohn.org/blog/pure-javascript-html-parser/) Early JavaScript HTML parser, compact code but useful in most cases
 2. [pettanR / webframework / js / 02_Dom / 09_HTMLParser.js](https://github.com/pettanR/webframework/blob/38d5bab145631f33b0e9988dfb704252884b5986/js/02_dom/09_XHTMLParser.js) Based on John Resig's code, without regular expressions
 3. [html.json](https://github.com/itozyun/html.json) Project using es2-html-parser
 4. [クラウド番外地 / 7KB 弱の JavaScript 製 HTML パーサーを書いた](https://outcloud.blogspot.com/2024/12/7kb-html-parser.html)
 
-## 5. License
+## 6. License
 
 [ES2 HTML Parser](https://github.com/ECMAScript2/es2-html-parser) is licensed under MIT license.
 

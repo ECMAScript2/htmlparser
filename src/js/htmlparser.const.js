@@ -1,6 +1,7 @@
 goog.provide( 'htmlparser.XML_ROOT_ELEMENTS' );
 goog.provide( 'htmlparser.BOOLEAN_ATTRIBUTES' );
 goog.provide( 'htmlparser.VOID_ELEMENTS' );
+goog.provide( 'htmlparser.NON_TEXT_CHILD_ELEMENTS' );
 goog.provide( 'htmlparser.RAW_TEXT_ELEMENTS' );
 goog.provide( 'htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS' );
 goog.provide( 'htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
@@ -43,13 +44,27 @@ htmlparser.VOID_ELEMENTS = {
 };
 
 /**
+ * @see https://www.w3.org/TR/html401/sgml/dtd.html#head.misc
+ *   Elements that cannot contain text nodes as children, excluding void elements.
+ * @const {!Object.<string, boolean>} */
+htmlparser.NON_TEXT_CHILD_ELEMENTS = {
+    MAP      : true, DL    : true, OL    : true, UL    : true, SELECT : true,
+    OPTGROUP : true, TABLE : true, THEAD : true, TFOOT : true, TBODY  : true,
+    COLGROUP : true, TR    : true, HEAD  : true, MENU  : true,
+
+    map      : true, dl    : true, ol    : true, ul    : true, select : true,
+    optgroup : true, table : true, thead : true, tfoot : true, tbody  : true,
+    colgroup : true, tr    : true, head  : true, menu  : true
+};
+
+/**
  * @see https://html.spec.whatwg.org/multipage/syntax.html#raw-text-elements
  *   Raw text elements
  *     script, style
  * 
  * @see https://html.spec.whatwg.org/multipage/syntax.html#escapable-raw-text-elements
  *   Escapable raw text elements
- *     textarea, title
+ *     textarea, title, listing
  * 
  * @const {!Object.<string, boolean>} */
 htmlparser.RAW_TEXT_ELEMENTS = {
@@ -60,8 +75,8 @@ htmlparser.RAW_TEXT_ELEMENTS = {
 /**
  * @const {!Object.<string, boolean>} */
 htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS = {
-    TEXTAREA : true, TITLE : true,
-    textarea : true, title : true
+    TEXTAREA : true, TITLE : true, LISTING : true,
+    textarea : true, title : true, listing : true
 };
 
 goog.scope(
