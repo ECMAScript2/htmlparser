@@ -29,7 +29,7 @@ HTML document fragments written by web designers generally work correctly.
    * `<!--[if IE 8]> </div><br clear=both><div> <![endif]-->`
      * Retrieve and parse the comment text [@see](https://github.com/itozyun/html.json/blob/a8b395e34676e0594fd9421f13bfe674997e544c/src/js/html2json/html2json.js#L240)
    * Element missing end tag
-     * An“auto-closing end tag”that is not present in the document, cannot omit the end tag, and is not closed by another starting tag is identified by the `isImplicit` flag. (`onParseEndTag`)
+     * An“auto-closing end tag”that is not present in the document, cannot omit the end tag, and is not closed by another starting tag is identified by the `isInvalidEndTagOmission` flag. (`onParseEndTag`)
    * Element missing start tag
      * `isMissingStartTag` flag is true (`onParseEndTag`)
 3. `<html><head><body>` is not a supplement to create a complete HTML document like [parse5](https://www.npmjs.com/package/parse5).

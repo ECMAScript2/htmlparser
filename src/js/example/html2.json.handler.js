@@ -42,10 +42,10 @@ htmlparser.example.handler.html2json = {
                 currentNode = element;
             };
         },
-        onParseEndTag : function( tag, isImplicit, isMissingStartTag ){
+        onParseEndTag : function( tag, isInvalidEndTagOmission, isMissingStartTag ){
             if( isMissingStartTag ){
                 currentNode.push( '</' + tag + '>' );
-            } else if( !isImplicit ){
+            } else if( !isInvalidEndTagOmission ){
                 if( tag === currentNode[ 0 ] ){
                     currentNode = stack.pop();
                 } else {

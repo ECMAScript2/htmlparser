@@ -26,7 +26,9 @@ goog.require( 'htmlparser.BOOLEAN_ATTRIBUTES' );
 goog.require( 'htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
 
 /** @define {boolean} */
-htmlparser.DEFINE.USE_XML                    = goog.define( 'htmlparser.DEFINE.USE_XML'                   , true );
+htmlparser.DEFINE.USE_XHTML                  = goog.define( 'htmlparser.DEFINE.USE_XHTML'                 , false );
+/** @define {boolean} */
+htmlparser.DEFINE.USE_XML_IN_HTML            = goog.define( 'htmlparser.DEFINE.USE_XML_IN_HTML'           , true );
 /** @define {boolean} */
 htmlparser.DEFINE.USE_VML                    = goog.define( 'htmlparser.DEFINE.USE_VML'                   , false );
 /** @define {boolean} */
@@ -34,10 +36,10 @@ htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE     = goog.define( 'htmlparser.DEFINE.U
 /** @define {boolean} */
 htmlparser.DEFINE.USE_CDATA_SECTION          = goog.define( 'htmlparser.DEFINE.USE_CDATA_SECTION'         , true );
 /** @define {boolean} */
-htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION = goog.define( 'htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION', false );
+htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION = goog.define( 'htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION', true );
 
 /** @define {boolean} */
-htmlparser.DEFINE.USE_PAUSE                  = goog.define( 'htmlparser.DEFINE.USE_PAUSE'              , false );
+htmlparser.DEFINE.USE_PAUSE                  = goog.define( 'htmlparser.DEFINE.USE_PAUSE'                 , false );
 
 /**
  * @typedef {{
@@ -152,7 +154,7 @@ goog.scope(
          * @param {boolean=} opt_isXHTMLFragment
          */
         htmlparser.exec = function( html, handler, opt_isXHTMLFragment ){
-            exec( html, handler, htmlparser.DEFINE.USE_XML && !!opt_isXHTMLFragment, [], html.length, true, htmlparser.DEFINE.USE_XML && !!opt_isXHTMLFragment, false );
+            exec( html, handler, htmlparser.DEFINE.USE_XHTML && !!opt_isXHTMLFragment, [], html.length, true, false, false );
         };
 
         /**
@@ -175,7 +177,7 @@ goog.scope(
 
                 // ProcessingInstruction
                 if( htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION && unpersedHTML.indexOf( '<?' ) === pointer ){
-                    if( htmlparser.DEFINE.USE_XML && isDocumentFragment ){
+                    if( htmlparser.DEFINE.USE_XHTML && isDocumentFragment ){
                         if( unpersedHTML.length === originalHTMLLength ){
                             if( unpersedHTML.indexOf( '<?xml ' ) === pointer ){
                                 isDocumentFragment = false;
@@ -271,14 +273,14 @@ goog.scope(
                         return;
                     };
                 // DocType
-                } else if( htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE && unpersedHTML.indexOf( '<!DOCTYPE ' ) === pointer ){
+                } else if( htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE && ( unpersedHTML.indexOf( '<!DOCTYPE ' ) === pointer || unpersedHTML.indexOf( '<!doctype ' ) === pointer ) ){
                     unpersedHTML = unpersedHTML.substr( pointer );
                     pointer      = 0;
                     index        = unpersedHTML.indexOf( '>' );
                     if( index !== -1 ){
                         nodeValue    = unpersedHTML.substring( 0, index + 1 );
                         unpersedHTML = unpersedHTML.substr( index + 1 );
-                        if( htmlparser.DEFINE.USE_XML && isDocumentFragment ){
+                        if( htmlparser.DEFINE.USE_XHTML && isDocumentFragment ){
                             // update XHTML fragment mode
                             isXHTMLDocument = 0 < nodeValue.indexOf( '-//W3C//DTD XHTML ' );
                         };
@@ -394,8 +396,14 @@ goog.scope(
              * @param {string} tagName
              * @param {boolean} isClosingAutomatically */
             function closeTag( stack, tagName, isClosingAutomatically ){
-                function missingEndTag( tagName ){
-                    return isClosingAutomatically && !htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ tagName ];
+                function detectInvalidEndTagOmission( tagName ){
+                    if( htmlparser.DEFINE.USE_XHTML && isXHTMLDocument
+                        ||
+                        htmlparser.DEFINE.USE_XML_IN_HTML && isXMLInHTML 
+                    ){
+                        tagName = tagName.toUpperCase();
+                    };
+                    return !htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ tagName ];
                 };
 
                 var pos = 0, i = stack.length;
@@ -412,9 +420,9 @@ goog.scope(
                 if( 0 <= pos ){
                     // Close all the open elements, up the stack
                     for( ; pos < i; ){
-                        handler.onParseEndTag( stack[ --i ], missingEndTag( stack[ i ] ), false );
+                        handler.onParseEndTag( stack[ --i ], isClosingAutomatically && detectInvalidEndTagOmission( stack[ i ] ), false );
 
-                        if( htmlparser.DEFINE.USE_XML && isXMLInHTML && htmlparser.isXMLRootElement( stack[ i ] ) ){
+                        if( htmlparser.DEFINE.USE_XML_IN_HTML && isXMLInHTML && htmlparser.isXMLRootElement( stack[ i ] ) ){
                             isXMLInHTML = false;
                         };
                     };
@@ -538,7 +546,7 @@ goog.scope(
                 if( phase === 9 ){
                     tagName = /** @type {string} */ (tagName);
 
-                    if( htmlparser.DEFINE.USE_XML && !isXMLInHTML ){
+                    if( htmlparser.DEFINE.USE_XML_IN_HTML && !isXMLInHTML ){
                         isXMLInHTML = htmlparser.isXMLRootElement( tagName );
                     };
                     if( htmlparser.DEFINE.USE_VML && !isInVML ){

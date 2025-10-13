@@ -33,7 +33,7 @@ var handler =
             };
             handler._result += ( empty ? '/' : '' ) + '>';
         },
-        onParseEndTag : function( tag, isImplicit, isMissingStartTag ){
+        onParseEndTag : function( tag, isInvalidEndTagOmission, isMissingStartTag ){
             handler._result += '</' + tag + '>';
         },
         onParseText : function( text ){
