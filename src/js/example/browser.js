@@ -15,9 +15,9 @@ function HTMLtoXML( html ){
 
 window.onload = function(){
     var isIE5  = !!window[ '__isIE5' ];
-    var input  = window[ 'input'  ] || document.all( 'input' );
+    var input  = window[ 'input'  ] || document.all( 'input'  );
     var output = window[ 'output' ] || document.all( 'output' );
-    var form   = window[ 'form'   ] || document.all( 'form' );
+    var form   = window[ 'form'   ] || document.all( 'form'   );
 
     if( isIE5 ){
         output.firstChild.data = '';
@@ -31,10 +31,14 @@ window.onload = function(){
 
         // var now = (new Date()).getTime();
 
+        var html = input.value.split( '\r\n' ).join( '\n' ).split( '\n\r' ).join( '\n' ).split( '\r' ).join( '\n' );
+
+        html = HTMLtoXML( html );
+
         if( isIE5 ){
-            output.firstChild.data = HTMLtoXML(input.value); // ie5
+            output.firstChild.data = html;
         } else {
-            output.value = HTMLtoXML(input.value);
+            output.value = html;
         };
         //alert( (new Date()).getTime() - now );
         return false;

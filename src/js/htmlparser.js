@@ -168,12 +168,13 @@ goog.scope(
          * @param {boolean} isXMLInHTML 
          * @param {boolean} isInVML */
         function exec( unpersedHTML, handler, isXHTMLDocument, stack, originalHTMLLength, isDocumentFragment, isXMLInHTML, isInVML ){
-            var pointer = -1, lastTagName = stack[ stack.length - 1 ], isRawElement, index, nodeValue, ignoreEndTag;
+            var pointer = -1, lastTagName, lastTagUpper, isRawElement, index, nodeValue, ignoreEndTag, tagNameLower;
 
+            loadLastTagName();
             incrementPosition();
 
             while( unpersedHTML ){
-                isRawElement = htmlparser.RAW_TEXT_ELEMENTS[ lastTagName ];
+                isRawElement = htmlparser.RAW_TEXT_ELEMENTS[ lastTagUpper ];
 
                 // ProcessingInstruction
                 if( htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION && unpersedHTML.indexOf( '<?' ) === pointer ){
@@ -203,11 +204,12 @@ goog.scope(
                 // end tag
                 } else if( unpersedHTML.indexOf( '</', pointer ) === pointer && htmlparser.isAlphabet( unpersedHTML.charAt( pointer + 2 ) ) ){
                     if( isRawElement ){
-                        if( lastTagName === 'PLAINTEXT' || lastTagName === 'plaintext' ){
+                        if( lastTagUpper === 'PLAINTEXT' ){
                             ignoreEndTag = true;
                         } else {
-                            if( unpersedHTML.indexOf( lastTagName.toLowerCase(), pointer ) !== pointer + 2 &&
-                                unpersedHTML.indexOf( lastTagName.toUpperCase(), pointer ) !== pointer + 2
+                            tagNameLower = isXHTMLDocument ? lastTagName : lastTagName.toLowerCase();
+                            if( unpersedHTML.indexOf( tagNameLower, pointer ) !== pointer + 2 &&
+                                unpersedHTML.indexOf( lastTagUpper, pointer ) !== pointer + 2
                             ){
                                 ignoreEndTag = true;
                             };
@@ -305,6 +307,25 @@ goog.scope(
 
             htmlparser.DEFINE.USE_PAUSE && handler.onParseComplete && handler.onParseComplete();
 
+            function loadLastTagName(){
+                lastTagName = stack[ stack.length - 1 ] || '';
+                updateLastTagUpper();
+            };
+
+            /** @param {string} newLastTagName */
+            function saveLastTagName( newLastTagName ){
+                lastTagName = stack[ stack.length ] = newLastTagName;
+                updateLastTagUpper();
+            };
+
+            function updateLastTagUpper(){
+                if( isXMLInHTML || isInVML ){
+                    lastTagUpper = '';
+                } else {
+                    lastTagUpper = isXHTMLDocument ? lastTagName.toUpperCase() : lastTagName;
+                };
+            };
+
             /** @return {boolean | void} true:stopped */
             function incrementPosition(){
                 pointer = unpersedHTML.indexOf( '<', pointer + 1 );
@@ -325,9 +346,9 @@ goog.scope(
                     unpersedHTML = unpersedHTML.substr( pointer );
                     pointer      = 0;
 
-                    if( isDocumentFragment || lastTagName && !htmlparser.NON_TEXT_CHILD_ELEMENTS[ lastTagName ] ){
+                    if( isDocumentFragment || lastTagName && !htmlparser.NON_TEXT_CHILD_ELEMENTS[ lastTagUpper ] ){
                         if( handler.onParseText(
-                                isRawElement && !htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS[ lastTagName ] ? text : htmlparser.unescapeHTML( text )
+                                isRawElement && !htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS[ lastTagUpper ] ? text : htmlparser.unescapeHTML( text )
                             ) === true && htmlparser.DEFINE.USE_PAUSE ){
                             onProgress();
                             return true;
@@ -357,7 +378,7 @@ goog.scope(
                 var phase = 0,
                     l     = unpersedHTML.length,
                     i     = 3,
-                    chr, tagName;
+                    chr, tagName, tagUpper;
 
                 for( ; i < l && phase !== 2; ++i ){
                     chr = unpersedHTML.charAt( i );
@@ -382,8 +403,13 @@ goog.scope(
                 if( phase === 2 ){
                     unpersedHTML = unpersedHTML.substr( i );
                     tagName      = /** @type {string} */ (tagName);
-                    if( !htmlparser.VOID_ELEMENTS[ tagName ] ){
-                        closeTag( stack, isXHTMLDocument || isXMLInHTML || isInVML ? tagName : tagName.toUpperCase(), false );
+                    if( isXMLInHTML || isInVML ){
+                        closeTag( stack, tagName, false );
+                    } else {
+                        tagUpper = tagName.toUpperCase();
+                        if( !htmlparser.VOID_ELEMENTS[ tagUpper ] ){
+                            closeTag( stack, isXHTMLDocument ? tagName : tagUpper, false );
+                        };
                     };
                 } else {
                     onError( unpersedHTML );
@@ -397,10 +423,7 @@ goog.scope(
              * @param {boolean} isClosingAutomatically */
             function closeTag( stack, tagName, isClosingAutomatically ){
                 function detectInvalidEndTagOmission( tagName ){
-                    if( htmlparser.DEFINE.USE_XHTML && isXHTMLDocument
-                        ||
-                        htmlparser.DEFINE.USE_XML_IN_HTML && isXMLInHTML 
-                    ){
+                    if( isXHTMLDocument ){
                         tagName = tagName.toUpperCase();
                     };
                     return !htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ tagName ];
@@ -441,7 +464,7 @@ goog.scope(
                 } else {
                     handler.onParseEndTag( tagName, false, true );
                 };
-                lastTagName = stack[ stack.length - 1 ];
+                loadLastTagName();
             };
             /**
              * 
@@ -480,7 +503,7 @@ goog.scope(
                     attrs    = {},
                     numAttrs = 0,
                     empty    = false,
-                    chr, tagName, start, attrName, quot, escape, isXMLOrVML, tagUpper, lastTagUpper;
+                    chr, tagName, start, attrName, quot, escape, isXMLOrVML, tagUpper;
 
                 for( ; i < l && phase < 9; ++i ){
                     chr = unpersedHTML.charAt( i );
@@ -557,18 +580,21 @@ goog.scope(
                         tagUpper = tagName.toUpperCase();
 
                         while( lastTagName ){
-                            lastTagUpper = lastTagName.toUpperCase();
                             if( htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagUpper ] && !htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagUpper ][ tagUpper ] ){
                                 closeTag( stack, lastTagName, false );
                             } else {
                                 break;
                             };
                         };
-                    };
 
-                    empty = empty || !!htmlparser.VOID_ELEMENTS[ tagName ];
-                    if( !empty ){
-                        lastTagName = stack[ stack.length ] = isXHTMLDocument || isXMLOrVML ? tagName : /** @type {string} */ (tagUpper);
+                        empty = empty || !!htmlparser.VOID_ELEMENTS[ tagUpper ];
+                        if( !empty ){
+                            saveLastTagName( isXHTMLDocument ? tagName : tagUpper );
+                        };
+                    } else {
+                        if( !empty ){
+                            saveLastTagName( tagName );
+                        };
                     };
 
                     unpersedHTML = unpersedHTML.substr( i );
