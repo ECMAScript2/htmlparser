@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:v="urn:schemas-microsoft-com:vml"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>XHTML Cleaner | ES2 HTML Parser</title>
+<title>Blogger Templete Cleaner | ES2 HTML Parser</title>
 <meta name="msapplication-tap-highlight" content="no">
 <meta name="HandheldFriendly" content="true">
 <meta name="mobileoptimized" content="0">
@@ -14,245 +14,260 @@
 </style>
 <!--[if lt IE 5.5000]><script>window.__isIE5=true</script><![endif]-->
 <script>
-/* es2-html-parser@1.4.0
+/* es2-html-parser@1.4.1
 (c) 2024-2025 itozyun <itozyun@gmail.com>(https://outcloud.blogspot.com/), MIT. */
-(function(I, R, ha) {
+(function(I, R, ia) {
   function S(a) {
     return a.split("&lt;").join("<").split("&gt;").join(">").split("&amp;lt;").join("&lt;").split("&amp;gt;").join("&gt;");
   }
   function V(a) {
+    return a.split("&lt;").join("&amp;lt;").split("&gt;").join("&amp;gt;").split("<").join("&lt;").split(">").join("&gt;");
+  }
+  function W(a) {
     return S(a).split('\\"').join('"').split("\\'").join("'");
   }
-  function Z(a, D) {
+  function ca(a, t) {
     function p() {
-      v || y ? z = "" : z = A ? r.toUpperCase() : r;
+      w || z ? A = "" : A = B ? u.toUpperCase() : u;
     }
-    function t() {
-      d = a.indexOf("<", d + 1);
-      -1 === d && (d = a.length, k());
+    function q() {
+      e = a.indexOf("<", e + 1);
+      -1 === e && (e = a.length, h());
     }
-    function k() {
-      var h;
-      if (d) {
-        h = a.substr(0, d);
-        a = a.substr(d);
-        d = 0;
-        (J || r && !aa[z]) && B.ha(T && !ba[z] ? h : S(h));
+    function h() {
+      var k;
+      if (e) {
+        k = a.substr(0, e);
+        a = a.substr(e);
+        e = 0;
+        (J || u && !da[A]) && C.ia(T && !X[A] ? k : S(k));
       }
     }
-    function E(h) {
-      B.ca && B.ca(h);
+    function E(k) {
+      C.da && C.da(k);
     }
-    function ca(h) {
-      for (var e = 0, C = a.length, b = 3, l, c; b < C && 2 !== e; ++b) {
-        switch(l = a.charAt(b), e) {
+    function ea(k) {
+      for (var f = 0, D = a.length, b = 3, l, c; b < D && 2 !== f; ++b) {
+        switch(l = a.charAt(b), f) {
           case 0:
-            w[l] & 4 ? e = 1 : ">" === l && (e = 2);
-            e && (c = a.substring(2, b));
+            x[l] & 4 ? f = 1 : ">" === l && (f = 2);
+            f && (c = a.substring(2, b));
             break;
           case 1:
-            ">" === l && (e = 2);
+            ">" === l && (f = 2);
         }
       }
-      if (2 === e) {
-        a = a.substr(b), v || y ? L(h, c, !1) : (e = c.toUpperCase(), W[e] || L(h, A ? c : e, !1));
+      if (2 === f) {
+        a = a.substr(b), w || z ? L(k, c, !1) : (f = c.toUpperCase(), Y[f] || L(k, B ? c : f, !1));
       } else {
         return E(a), !0;
       }
     }
-    function L(h, e, C) {
-      var b = 0, l = h.length, c, M, N;
-      if (e) {
-        for (b = l; 0 <= b && h[--b] !== e;) {
+    function L(k, f, D) {
+      var b = 0, l = k.length, c, M, N;
+      if (f) {
+        for (b = l; 0 <= b && k[--b] !== f;) {
         }
       }
       if (0 <= b) {
         for (; b < l;) {
-          e = B;
-          M = e.ba;
-          N = h[--l];
-          if (c = C) {
-            c = h[l], A && (c = c.toUpperCase()), c = !n[c];
+          f = C;
+          M = f.ca;
+          N = k[--l];
+          if (c = D) {
+            c = k[l], B && (c = c.toUpperCase()), c = !n[c];
           }
-          M.call(e, N, c, !1);
-          v && X[h[l]] && (v = !1);
+          M.call(f, N, c, !1);
+          w && Z[k[l]] && (w = !1);
         }
-        h.length = b;
-        if (y) {
-          for (y = !1, l = b; l;) {
-            if (0 < h[--l].indexOf(":")) {
-              y = !0;
+        k.length = b;
+        if (z) {
+          for (z = !1, l = b; l;) {
+            if (0 < k[--l].indexOf(":")) {
+              z = !0;
               break;
             }
           }
         }
       } else {
-        B.ba(e, !1, !0);
+        C.ca(f, !1, !0);
       }
-      r = q[q.length - 1] || "";
+      u = r[r.length - 1] || "";
       p();
     }
-    function da(h) {
-      function e(O, P) {
-        M[O] = !0 === P ? v ? O : P : ea[O.toLowerCase()] ? v ? V(P || O) : !0 : V(P || "");
+    function fa(k) {
+      function f(O, P) {
+        M[O] = !0 === P ? w ? O : P : ha[O.toLowerCase()] ? w ? W(P || O) : !0 : W(P || "");
         ++N;
       }
-      function C() {
+      function D() {
         (F = "/>" === a.substr(c, 2)) && ++c;
         return F;
       }
-      for (var b = 1, l = a.length, c = 2, M = {}, N = 0, F = !1, g, x, u, G, Y, Q, K; c < l && 9 > b; ++c) {
+      for (var b = 1, l = a.length, c = 2, M = {}, N = 0, F = !1, g, y, v, G, aa, Q, K; c < l && 9 > b; ++c) {
         switch(g = a.charAt(c), b) {
           case 1:
-            w[g] & 4 ? (b = 2, x = a.substring(1, c)) : ">" === g ? (b = 9, x = a.substring(1, c)) : C() && (b = 9, x = a.substring(1, c - 1));
+            x[g] & 4 ? (b = 2, y = a.substring(1, c)) : ">" === g ? (b = 9, y = a.substring(1, c)) : D() && (b = 9, y = a.substring(1, c - 1));
             break;
           case 2:
-            ">" === g || C() ? b = 9 : w[g] & 4 || (b = 3, u = c);
+            ">" === g || D() ? b = 9 : x[g] & 4 || (b = 3, v = c);
             break;
           case 3:
-            "=" === g ? (b = 5, G = a.substring(u, c)) : w[g] & 4 ? (b = 4, G = a.substring(u, c)) : ">" === g ? (b = 9, e(a.substring(u, c), !0)) : C() && (b = 9, e(a.substring(u, c - 1), !0));
+            "=" === g ? (b = 5, G = a.substring(v, c)) : x[g] & 4 ? (b = 4, G = a.substring(v, c)) : ">" === g ? (b = 9, f(a.substring(v, c), !0)) : D() && (b = 9, f(a.substring(v, c - 1), !0));
             break;
           case 4:
-            "=" === g ? b = 5 : ">" === g || C() ? (b = 9, e(G, !0)) : w[g] & 4 || (b = 3, e(G, !0), u = c);
+            "=" === g ? b = 5 : ">" === g || D() ? (b = 9, f(G, !0)) : x[g] & 4 || (b = 3, f(G, !0), v = c);
             break;
           case 5:
-            '"' === g || "'" === g ? (b = 6, Y = g, u = c + 1) : w[g] & 4 || (b = 7, u = c);
+            '"' === g || "'" === g ? (b = 6, aa = g, v = c + 1) : x[g] & 4 || (b = 7, v = c);
             Q = !1;
             break;
           case 6:
-            Q || g !== Y || (b = 2, e(G, a.substring(u, c)));
+            Q || g !== aa || (b = 2, f(G, a.substring(v, c)));
             Q = "\\" === g && !Q;
             break;
           case 7:
-            w[g] & 4 ? b = 2 : ">" === g && (b = 9), 7 !== b && e(G, a.substring(u, c));
+            x[g] & 4 ? b = 2 : ">" === g && (b = 9), 7 !== b && f(G, a.substring(v, c));
         }
       }
       if (9 === b) {
-        v || (v = !!X[x]);
-        y || (y = 0 < x.indexOf(":"));
-        if (b = v || y) {
-          F || (r = q[q.length] = x, p());
+        w || (w = !!Z[y]);
+        z || (z = 0 < y.indexOf(":"));
+        if (b = w || z) {
+          F || (u = r[r.length] = y, p());
         } else {
-          for (K = x.toUpperCase(); r;) {
-            if (n[z] && !n[z][K]) {
-              L(h, r, !1);
+          for (K = y.toUpperCase(); u;) {
+            if (n[A] && !n[A][K]) {
+              L(k, u, !1);
             } else {
               break;
             }
           }
-          (F = F || !!W[K]) || (r = q[q.length] = A ? x : K, p());
+          (F = F || !!Y[K]) || (u = r[r.length] = B ? y : K, p());
         }
         a = a.substr(c);
-        B.ga(A || b ? x : K, N ? M : null, F, c);
+        C.ha(B || b ? y : K, N ? M : null, F, c);
       } else {
         return E(a), !0;
       }
     }
-    var B = f, A = !1, q = [], J = !0, v = !1, y = !1, d = -1, z, U, r, T, m, H;
-    r = q[q.length - 1] || "";
+    var C = d, B = !1, r = [], J = !0, w = !1, z = !1, e = -1, A, U, u, T, m, H;
+    u = r[r.length - 1] || "";
     p();
-    for (t(); a;) {
-      T = fa[z];
-      if (a.indexOf("\x3c?") === d) {
-        J && a.length === D && a.indexOf("\x3c?xml ") === d && (J = !1, A = !0);
-        k();
+    for (q(); a;) {
+      T = ba[A];
+      if (a.indexOf("\x3c?") === e) {
+        J && a.length === t && a.indexOf("\x3c?xml ") === e && (J = !1, B = !0);
+        h();
         m = a.indexOf("?>");
         if (-1 !== m) {
           H = a.substring(2, m);
           a = a.substr(m + 2);
-          B.fa(S(H));
+          C.ga(S(H));
         } else {
           E(a);
           return;
         }
-      } else if (a.indexOf("</", d) === d && w[a.charAt(d + 2)] & 3) {
-        if (T && a.indexOf(A ? r : r.toLowerCase(), d) !== d + 2 && a.indexOf(z, d) !== d + 2 && (U = !0), U) {
-          t(), U = !1;
+      } else if (a.indexOf("</", e) === e && x[a.charAt(e + 2)] & 3) {
+        if (T && a.indexOf(B ? u : u.toLowerCase(), e) !== e + 2 && a.indexOf(A, e) !== e + 2 && (U = !0), U) {
+          q(), U = !1;
         } else {
-          if (k(), ca(q)) {
+          if (h(), ea(r)) {
             return;
           }
         }
       } else if (T) {
-        t();
-      } else if ("<" === a.charAt(d) && w[a.charAt(d + 1)] & 3) {
-        if (k(), da(q)) {
+        q();
+      } else if ("<" === a.charAt(e) && x[a.charAt(e + 1)] & 3) {
+        if (h(), fa(r)) {
           return;
         }
-      } else if (a.indexOf("\x3c!--") === d) {
-        if (k(), m = a.indexOf("--\x3e"), -1 !== m) {
+      } else if (a.indexOf("\x3c!--") === e) {
+        if (h(), m = a.indexOf("--\x3e"), -1 !== m) {
           H = a.substring(4, m), a = a.substr(m + 3);
         } else {
           E(a);
           return;
         }
-      } else if (a.indexOf("<![CDATA[") === d) {
-        if (k(), m = a.indexOf("]]\x3e"), -1 !== m) {
+      } else if (a.indexOf("<![CDATA[") === e) {
+        if (h(), m = a.indexOf("]]\x3e"), -1 !== m) {
           H = a.substring(9, m), a = a.substr(m + 3);
         } else {
           E(a);
           return;
         }
-      } else if (a.indexOf("<!DOCTYPE ") === d || a.indexOf("<!doctype ") === d) {
-        if (a = a.substr(d), d = 0, m = a.indexOf(">"), -1 !== m) {
-          H = a.substring(0, m + 1), a = a.substr(m + 1), J && (A = 0 < H.indexOf("-//W3C//DTD XHTML ")), J = !1, B.ea(H);
+      } else if (a.indexOf("<!DOCTYPE ") === e || a.indexOf("<!doctype ") === e) {
+        if (a = a.substr(e), e = 0, m = a.indexOf(">"), -1 !== m) {
+          H = a.substring(0, m + 1), a = a.substr(m + 1), J && (B = 0 < H.indexOf("-//W3C//DTD XHTML ")), J = !1, C.fa(H);
         } else {
           E(a);
           return;
         }
       } else {
-        t();
+        q();
       }
     }
-    L(q, "", !0);
+    L(r, "", !0);
   }
-  var X = {xml:!0, svg:!0, math:!0}, ea = {async:!0, autofocus:!0, checked:!0, compact:!0, declare:!0, defer:!0, disabled:!0, draggable:!0, hidden:!0, ismap:!0, loop:!0, multiple:!0, nohref:!0, noresize:!0, noshade:!0, novalidate:!0, nowrap:!0, readonly:!0, required:!0, reversed:!0, scoped:!0, selected:!0}, W = {AREA:!0, BASE:!0, COL:!0, EMBED:!0, BR:!0, HR:!0, IMG:!0, INPUT:!0, LINK:!0, META:!0, SOURCE:!0, TRACK:!0, WBR:!0}, aa = {MAP:!0, DATALIST:!0, DL:!0, OL:!0, UL:!0, SELECT:!0, OPTGROUP:!0, 
-  TABLE:!0, THEAD:!0, TFOOT:!0, TBODY:!0, COLGROUP:!0, TR:!0, HEAD:!0}, fa = {SCRIPT:!0, STYLE:!0, TEXTAREA:!0, TITLE:!0}, ba = {TEXTAREA:!0, TITLE:!0}, n = {CAPTION:{ARTICLE:!0, SECTION:!0, NAV:!0, ASIDE:!0, H1:!0, H2:!0, H3:!0, H4:!0, H5:!0, H6:!0, HEADER:!0, FOOTER:!0, ADDRESS:!0, P:!0, HR:!0, PRE:!0, BLOCKQUOTE:!0, OL:!0, UL:!0, DL:!0, FIGURE:!0, DIV:!0, A:!0, EM:!0, STRONG:!0, SMALL:!0, S:!0, CITE:!0, Q:!0, DFN:!0, ABBR:!0, DATA:!0, TIME:!0, CODE:!0, VAR:!0, SAMP:!0, KBD:!0, SUB:!0, SUP:!0, 
-  I:!0, B:!0, U:!0, MARK:!0, RUBY:!0, BDI:!0, BDO:!0, SPAN:!0, BR:!0, WBR:!0, INS:!0, DEL:!0, PICTURE:!0, IMG:!0, IFRAME:!0, EMBED:!0, OBJECT:!0, VIDEO:!0, AUDIO:!0, MAP:!0, AREA:!0, math:!0, svg:!0, FORM:!0, LABEL:!0, INPUT:!0, BUTTON:!0, SELECT:!0, DATALIST:!0, TEXTAREA:!0, OUTPUT:!0, PROGRESS:!0, METER:!0, FIELDSET:!0, DETAILS:!0, DIALOG:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0, CANVAS:!0}, DD:{ARTICLE:!0, SECTION:!0, NAV:!0, ASIDE:!0, H1:!0, H2:!0, H3:!0, H4:!0, H5:!0, H6:!0, HEADER:!0, FOOTER:!0, 
-  ADDRESS:!0, P:!0, HR:!0, PRE:!0, BLOCKQUOTE:!0, OL:!0, UL:!0, DL:!0, FIGURE:!0, DIV:!0, A:!0, EM:!0, STRONG:!0, SMALL:!0, S:!0, CITE:!0, Q:!0, DFN:!0, ABBR:!0, DATA:!0, TIME:!0, CODE:!0, VAR:!0, SAMP:!0, KBD:!0, SUB:!0, SUP:!0, I:!0, B:!0, U:!0, MARK:!0, RUBY:!0, BDI:!0, BDO:!0, SPAN:!0, BR:!0, WBR:!0, INS:!0, DEL:!0, PICTURE:!0, IMG:!0, IFRAME:!0, EMBED:!0, OBJECT:!0, VIDEO:!0, AUDIO:!0, MAP:!0, AREA:!0, math:!0, svg:!0, TABLE:!0, FORM:!0, LABEL:!0, INPUT:!0, BUTTON:!0, SELECT:!0, DATALIST:!0, 
-  TEXTAREA:!0, OUTPUT:!0, PROGRESS:!0, METER:!0, FIELDSET:!0, DETAILS:!0, DIALOG:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0, CANVAS:!0}, DT:{ADDRESS:!0, P:!0, HR:!0, PRE:!0, BLOCKQUOTE:!0, OL:!0, UL:!0, DL:!0, FIGURE:!0, DIV:!0, A:!0, EM:!0, STRONG:!0, SMALL:!0, S:!0, CITE:!0, Q:!0, DFN:!0, ABBR:!0, DATA:!0, TIME:!0, CODE:!0, VAR:!0, SAMP:!0, KBD:!0, SUB:!0, SUP:!0, I:!0, B:!0, U:!0, MARK:!0, RUBY:!0, BDI:!0, BDO:!0, SPAN:!0, BR:!0, WBR:!0, INS:!0, DEL:!0, PICTURE:!0, IMG:!0, IFRAME:!0, EMBED:!0, OBJECT:!0, 
-  VIDEO:!0, AUDIO:!0, MAP:!0, AREA:!0, math:!0, svg:!0, TABLE:!0, FORM:!0, LABEL:!0, INPUT:!0, BUTTON:!0, SELECT:!0, DATALIST:!0, TEXTAREA:!0, OUTPUT:!0, PROGRESS:!0, METER:!0, FIELDSET:!0, DETAILS:!0, DIALOG:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0, CANVAS:!0}, P:{A:!0, EM:!0, STRONG:!0, SMALL:!0, S:!0, CITE:!0, Q:!0, DFN:!0, ABBR:!0, DATA:!0, TIME:!0, CODE:!0, VAR:!0, SAMP:!0, KBD:!0, SUB:!0, SUP:!0, I:!0, B:!0, U:!0, MARK:!0, RUBY:!0, BDI:!0, BDO:!0, SPAN:!0, BR:!0, WBR:!0, INS:!0, DEL:!0, PICTURE:!0, 
-  IMG:!0, IFRAME:!0, EMBED:!0, OBJECT:!0, VIDEO:!0, AUDIO:!0, MAP:!0, AREA:!0, math:!0, svg:!0, LABEL:!0, INPUT:!0, BUTTON:!0, SELECT:!0, DATALIST:!0, TEXTAREA:!0, OUTPUT:!0, PROGRESS:!0, METER:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0, CANVAS:!0}, HTML:{HEAD:!0, BODY:!0}, HEAD:{TITLE:!0, BASE:!0, LINK:!0, META:!0, STYLE:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0}, COLGROUP:{COL:!0}, OPTGROUP:{OPTION:!0}, OPTION:{}, TBODY:{TR:!0}, TR:{TH:!0, TD:!0}}, w, f;
+  var Z = {xml:!0, svg:!0, math:!0}, ha = {async:!0, autofocus:!0, checked:!0, compact:!0, declare:!0, defer:!0, disabled:!0, draggable:!0, hidden:!0, ismap:!0, loop:!0, multiple:!0, nohref:!0, noresize:!0, noshade:!0, novalidate:!0, nowrap:!0, readonly:!0, required:!0, reversed:!0, scoped:!0, selected:!0}, Y = {AREA:!0, BASE:!0, COL:!0, EMBED:!0, BR:!0, HR:!0, IMG:!0, INPUT:!0, LINK:!0, META:!0, SOURCE:!0, TRACK:!0, WBR:!0}, da = {MAP:!0, DATALIST:!0, DL:!0, OL:!0, UL:!0, SELECT:!0, OPTGROUP:!0, 
+  TABLE:!0, THEAD:!0, TFOOT:!0, TBODY:!0, COLGROUP:!0, TR:!0, HEAD:!0}, ba = {SCRIPT:!0, STYLE:!0, TEXTAREA:!0, TITLE:!0}, X = {TEXTAREA:!0, TITLE:!0}, n = {CAPTION:{ARTICLE:!0, SECTION:!0, NAV:!0, ASIDE:!0, H1:!0, H2:!0, H3:!0, H4:!0, H5:!0, H6:!0, HEADER:!0, FOOTER:!0, ADDRESS:!0, P:!0, HR:!0, PRE:!0, BLOCKQUOTE:!0, OL:!0, UL:!0, DL:!0, FIGURE:!0, DIV:!0, A:!0, EM:!0, STRONG:!0, SMALL:!0, S:!0, CITE:!0, Q:!0, DFN:!0, ABBR:!0, DATA:!0, TIME:!0, CODE:!0, VAR:!0, SAMP:!0, KBD:!0, SUB:!0, SUP:!0, I:!0, 
+  B:!0, U:!0, MARK:!0, RUBY:!0, BDI:!0, BDO:!0, SPAN:!0, BR:!0, WBR:!0, INS:!0, DEL:!0, PICTURE:!0, IMG:!0, IFRAME:!0, EMBED:!0, OBJECT:!0, VIDEO:!0, AUDIO:!0, MAP:!0, AREA:!0, math:!0, svg:!0, FORM:!0, LABEL:!0, INPUT:!0, BUTTON:!0, SELECT:!0, DATALIST:!0, TEXTAREA:!0, OUTPUT:!0, PROGRESS:!0, METER:!0, FIELDSET:!0, DETAILS:!0, DIALOG:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0, CANVAS:!0}, DD:{ARTICLE:!0, SECTION:!0, NAV:!0, ASIDE:!0, H1:!0, H2:!0, H3:!0, H4:!0, H5:!0, H6:!0, HEADER:!0, FOOTER:!0, ADDRESS:!0, 
+  P:!0, HR:!0, PRE:!0, BLOCKQUOTE:!0, OL:!0, UL:!0, DL:!0, FIGURE:!0, DIV:!0, A:!0, EM:!0, STRONG:!0, SMALL:!0, S:!0, CITE:!0, Q:!0, DFN:!0, ABBR:!0, DATA:!0, TIME:!0, CODE:!0, VAR:!0, SAMP:!0, KBD:!0, SUB:!0, SUP:!0, I:!0, B:!0, U:!0, MARK:!0, RUBY:!0, BDI:!0, BDO:!0, SPAN:!0, BR:!0, WBR:!0, INS:!0, DEL:!0, PICTURE:!0, IMG:!0, IFRAME:!0, EMBED:!0, OBJECT:!0, VIDEO:!0, AUDIO:!0, MAP:!0, AREA:!0, math:!0, svg:!0, TABLE:!0, FORM:!0, LABEL:!0, INPUT:!0, BUTTON:!0, SELECT:!0, DATALIST:!0, TEXTAREA:!0, 
+  OUTPUT:!0, PROGRESS:!0, METER:!0, FIELDSET:!0, DETAILS:!0, DIALOG:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0, CANVAS:!0}, DT:{ADDRESS:!0, P:!0, HR:!0, PRE:!0, BLOCKQUOTE:!0, OL:!0, UL:!0, DL:!0, FIGURE:!0, DIV:!0, A:!0, EM:!0, STRONG:!0, SMALL:!0, S:!0, CITE:!0, Q:!0, DFN:!0, ABBR:!0, DATA:!0, TIME:!0, CODE:!0, VAR:!0, SAMP:!0, KBD:!0, SUB:!0, SUP:!0, I:!0, B:!0, U:!0, MARK:!0, RUBY:!0, BDI:!0, BDO:!0, SPAN:!0, BR:!0, WBR:!0, INS:!0, DEL:!0, PICTURE:!0, IMG:!0, IFRAME:!0, EMBED:!0, OBJECT:!0, VIDEO:!0, 
+  AUDIO:!0, MAP:!0, AREA:!0, math:!0, svg:!0, TABLE:!0, FORM:!0, LABEL:!0, INPUT:!0, BUTTON:!0, SELECT:!0, DATALIST:!0, TEXTAREA:!0, OUTPUT:!0, PROGRESS:!0, METER:!0, FIELDSET:!0, DETAILS:!0, DIALOG:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0, CANVAS:!0}, P:{A:!0, EM:!0, STRONG:!0, SMALL:!0, S:!0, CITE:!0, Q:!0, DFN:!0, ABBR:!0, DATA:!0, TIME:!0, CODE:!0, VAR:!0, SAMP:!0, KBD:!0, SUB:!0, SUP:!0, I:!0, B:!0, U:!0, MARK:!0, RUBY:!0, BDI:!0, BDO:!0, SPAN:!0, BR:!0, WBR:!0, INS:!0, DEL:!0, PICTURE:!0, IMG:!0, 
+  IFRAME:!0, EMBED:!0, OBJECT:!0, VIDEO:!0, AUDIO:!0, MAP:!0, AREA:!0, math:!0, svg:!0, LABEL:!0, INPUT:!0, BUTTON:!0, SELECT:!0, DATALIST:!0, TEXTAREA:!0, OUTPUT:!0, PROGRESS:!0, METER:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0, CANVAS:!0}, HTML:{HEAD:!0, BODY:!0}, HEAD:{TITLE:!0, BASE:!0, LINK:!0, META:!0, STYLE:!0, SCRIPT:!0, NOSCRIPT:!0, TEMPLATE:!0}, COLGROUP:{COL:!0}, OPTGROUP:{OPTION:!0}, OPTION:{}, TBODY:{TR:!0}, TR:{TH:!0, TD:!0}}, x, d;
   n.LI = n.TD = n.DD;
   n.TH = n.DT;
   n.RP = n.RT = n.P;
   n.TFOOT = n.THEAD = n.TBODY;
-  w = {a:2, b:2, c:2, d:2, e:2, f:2, g:2, h:2, i:2, j:2, k:2, l:2, m:2, n:2, o:2, p:2, q:2, r:2, s:2, t:2, u:2, v:2, w:2, x:2, y:2, z:2, A:1, B:1, C:1, D:1, E:1, F:1, G:1, H:1, I:1, J:1, K:1, L:1, M:1, N:1, O:1, P:1, Q:1, R:1, S:1, T:1, U:1, V:1, W:1, X:1, Y:1, Z:1, "\t":4, "\n":4, "\f":4, "\r":4, " ":4};
-  f = {$:"", aa:"", da:function() {
-    f.$ = f.aa = "";
-  }, ca:function(a) {
-    f.$ = a;
-  }, ea:function(a) {
-    f.$ = f.aa + a;
-    f.aa = "";
-  }, ga:function(a, D, p) {
-    var t;
-    f.$ += "<" + a;
-    for (t in D) {
-      a = D[t], f.$ += " " + t + (!0 !== a ? '="' + a.split('"').join('\\"').split('\\\\"').join('\\"') + '"' : "");
-    }
-    f.$ += (p ? "/" : "") + ">";
-  }, ba:function(a) {
-    f.$ += "</" + a + ">";
-  }, ha:function(a) {
-    a.split(" ").join("") && (a = " " === a.charAt(0) ? a.substr(1) : a, a = a.length && " " === a.charAt(a.length - 1) ? a.substr(0, a.length - 1) : a, f.$ += a);
-  }, ja:function() {
-  }, ia:function() {
+  x = {a:2, b:2, c:2, d:2, e:2, f:2, g:2, h:2, i:2, j:2, k:2, l:2, m:2, n:2, o:2, p:2, q:2, r:2, s:2, t:2, u:2, v:2, w:2, x:2, y:2, z:2, A:1, B:1, C:1, D:1, E:1, F:1, G:1, H:1, I:1, J:1, K:1, L:1, M:1, N:1, O:1, P:1, Q:1, R:1, S:1, T:1, U:1, V:1, W:1, X:1, Y:1, Z:1, "\t":4, "\n":4, "\f":4, "\r":4, " ":4};
+  d = {$:"", ba:"", aa:[], ea:function() {
+    d.$ = d.ba = "";
+    d.aa.length = 0;
+  }, da:function(a) {
+    d.$ = a;
   }, fa:function(a) {
-    0 === a.indexOf("xml ") && (f.aa = "\x3c?" + a + "?>");
+    d.$ = d.ba + a;
+    d.ba = "";
+  }, ha:function(a, t, p) {
+    var q, h;
+    d.$ += "<" + a;
+    for (q in t) {
+      h = t[q];
+      d.$ += " " + q + (!0 !== h ? '="' + V(h).split('"').join('\\"').split('\\\\"').join('\\"') + '"' : '="' + q + '"');
+    }
+    d.$ += (p ? "/" : "") + ">";
+    d.aa.push(a.toUpperCase());
+  }, ca:function(a, t, p) {
+    d.$ += "</" + a + ">";
+    p || d.aa[d.aa.length - 1] === a.toUpperCase() && d.aa.pop();
+  }, ia:function(a) {
+    var t = d.aa[d.aa.length - 1];
+    if (ba[t] && !X[t]) {
+      d.$ += a;
+    } else {
+      for (a = a.split("\n").join(" ").split("\t").join(" "); 0 <= a.indexOf("  ");) {
+        a = a.split("  ").join(" ");
+      }
+      a.split(" ").join("") && (a = " " === a.charAt(0) ? a.substr(1) : a, a = a.length && " " === a.charAt(a.length - 1) ? a.substr(0, a.length - 1) : a, d.$ += V(a));
+    }
+  }, ka:function() {
+  }, ja:function() {
+  }, ga:function(a) {
+    0 === a.indexOf("xml ") && (d.ba = "\x3c?" + a + "?>\n");
   }};
   I.onload = function() {
-    var a = !!I.__isIE5, D = I.input || R.all("input"), p = I.output || R.all("output"), t = I.form || R.all("form");
+    var a = !!I.__isIE5, t = I.input || R.all("input"), p = I.output || R.all("output"), q = I.form || R.all("form");
     a ? p.firstChild.data = "" : p.value = "";
-    t.onsubmit = bz;
-    function bz(k) {
-      k && k.preventDefault();
+    q.onsubmit = bz;
+    function bz(h) {
+      h && h.preventDefault();
       "undefined" != typeof event && (event.returnValue = !1);
-      k = D.value.split("\r\n").join("\n").split("\n\r").join("\n").split("\r").join("\n");
-      f.da();
-      Z(k, k.length);
-      k = f.$;
-      a ? p.firstChild.data = k : p.value = k;
+      h = t.value.split("\r\n").join("\n").split("\n\r").join("\n").split("\r").join("\n");
+      d.ea();
+      ca(h, h.length);
+      h = d.$;
+      a ? p.firstChild.data = h : p.value = h;
       return !1;
     }
     bz = !1;
@@ -261,9 +276,9 @@
 
 </script>
 <body>
-<nav><a href="https://github.com/">github</a> / <a href="https://github.com/ECMAScript2/htmlparser">ES2 HTML Parser</a> / XML Cleaner</nav>
+<nav><a href="https://github.com/">github</a> / <a href="https://github.com/ECMAScript2/htmlparser">ES2 HTML Parser</a> / Blogger Templete Cleaner</nav>
 
-<h1>XML Cleaner</h1>
+<h1>Blogger Templete Cleaner</h1>
 
 <form id="form">
 <label for="input">Input (XML):</label><br/>

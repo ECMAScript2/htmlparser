@@ -17,7 +17,7 @@ Compact JavaScript HTML parser.
 
 ## 2. Demo
 
-[XHTML Cleaner](https://ecmascript2.github.io/htmlparser/)
+[Blogger Templete Cleaner](https://ecmascript2.github.io/htmlparser/)
 
 ## 3. Functions and Features
 
