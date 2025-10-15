@@ -2,7 +2,7 @@ goog.provide( 'htmlparser.example.handler.html2json' );
 
 goog.requireType( 'htmlparser.typedef.Handler' );
 
-var rootNode, currentNode, stack;
+var rootNode, currentNode, stack, xmlDeclaration;
 
 /** 
  * @extends {htmlparser.typedef.Handler}
@@ -12,6 +12,7 @@ htmlparser.example.handler.html2json = {
         _init : function(){
             rootNode = currentNode = [];
             stack = [];
+            xmlDeclaration = '';
         },
 
         _getResult : function(){
@@ -26,7 +27,8 @@ htmlparser.example.handler.html2json = {
         },
         onParseDocType : function( doctype ){
             rootNode[ 0 ] = 9;
-            rootNode[ 1 ] = doctype;
+            rootNode[ 1 ] = xmlDeclaration + doctype;
+            xmlDeclaration = '';
         },
         onParseStartTag : function( tag, attrs, empty, myIndex ){
             var element = [ tag ];
@@ -63,6 +65,10 @@ htmlparser.example.handler.html2json = {
             currentNode.push( [ 4, data ] );
         },
         onParseProcessingInstruction : function( data ){
-            currentNode.push( [ 7, data ] );
+            if( rootNode.length === 0 && data.indexOf( 'xml ' ) === 0 ){
+                xmlDeclaration = '<?' + data + '?>';
+            } else {
+                currentNode.push( [ 7, data ] );
+            };
         }
     };

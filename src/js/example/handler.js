@@ -38,9 +38,7 @@ var handler =
         },
         onParseText : function( text ){
             // text = X.String.cleanupWhiteSpace( text );
-            if( handler._xmlDeclaration ){
-                handler._xmlDeclaration += text;
-            } else if( text.split( ' ' ).join( '' ) ){
+            if( text.split( ' ' ).join( '' ) ){
                 text = text.charAt( 0 ) === ' ' ? text.substr( 1 ) : text;
                 text = text.length && text.charAt( text.length - 1 ) === ' ' ? text.substr( 0, text.length - 1 ) : text;
                 handler._result += text;

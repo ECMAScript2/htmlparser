@@ -485,8 +485,10 @@ goog.scope(
                         case 1 : // タグ名の終わりの空白文字を待つ
                             if( htmlparser.isWhitespace( chr ) ){
                                 phase = 2, tagName = unpersedHTML.substring( 1, i );
-                            } else if( chr === '>' || isEmpty() ){
+                            } else if( chr === '>' ){
                                 phase = 9, tagName = unpersedHTML.substring( 1, i );
+                            } else if( isEmpty() ){
+                                phase = 9, tagName = unpersedHTML.substring( 1, i - 1 );
                             };
                             break;
                         case 2 : // 属性名の開始を待つ
@@ -501,8 +503,10 @@ goog.scope(
                                 phase = 5, attrName = unpersedHTML.substring( start, i );
                             } else if( htmlparser.isWhitespace( chr ) ){
                                 phase = 4, attrName = unpersedHTML.substring( start, i );
-                            } else if( chr === '>' || isEmpty() ){
+                            } else if( chr === '>' ){
                                 phase = 9, saveAttr( unpersedHTML.substring( start, i ), true );
+                            } else if( isEmpty() ){
+                                phase = 9, saveAttr( unpersedHTML.substring( start, i - 1 ), true );
                             };
                             break;
                         case 4 : // 属性名に続くスペースの次に続くものは？
