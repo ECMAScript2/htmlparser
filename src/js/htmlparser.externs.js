@@ -13,18 +13,21 @@ var __avoidRenamingTagNamesAndAttributes__ = [
         xml : true, svg : true, math : true
     },
     {
-        AREA    : true, BASE    : true, BASEFONT : true, BR    : true, BGSOUND : true,
-        COL     : true, COMMAND : true, FRAME    : true, HR    : true, IMG     : true,
-        INPUT   : true, ISINDEX : true, KEYGEN   : true, LINK  : true, META    : true,
-        PARAM   : true, SOURCE  : true, TRACK    : true, EMBED : true, WBR     : true
+          AREA     : true, BASE    : true, COL     : true, EMBED : true, BR      : true,
+          HR       : true, IMG     : true, INPUT   : true, LINK  : true, META    : true,
+          SOURCE   : true, TRACK   : true, WBR     : true,
+          BASEFONT : true, BGSOUND : true, COMMAND : true, FRAME : true, ISINDEX : true,
+          KEYGEN   : true, PARAM   : true, SPACER  : true
     },
     {
-        MAP      : true, DL    : true, OL    : true, UL    : true, SELECT   : true,
-        OPTGROUP : true, TABLE : true, THEAD : true, TFOOT : true, TBODY    : true,
-        COLGROUP : true, TR    : true, HEAD  : true, MENU  : true, FRAMESET : true
+        MAP      : true, DATALIST : true, DL    : true, OL    : true, UL    : true,
+        SELECT   : true, OPTGROUP : true, TABLE : true, THEAD : true, TFOOT : true,
+        TBODY    : true, COLGROUP : true, TR    : true, HEAD  : true,
+        DIR      : true, FRAMESET : true, MENU  : true
     },
     {
-        SCRIPT : true, STYLE : true, TEXTAREA : true, TITLE : true, PLAINTEXT : true, XMP : true, LISTING : true
+        SCRIPT  : true, STYLE     : true, TEXTAREA : true, TITLE : true,
+        LISTING : true, PLAINTEXT : true, XMP      : true
     },
     {
         CAPTION  : {ARTICLE:!0,SECTION:!0,NAV:!0,ASIDE:!0,H1:!0,H2:!0,H3:!0,H4:!0,H5:!0,H6:!0,HEADER:!0,FOOTER:!0,ADDRESS:!0,P:!0,HR:!0,PRE:!0,BLOCKQUOTE:!0,OL:!0,UL:!0,DL:!0,FIGURE:!0,DIV:!0,A:!0,EM:!0,STRONG:!0,SMALL:!0,S:!0,CITE:!0,Q:!0,DFN:!0,ABBR:!0,DATA:!0,TIME:!0,CODE:!0,VAR:!0,SAMP:!0,KBD:!0,SUB:!0,SUP:!0,I:!0,B:!0,U:!0,MARK:!0,RUBY:!0,BDI:!0,BDO:!0,SPAN:!0,BR:!0,WBR:!0,INS:!0,DEL:!0,PICTURE:!0,IMG:!0,IFRAME:!0,EMBED:!0,OBJECT:!0,VIDEO:!0,AUDIO:!0,MAP:!0,AREA:!0,math:!0,svg:!0,         FORM:!0,LABEL:!0,INPUT:!0,BUTTON:!0,SELECT:!0,DATALIST:!0,TEXTAREA:!0,KEYGEN:!0,OUTPUT:!0,PROGRESS:!0,METER:!0,FIELDSET:!0,DETAILS:!0,DIALOG:!0,SCRIPT:!0,NOSCRIPT:!0,TEMPLATE:!0,CANVAS:!0},

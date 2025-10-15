@@ -7,7 +7,6 @@
 
 goog.provide( 'htmlparser' );
 goog.provide( 'htmlparser.exec' );
-goog.provide( 'htmlparser.DEFINE' );
 goog.provide( 'htmlparser.typedef.Handler' );
 goog.provide( 'htmlparser.isWhitespace' );
 goog.provide( 'htmlparser.isAlphabet' );
@@ -17,6 +16,7 @@ goog.provide( 'htmlparser.unescapeHTML' );
 goog.provide( 'htmlparser.escapeHTML' );
 goog.provide( 'htmlparser.unescapeAttrValue' );
 
+goog.require( 'htmlparser.DEFINE' );
 goog.require( 'htmlparser.XML_ROOT_ELEMENTS' );
 goog.require( 'htmlparser.VOID_ELEMENTS' );
 goog.require( 'htmlparser.NON_TEXT_CHILD_ELEMENTS' );
@@ -24,22 +24,6 @@ goog.require( 'htmlparser.RAW_TEXT_ELEMENTS' );
 goog.require( 'htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS' );
 goog.require( 'htmlparser.BOOLEAN_ATTRIBUTES' );
 goog.require( 'htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN' );
-
-/** @define {boolean} */
-htmlparser.DEFINE.USE_XHTML                  = goog.define( 'htmlparser.DEFINE.USE_XHTML'                 , false );
-/** @define {boolean} */
-htmlparser.DEFINE.USE_XML_IN_HTML            = goog.define( 'htmlparser.DEFINE.USE_XML_IN_HTML'           , true );
-/** @define {boolean} */
-htmlparser.DEFINE.USE_VML                    = goog.define( 'htmlparser.DEFINE.USE_VML'                   , false );
-/** @define {boolean} */
-htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE     = goog.define( 'htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE'    , true );
-/** @define {boolean} */
-htmlparser.DEFINE.USE_CDATA_SECTION          = goog.define( 'htmlparser.DEFINE.USE_CDATA_SECTION'         , true );
-/** @define {boolean} */
-htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION = goog.define( 'htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION', true );
-
-/** @define {boolean} */
-htmlparser.DEFINE.USE_PAUSE                  = goog.define( 'htmlparser.DEFINE.USE_PAUSE'                 , false );
 
 /**
  * @typedef {{
@@ -59,8 +43,7 @@ htmlparser.typedef.Handler;
 
 /**
  * @private
- * @enum {number}
- */
+ * @enum {number} */
 htmlparser._CHAR_KINDS = {
     IS_UPPERCASE_ALPHABETS : 1,
     IS_LOWERCASE_ALPHABETS : 2,
@@ -84,40 +67,35 @@ htmlparser._CHARS = {
 
 /**
  * @param {string} chr 
- * @return {number}
- */
+ * @return {number} */
 htmlparser.isWhitespace = function( chr ){
 	return htmlparser._CHARS[ chr ] & htmlparser._CHAR_KINDS.IS_WHITESPACE;
 };
 
 /**
  * @param {string} chr 
- * @return {number}
- */
+ * @return {number} */
 htmlparser.isAlphabet = function( chr ){
 	return htmlparser._CHARS[ chr ] & ( htmlparser._CHAR_KINDS.IS_UPPERCASE_ALPHABETS + htmlparser._CHAR_KINDS.IS_LOWERCASE_ALPHABETS );
 };
 
 /**
  * @param {string} tagName
- * @return {boolean}
- */
+ * @return {boolean} */
 htmlparser.isXMLRootElement = function( tagName ){
 	return !!htmlparser.XML_ROOT_ELEMENTS[ tagName ];
 };
 
 /**
  * @param {string} tagName
- * @return {boolean}
- */
+ * @return {boolean} */
 htmlparser.isNamespacedTag = function( tagName ){
 	return 0 < tagName.indexOf( ':' );
 };
 
 /**
  * @param {string} str 
- * @return {string}
- */
+ * @return {string} */
 htmlparser.unescapeHTML = function( str ){
     return str.split( '&lt;' ).join( '<' )
               .split( '&gt;' ).join( '>' )
@@ -127,8 +105,7 @@ htmlparser.unescapeHTML = function( str ){
 
 /**
  * @param {string} str 
- * @return {string}
- */
+ * @return {string} */
 htmlparser.escapeHTML = function ( str ){
     return str.split( '&lt;' ).join( '&amp;lt;' )
               .split( '&gt;' ).join( '&amp;gt;' )
@@ -138,8 +115,7 @@ htmlparser.escapeHTML = function ( str ){
 
 /**
  * @param {string} str 
- * @return {string}
- */
+ * @return {string} */
 htmlparser.unescapeAttrValue = function normalize( str ){
     return htmlparser.unescapeHTML( str ).split( '\\"' ).join( '"' )
                                          .split( "\\'" ).join( "'" );
@@ -149,10 +125,9 @@ goog.scope(
     function(){
         /**
          * 
-         * @param {string} html 
+         * @param {string} html html document or document fragment
          * @param {htmlparser.typedef.Handler} handler
-         * @param {boolean=} opt_isXHTMLFragment
-         */
+         * @param {boolean=} opt_isXHTMLFragment Parse as XHTML when the input is a document fragment */
         htmlparser.exec = function( html, handler, opt_isXHTMLFragment ){
             exec( html, handler, htmlparser.DEFINE.USE_XHTML && !!opt_isXHTMLFragment, [], html.length, true, false, false );
         };
@@ -168,7 +143,7 @@ goog.scope(
          * @param {boolean} isXMLInHTML 
          * @param {boolean} isInVML */
         function exec( unpersedHTML, handler, isXHTMLDocument, stack, originalHTMLLength, isDocumentFragment, isXMLInHTML, isInVML ){
-            var pointer = -1, lastTagName, lastTagUpper, isRawElement, index, nodeValue, ignoreEndTag, tagNameLower;
+            var pointer = -1, lastTagName, lastTagUpper, isRawElement, index, nodeValue, ignoreEndTag;
 
             loadLastTagName();
             incrementPosition();
@@ -204,11 +179,10 @@ goog.scope(
                 // end tag
                 } else if( unpersedHTML.indexOf( '</', pointer ) === pointer && htmlparser.isAlphabet( unpersedHTML.charAt( pointer + 2 ) ) ){
                     if( isRawElement ){
-                        if( lastTagUpper === 'PLAINTEXT' ){
+                        if( htmlparser.DEFINE.USE_TRADITIONAL_TAGS && lastTagUpper === 'PLAINTEXT' ){
                             ignoreEndTag = true;
                         } else {
-                            tagNameLower = isXHTMLDocument ? lastTagName : lastTagName.toLowerCase();
-                            if( unpersedHTML.indexOf( tagNameLower, pointer ) !== pointer + 2 &&
+                            if( unpersedHTML.indexOf( isXHTMLDocument ? lastTagName : lastTagName.toLowerCase(), pointer ) !== pointer + 2 &&
                                 unpersedHTML.indexOf( lastTagUpper, pointer ) !== pointer + 2
                             ){
                                 ignoreEndTag = true;
@@ -360,7 +334,7 @@ goog.scope(
             function onProgress(){
                 handler.onParseProgress &&
                 handler.onParseProgress(
-                    1 - ( unpersedHTML.length ) / originalHTMLLength,
+                    1 - unpersedHTML.length / originalHTMLLength,
                     exec,
                     [ unpersedHTML, handler, isXHTMLDocument, stack, originalHTMLLength, isDocumentFragment, isXMLInHTML, isInVML ]
                 );
