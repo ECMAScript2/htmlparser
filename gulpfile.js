@@ -30,7 +30,6 @@ gulp.task( 'dist', gulp.series(
                         define            : [
                             'htmlparser.DEFINE.USE_XHTML='                  + true,
                             'htmlparser.DEFINE.USE_XML_IN_HTML='            + true,
-                            'htmlparser.DEFINE.USE_VML='                    + true,
                             'htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE='     + true,
                             'htmlparser.DEFINE.USE_CDATA_SECTION='          + true,
                             'htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION=' + true,
@@ -62,7 +61,6 @@ gulp.task( 'dist', gulp.series(
                         define            : [
                             'htmlparser.DEFINE.USE_XHTML='                  + true,
                             'htmlparser.DEFINE.USE_XML_IN_HTML='            + true,
-                            'htmlparser.DEFINE.USE_VML='                    + true,
                             'htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE='     + true,
                             'htmlparser.DEFINE.USE_CDATA_SECTION='          + true,
                             'htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION=' + true,

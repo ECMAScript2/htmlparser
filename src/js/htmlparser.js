@@ -129,7 +129,7 @@ goog.scope(
          * @param {htmlparser.typedef.Handler} handler
          * @param {boolean=} opt_isXHTMLFragment Parse as XHTML when the input is a document fragment */
         htmlparser.exec = function( html, handler, opt_isXHTMLFragment ){
-            exec( html, handler, htmlparser.DEFINE.USE_XHTML && !!opt_isXHTMLFragment, [], html.length, true, false, false );
+            exec( html, handler, htmlparser.DEFINE.USE_XHTML && !!opt_isXHTMLFragment, [], html.length, true, false );
         };
 
         /**
@@ -140,16 +140,15 @@ goog.scope(
          * @param {!Array.<string>} stack
          * @param {number} originalHTMLLength
          * @param {boolean} isDocumentFragment
-         * @param {boolean} isXMLInHTML 
-         * @param {boolean} isInVML */
-        function exec( unpersedHTML, handler, isXHTMLDocument, stack, originalHTMLLength, isDocumentFragment, isXMLInHTML, isInVML ){
-            var pointer = -1, lastTagName, lastTagUpper, isRawElement, index, nodeValue, ignoreEndTag;
+         * @param {boolean} isXMLInHTML */
+        function exec( unpersedHTML, handler, isXHTMLDocument, stack, originalHTMLLength, isDocumentFragment, isXMLInHTML ){
+            var pointer = -1, lastTagName, lastTagUpper, isRawTextElement, index, nodeValue, ignoreEndTag;
 
             loadLastTagName();
             incrementPosition();
 
             while( unpersedHTML ){
-                isRawElement = htmlparser.RAW_TEXT_ELEMENTS[ lastTagUpper ];
+                isRawTextElement = htmlparser.RAW_TEXT_ELEMENTS[ lastTagUpper ];
 
                 // ProcessingInstruction
                 if( htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION && unpersedHTML.indexOf( '<?' ) === pointer ){
@@ -178,7 +177,7 @@ goog.scope(
                     };
                 // end tag
                 } else if( unpersedHTML.indexOf( '</', pointer ) === pointer && htmlparser.isAlphabet( unpersedHTML.charAt( pointer + 2 ) ) ){
-                    if( isRawElement ){
+                    if( isRawTextElement ){
                         if( htmlparser.DEFINE.USE_TRADITIONAL_TAGS && lastTagUpper === 'PLAINTEXT' ){
                             ignoreEndTag = true;
                         } else {
@@ -202,7 +201,7 @@ goog.scope(
                             return;
                         };
                     };
-                } else if( isRawElement ){
+                } else if( isRawTextElement ){
                     if( incrementPosition() && htmlparser.DEFINE.USE_PAUSE ){
                         return;
                     };
@@ -293,7 +292,7 @@ goog.scope(
             };
 
             function updateLastTagUpper(){
-                if( isXMLInHTML || isInVML ){
+                if( isXMLInHTML || htmlparser.isNamespacedTag( lastTagName ) ){
                     lastTagUpper = '';
                 } else {
                     lastTagUpper = isXHTMLDocument ? lastTagName.toUpperCase() : lastTagName;
@@ -322,7 +321,7 @@ goog.scope(
 
                     if( isDocumentFragment || lastTagName && !htmlparser.NON_TEXT_CHILD_ELEMENTS[ lastTagUpper ] ){
                         if( handler.onParseText(
-                                isRawElement && !htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS[ lastTagUpper ] ? text : htmlparser.unescapeHTML( text )
+                                isRawTextElement && !htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS[ lastTagUpper ] ? text : htmlparser.unescapeHTML( text )
                             ) === true && htmlparser.DEFINE.USE_PAUSE ){
                             onProgress();
                             return true;
@@ -336,7 +335,7 @@ goog.scope(
                 handler.onParseProgress(
                     1 - unpersedHTML.length / originalHTMLLength,
                     exec,
-                    [ unpersedHTML, handler, isXHTMLDocument, stack, originalHTMLLength, isDocumentFragment, isXMLInHTML, isInVML ]
+                    [ unpersedHTML, handler, isXHTMLDocument, stack, originalHTMLLength, isDocumentFragment, isXMLInHTML ]
                 );
             };
 
@@ -377,7 +376,7 @@ goog.scope(
                 if( phase === 2 ){
                     unpersedHTML = unpersedHTML.substr( i );
                     tagName      = /** @type {string} */ (tagName);
-                    if( isXMLInHTML || isInVML ){
+                    if( isXMLInHTML || htmlparser.isNamespacedTag( tagName ) ){
                         closeTag( stack, tagName, false );
                     } else {
                         tagUpper = tagName.toUpperCase();
@@ -425,16 +424,6 @@ goog.scope(
                     };
                     // Remove the open elements from the stack
                     stack.length = pos;
-                    // Update isInVML
-                    if( htmlparser.DEFINE.USE_VML && isInVML ){
-                        isInVML = false;
-                        for( i = pos; i; ){
-                            if( htmlparser.isNamespacedTag( stack[ --i ] ) ){
-                                isInVML = true;
-                                break;
-                            };
-                        };
-                    };
                 } else {
                     handler.onParseEndTag( tagName, false, true );
                 };
@@ -477,7 +466,7 @@ goog.scope(
                     attrs    = {},
                     numAttrs = 0,
                     empty    = false,
-                    chr, tagName, start, attrName, quot, escape, isXMLOrVML, tagUpper;
+                    chr, tagName, start, attrName, quot, escape, isXMLOrVML, tagUpper, lastXMLInHTML;
 
                 for( ; i < l && phase < 9; ++i ){
                     chr = unpersedHTML.charAt( i );
@@ -547,14 +536,19 @@ goog.scope(
                 if( phase === 9 ){
                     tagName = /** @type {string} */ (tagName);
 
-                    if( htmlparser.DEFINE.USE_XML_IN_HTML && !isXMLInHTML ){
+                    if( htmlparser.DEFINE.USE_XML_IN_HTML && !( lastXMLInHTML = isXMLInHTML ) ){
                         isXMLInHTML = htmlparser.isXMLRootElement( tagName );
                     };
-                    if( htmlparser.DEFINE.USE_VML && !isInVML ){
-                        isInVML = htmlparser.isNamespacedTag( tagName );
-                    };
-                    isXMLOrVML = isXMLInHTML || isInVML;
-                    if( !isXMLOrVML ){
+
+                    if( isXMLInHTML || htmlparser.isNamespacedTag( tagName ) ){
+                        isXMLOrVML = true;
+                        if( !empty ){
+                            saveLastTagName( tagName );
+                        } else {
+                            /** @suppress {checkTypes} */
+                            isXMLInHTML = lastXMLInHTML;
+                        };
+                    } else {
                         tagUpper = tagName.toUpperCase();
 
                         while( lastTagName ){
@@ -568,10 +562,6 @@ goog.scope(
                         empty = empty || !!htmlparser.VOID_ELEMENTS[ tagUpper ];
                         if( !empty ){
                             saveLastTagName( isXHTMLDocument ? tagName : tagUpper );
-                        };
-                    } else {
-                        if( !empty ){
-                            saveLastTagName( tagName );
                         };
                     };
 

@@ -35,7 +35,7 @@ test('VML - textbox',
                 `<v:roundrect style="width:90; height:27;" fillcolor="#ffcccc"><v:textbox><a href="xxx.htm">Click me!!</a></v:textbox></v:roundrect>`
             ),
             [ 11, [ 'v:roundrect', { style : 'width:90; height:27;', fillcolor: '#ffcccc' },
-                [ 'v:textbox', [ 'a', { href: 'xxx.htm' }, 'Click me!!' ] ]
+                [ 'v:textbox', [ 'A', { href: 'xxx.htm' }, 'Click me!!' ] ]
             ] ]
         );
     }

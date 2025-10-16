@@ -39,7 +39,9 @@ var handler =
             };
             handler._result += ( empty ? '/' : '' ) + '>';
 
-            handler._stack.push( tag.toUpperCase() );
+            if( !empty ){
+                handler._stack.push( tag.toUpperCase() );
+            };
         },
         onParseEndTag : function( tag, isInvalidEndTagOmission, isMissingStartTag ){
             handler._result += '</' + tag + '>';

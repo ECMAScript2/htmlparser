@@ -58,14 +58,14 @@ htmlparser.NON_TEXT_CHILD_ELEMENTS =
     ? {
           MAP      : true, DATALIST : true, DL    : true, OL    : true, UL    : true,
           SELECT   : true, OPTGROUP : true, TABLE : true, THEAD : true, TFOOT : true,
-          TBODY    : true, COLGROUP : true, TR    : true, HEAD  : true,
+          TBODY    : true, COLGROUP : true, TR    : true, // HEAD  : true,
           // legacy
           DIR      : true, FRAMESET : true, MENU  : true
       }
     : {
           MAP      : true, DATALIST : true, DL    : true, OL    : true, UL    : true,
           SELECT   : true, OPTGROUP : true, TABLE : true, THEAD : true, TFOOT : true,
-          TBODY    : true, COLGROUP : true, TR    : true, HEAD  : true
+          TBODY    : true, COLGROUP : true, TR    : true // , HEAD  : true
       };
 
 /**

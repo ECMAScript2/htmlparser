@@ -5,8 +5,6 @@ htmlparser.DEFINE.USE_XHTML                  = goog.define( 'htmlparser.DEFINE.U
 /** @define {boolean} */
 htmlparser.DEFINE.USE_XML_IN_HTML            = goog.define( 'htmlparser.DEFINE.USE_XML_IN_HTML'           , true );
 /** @define {boolean} */
-htmlparser.DEFINE.USE_VML                    = goog.define( 'htmlparser.DEFINE.USE_VML'                   , false );
-/** @define {boolean} */
 htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE     = goog.define( 'htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE'    , true );
 /** @define {boolean} */
 htmlparser.DEFINE.USE_CDATA_SECTION          = goog.define( 'htmlparser.DEFINE.USE_CDATA_SECTION'         , true );
