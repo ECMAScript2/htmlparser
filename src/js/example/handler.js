@@ -11,15 +11,22 @@ goog.require( 'htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS' );
  */
 var handler =
     {
-        _result : '',
+        _result         : '',
 
         _xmlDeclaration : '',
 
-        _stack : [],
+        _stack          : [],
 
-        _init : function(){
+        _startTime      : 0,
+
+        _init : function( usePause ){
             handler._result = handler._xmlDeclaration = '';
             handler._stack.length = 0;
+            if( usePause ){
+                handler._startTime = + new Date;
+            } else {
+                handler._startTime = 0;
+            };
         },
         onParseError : function( msg ){
             handler._result = msg;
@@ -27,6 +34,12 @@ var handler =
         onParseDocType : function( doctype ){
             handler._result = handler._xmlDeclaration + doctype;
             handler._xmlDeclaration = '';
+
+            if( handler._startTime ){
+                if( handler._startTime + 16 < + new Date ){
+                    return true;
+                };
+            };
         },
         onParseStartTag : function( tag, attrs, empty, myIndex ){
             var name, value;
@@ -41,6 +54,11 @@ var handler =
 
             if( !empty ){
                 handler._stack.push( tag.toUpperCase() );
+            };
+            if( handler._startTime ){
+                if( handler._startTime + 16 < + new Date ){
+                    return true;
+                };
             };
         },
         onParseEndTag : function( tag, isInvalidEndTagOmission, isMissingStartTag ){
@@ -70,16 +88,36 @@ var handler =
                     handler._result += htmlparser.escapeHTML( text );
                 };
             };
+            if( handler._startTime ){
+                if( handler._startTime + 16 < + new Date ){
+                    return true;
+                };
+            };
         },
         onParseComment : function( comment ){
             //handler._result += '<!--' + comment + '-->';
+            if( handler._startTime ){
+                if( handler._startTime + 16 < + new Date ){
+                    return true;
+                };
+            };
         },
         onParseCDATASection : function( data ){
             // handler._result += '<![CDATA[' + data + ']]>';
+            if( handler._startTime ){
+                if( handler._startTime + 16 < + new Date ){
+                    return true;
+                };
+            };
         },
         onParseProcessingInstruction : function( data ){
             if( data.indexOf( 'xml ' ) === 0 ){
                 handler._xmlDeclaration = '<?' + data + '?>\n';
+            };
+            if( handler._startTime ){
+                if( handler._startTime + 16 < + new Date ){
+                    return true;
+                };
             };
         }
     };

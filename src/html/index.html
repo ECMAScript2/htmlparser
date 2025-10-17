@@ -10,7 +10,7 @@
 <meta name="format-detection" content="telephone=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width,target-densitydpi=medium-dpi,initial-scale=1,minimum-scale=1,shrink-to-fit=no">
-<style>textarea{font-size:12px}
+<style>textarea{font-size:12px}.progress-outer{height:1em;background:#ccc;margin:1em 0}#progress{height:1em;width:0;background:#1b5fdd}#textlen{border:0}
 </style>
 <!--[if lt IE 5.5000]><script>window.__isIE5=true</script><![endif]-->
 <script></script>
@@ -24,6 +24,10 @@
 <textarea cols="60" rows="10" id="input" spellcheck="false" autocomplete="off">&lt;p&gt;Hello, world!</textarea><br/>
 <input type="submit" value="Run" />
 </form>
+
+<div class="progress-outer"><div id="progress"></div></div>
+
+Text length: <input id="textlen" type="text"><br>
 
 <label for="output">Output (XML):</label><br/>
 <textarea cols="60" rows="10" id="output" spellcheck="false" autocomplete="off">&lt;p&gt;Hello, world!&lt;/p&gt;</textarea>
