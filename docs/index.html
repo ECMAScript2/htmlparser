@@ -32,7 +32,7 @@
     }
     function G() {
       d = a.indexOf("<", d + 1);
-      if (-1 === d && (d = a.length, q())) {
+      if (d === -1 && (d = a.length, q())) {
         return !0;
       }
     }
@@ -42,7 +42,7 @@
         p = a.substr(0, d);
         a = a.substr(d);
         d = 0;
-        if ((z || x && !ja[D]) && !0 === e.na(U && !ba[D] ? p : M(p))) {
+        if ((z || x && !ja[D]) && e.na(U && !ba[D] ? p : M(p)) === !0) {
           return I(), !0;
         }
       }
@@ -54,7 +54,7 @@
       e.fa && e.fa(p);
     }
     function ka(p) {
-      for (var h = 0, y = a.length, k = 3, c, u; k < y && 2 !== h; ++k) {
+      for (var h = 0, y = a.length, k = 3, c, u; k < y && h !== 2; ++k) {
         switch(c = a.charAt(k), h) {
           case 0:
             if (A[c] & 4) {
@@ -63,10 +63,10 @@
               break;
             }
           case 1:
-            ">" === c && (h = 2, u = k);
+            c === ">" && (h = 2, u = k);
         }
       }
-      if (2 === h) {
+      if (h === 2) {
         h = a.substring(2, u), a = a.substr(k), v || 0 < h.indexOf(":") ? Q(p, h, !1) : (k = h.toUpperCase(), ca[k] || Q(p, f ? h : k, !1));
       } else {
         return J(a), !0;
@@ -104,41 +104,41 @@
       }
       function y(B) {
         var S = a.substring(V, O);
-        B = null != B ? a.substring(W, B) : !0;
-        R[S] = !0 === B ? f || N ? S : B : ma[S.toLowerCase()] ? f || N ? Z(B || S) : !0 : Z(B || "");
+        B = B != null ? a.substring(W, B) : !0;
+        R[S] = B === !0 ? f || N ? S : B : ma[S.toLowerCase()] ? f || N ? Z(B || S) : !0 : Z(B || "");
         ++fa;
       }
       function k() {
-        (K = "/>" === a.substr(g, 2)) && ++g;
+        (K = a.substr(g, 2) === "/>") && ++g;
         return K;
       }
-      for (var c = 1, u = a.length, g = 2, R = {}, fa = 0, K = !1, ea = v, l, V, O, W, H, ha, T, N, P; g < u && 9 > c; ++g) {
+      for (var c = 1, u = a.length, g = 2, R = {}, fa = 0, K = !1, ea = v, l, V, O, W, H, ha, T, N, P; g < u && c < 9; ++g) {
         switch(l = a.charAt(g), c) {
           case 1:
-            A[l] & 4 ? (c = 2, h(g)) : ">" === l ? (c = 9, h(g)) : k() && (c = 9, h(g - 1));
+            A[l] & 4 ? (c = 2, h(g)) : l === ">" ? (c = 9, h(g)) : k() && (c = 9, h(g - 1));
             break;
           case 2:
-            ">" === l || k() ? c = 9 : A[l] & 4 || (c = 3, V = g);
+            l === ">" || k() ? c = 9 : A[l] & 4 || (c = 3, V = g);
             break;
           case 3:
-            "=" === l ? (c = 5, O = g) : A[l] & 4 ? (c = 4, O = g) : ">" === l ? (c = 9, O = g, y()) : k() && (c = 9, O = g - 1, y());
+            l === "=" ? (c = 5, O = g) : A[l] & 4 ? (c = 4, O = g) : l === ">" ? (c = 9, O = g, y()) : k() && (c = 9, O = g - 1, y());
             break;
           case 4:
-            "=" === l ? c = 5 : ">" === l || k() ? (c = 9, y()) : A[l] & 4 || (c = 3, y(), V = g);
+            l === "=" ? c = 5 : l === ">" || k() ? (c = 9, y()) : A[l] & 4 || (c = 3, y(), V = g);
             break;
           case 5:
-            '"' === l || "'" === l ? (c = 6, ha = l, W = g + 1) : A[l] & 4 || (c = 7, W = g);
+            l === '"' || l === "'" ? (c = 6, ha = l, W = g + 1) : A[l] & 4 || (c = 7, W = g);
             T = !1;
             break;
           case 6:
             T || l !== ha || (c = 2, y(g));
-            T = "\\" === l && !T;
+            T = l === "\\" && !T;
             break;
           case 7:
-            A[l] & 4 ? (c = 2, y(g)) : ">" === l && (c = 9, y(g));
+            A[l] & 4 ? (c = 2, y(g)) : l === ">" && (c = 9, y(g));
         }
       }
-      if (9 === c) {
+      if (c === 9) {
         if (N) {
           K ? v = ea : (x = m[m.length] = H, n());
         } else {
@@ -152,7 +152,7 @@
           (K = K || !!ca[P]) || (x = m[m.length] = f ? H : P, n());
         }
         a = a.substr(g);
-        if (!0 === e.ma(f || N ? H : P, fa ? R : null, K, g)) {
+        if (e.ma(f || N ? H : P, fa ? R : null, K, g) === !0) {
           return I(), !0;
         }
       } else {
@@ -170,10 +170,10 @@
           return;
         }
         r = a.indexOf("?>");
-        if (-1 !== r) {
+        if (r !== -1) {
           E = a.substring(2, r);
           a = a.substr(r + 2);
-          if (!0 === e.la(M(E))) {
+          if (e.la(M(E)) === !0) {
             I();
             return;
           }
@@ -196,7 +196,7 @@
         if (G()) {
           return;
         }
-      } else if ("<" === a.charAt(d) && A[a.charAt(d + 1)] & 3) {
+      } else if (a.charAt(d) === "<" && A[a.charAt(d + 1)] & 3) {
         if (q() || la(m)) {
           return;
         }
@@ -205,8 +205,8 @@
           return;
         }
         r = a.indexOf("--\x3e");
-        if (-1 !== r) {
-          if (E = a.substring(4, r), a = a.substr(r + 3), !0 === e.ja(M(E))) {
+        if (r !== -1) {
+          if (E = a.substring(4, r), a = a.substr(r + 3), e.ja(M(E)) === !0) {
             I();
             return;
           }
@@ -219,8 +219,8 @@
           return;
         }
         r = a.indexOf("]]\x3e");
-        if (-1 !== r) {
-          if (E = a.substring(9, r), a = a.substr(r + 3), !0 === e.ia(M(E))) {
+        if (r !== -1) {
+          if (E = a.substring(9, r), a = a.substr(r + 3), e.ia(M(E)) === !0) {
             I();
             return;
           }
@@ -229,8 +229,8 @@
           return;
         }
       } else if (a.indexOf("<!DOCTYPE ") === d || a.indexOf("<!doctype ") === d) {
-        if (a = a.substr(d), d = 0, r = a.indexOf(">"), -1 !== r) {
-          if (E = a.substring(0, r + 1), a = a.substr(r + 1), z && (f = 0 < E.indexOf("-//W3C//DTD XHTML ")), z = !1, !0 === e.ka(E)) {
+        if (a = a.substr(d), d = 0, r = a.indexOf(">"), r !== -1) {
+          if (E = a.substring(0, r + 1), a = a.substr(r + 1), z && (f = 0 < E.indexOf("-//W3C//DTD XHTML ")), z = !1, e.ka(E) === !0) {
             I();
             return;
           }
@@ -274,7 +274,7 @@
     b.$ += "<" + a;
     for (m in e) {
       w = e[m];
-      b.$ += " " + m + (!0 !== w ? '="' + Y(w).split('"').join('\\"').split('\\\\"').join('\\"') + '"' : "");
+      b.$ += " " + m + (w !== !0 ? '="' + Y(w).split('"').join('\\"').split('\\\\"').join('\\"') + '"' : "");
     }
     b.$ += (f ? "/" : "") + ">";
     f || b.ba.push(a.toUpperCase());
@@ -292,7 +292,7 @@
       for (a = a.split("\n").join(" ").split("\t").join(" "); 0 <= a.indexOf("  ");) {
         a = a.split("  ").join(" ");
       }
-      a.split(" ").join("") && (a = " " === a.charAt(0) ? a.substr(1) : a, a = a.length && " " === a.charAt(a.length - 1) ? a.substr(0, a.length - 1) : a, b.$ += Y(a));
+      a.split(" ").join("") && (a = a.charAt(0) === " " ? a.substr(1) : a, a = a.length && a.charAt(a.length - 1) === " " ? a.substr(0, a.length - 1) : a, b.$ += Y(a));
     }
     if (b.aa && b.aa + 16 < +new C()) {
       return !0;
@@ -306,7 +306,7 @@
       return !0;
     }
   }, la:function(a) {
-    0 === a.indexOf("xml ") && (b.ca = "\x3c?" + a + "?>\n");
+    a.indexOf("xml ") === 0 && (b.ca = "\x3c?" + a + "?>\n");
     if (b.aa && b.aa + 16 < +new C()) {
       return !0;
     }
@@ -325,7 +325,7 @@
     };
     m.onsubmit = function(n) {
       n && n.preventDefault();
-      "undefined" != typeof event && (event.returnValue = !1);
+      typeof event != "undefined" && (event.returnValue = !1);
       n = e.value.split("\r\n").join("\n").split("\n\r").join("\n").split("\r").join("\n");
       a ? f.firstChild.data = "" : f.value = "";
       z.value = v = n.length;
@@ -335,7 +335,7 @@
       return !1;
     };
     function bz(n, G, q) {
-      w.style.width = 100 * n + "%";
+      w.style.width = n * 100 + "%";
       setTimeout(function() {
         b.aa = +new C();
         a ? G(q[0], q[1], q[2], q[3], q[4], q[5], q[6]) : G.apply(null, q);

@@ -19,7 +19,7 @@
     "@externs/nodejs": "^1.5.0",
     "ava": "^6.1.3",
     "es2-postprocessor": "^0.13.1",
-    "google-closure-compiler": "^20240317.0.0",
-    "gulp": "^4.0.2"
+    "google-closure-compiler": "^20251015.0.0",
+    "gulp": "^5.0.1"
   }
 }
