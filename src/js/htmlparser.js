@@ -351,29 +351,25 @@ goog.scope(
                 var phase = 0,
                     l     = unpersedHTML.length,
                     i     = 3,
-                    chr, tagName, tagUpper;
+                    chr, tagEndIndex, tagName, tagUpper;
 
                 for( ; i < l && phase !== 2; ++i ){
                     chr = unpersedHTML.charAt( i );
                     switch( phase ){
                         case 0 : // タグ名の終わりの空白文字を待つ
                             if( htmlparser.isWhitespace( chr ) ){
-                                phase = 1;
-                            } else if( chr === '>' ){
-                                phase = 2;
+                                phase = 1, tagEndIndex = i;
+                                break;
                             };
-                            if( phase ){
-                                tagName = unpersedHTML.substring( 2, i );
-                            };
-                            break;
                         case 1 : // タグの終了を待つ
                             if( chr === '>' ){
-                                phase = 2;
+                                phase = 2, tagEndIndex = i;
                             };
                             break;
                     };
                 };
                 if( phase === 2 ){
+                    tagName      = unpersedHTML.substring( 2, tagEndIndex );
                     unpersedHTML = unpersedHTML.substr( i );
                     tagName      = /** @type {string} */ (tagName);
                     if( isXMLInHTML || htmlparser.isNamespacedTag( tagName ) ){
@@ -435,9 +431,11 @@ goog.scope(
              * @return {boolean | void} true:stopped or error */
             function parseStartTag( stack ){
                 /**
-                 * @param {string} name 
-                 * @param {(string | boolean)} value */
-                function saveAttr( name, value ){
+                 * @param {number=} attrValEndIndexOrVoid */
+                function saveAttr( attrValEndIndexOrVoid ){
+                    var name  = unpersedHTML.substring( attrNameStartIndex, attrNameEndIndex );
+                    var value = attrValEndIndexOrVoid != null ? unpersedHTML.substring( attrValStartIndex, attrValEndIndexOrVoid ) : true;
+
                     attrs[ name ] = value === true
                                       ? ( isXMLInHTML
                                             ? name
@@ -466,75 +464,73 @@ goog.scope(
                     attrs    = {},
                     numAttrs = 0,
                     empty    = false,
-                    chr, tagName, start, attrName, quot, escape, isXMLOrVML, tagUpper, lastXMLInHTML;
+                    chr, tagEndIndex, attrNameStartIndex, attrNameEndIndex, attrValStartIndex,
+                    tagName, quot, escape, isXMLOrVML, tagUpper, lastXMLInHTML;
 
                 for( ; i < l && phase < 9; ++i ){
                     chr = unpersedHTML.charAt( i );
                     switch( phase ){
                         case 1 : // タグ名の終わりの空白文字を待つ
                             if( htmlparser.isWhitespace( chr ) ){
-                                phase = 2, tagName = unpersedHTML.substring( 1, i );
+                                phase = 2, tagEndIndex = i;
                             } else if( chr === '>' ){
-                                phase = 9, tagName = unpersedHTML.substring( 1, i );
+                                phase = 9, tagEndIndex = i;
                             } else if( isEmpty() ){
-                                phase = 9, tagName = unpersedHTML.substring( 1, i - 1 );
+                                phase = 9, tagEndIndex = i - 1;
                             };
                             break;
                         case 2 : // 属性名の開始を待つ
                             if( chr === '>' || isEmpty() ){
                                 phase = 9;
                             } else if( !htmlparser.isWhitespace( chr ) ){
-                                phase = 3, start = i;
+                                phase = 3, attrNameStartIndex = i;
                             };
                             break;
                         case 3 : // 属性名の終わりを待つ
                             if( chr === '=' ){
-                                phase = 5, attrName = unpersedHTML.substring( start, i );
+                                phase = 5, attrNameEndIndex = i;
                             } else if( htmlparser.isWhitespace( chr ) ){
-                                phase = 4, attrName = unpersedHTML.substring( start, i );
+                                phase = 4, attrNameEndIndex = i;
                             } else if( chr === '>' ){
-                                phase = 9, saveAttr( unpersedHTML.substring( start, i ), true );
+                                phase = 9, attrNameEndIndex = i, saveAttr();
                             } else if( isEmpty() ){
-                                phase = 9, saveAttr( unpersedHTML.substring( start, i - 1 ), true );
+                                phase = 9, attrNameEndIndex = i - 1, saveAttr();
                             };
                             break;
                         case 4 : // 属性名に続くスペースの次に続くものは？
                             if( chr === '=' ){
                                 phase = 5;
-                            } else if( chr === '>' || isEmpty() ){
-                                phase = 9, saveAttr( /** @type {string} */ (attrName), true );
-                            } else if( !htmlparser.isWhitespace( chr ) ){
-                                phase = 3, saveAttr( /** @type {string} */ (attrName), true ), start = i; // <textarea readonly>
+                            } else if( chr === '>' || isEmpty() ){             // <textarea readonly>
+                                phase = 9, saveAttr();                         //                   ^
+                            } else if( !htmlparser.isWhitespace( chr ) ){      // <textarea readonly x
+                                phase = 3, saveAttr(), attrNameStartIndex = i; //                    ^
                             };
                             break;
                         case 5 : // 属性値の開始 quot を待つ
                             if( chr === '"' || chr === "'" ){
-                                phase = 6, quot = chr, start = i + 1;
+                                phase = 6, quot = chr, attrValStartIndex = i + 1;
                             } else if( !htmlparser.isWhitespace( chr ) ){
-                                phase = 7, start = i; // no quot
+                                phase = 7, attrValStartIndex = i; // no quote
                             };
                             escape = false;
                             break;
                         case 6 : //属性値の閉じ quot を待つ
                             if( !escape && chr === quot ){
-                                phase = 2, saveAttr( /** @type {string} */ (attrName), unpersedHTML.substring( start, i ) );
+                                phase = 2, saveAttr( i );
                             };
                             escape = chr === '\\' && !escape; // \\\\ is not escape for "
                             break;
                         case 7 : //閉じ quot のない属性の値
                             if( htmlparser.isWhitespace( chr ) ){
-                                phase = 2;
+                                phase = 2, saveAttr( i );
                             } else if( chr === '>' ){
-                                phase = 9;
-                            };
-                            if( phase !== 7 ){
-                                saveAttr( /** @type {string} */ (attrName), unpersedHTML.substring( start, i ) );
+                                phase = 9, saveAttr( i );
                             };
                             break;
                     };
                 };
                 if( phase === 9 ){
-                    tagName = /** @type {string} */ (tagName);
+                    tagName = unpersedHTML.substring( 1, tagEndIndex );
 
                     if( htmlparser.DEFINE.USE_XML_IN_HTML && !( lastXMLInHTML = isXMLInHTML ) ){
                         isXMLInHTML = htmlparser.isXMLRootElement( tagName );
