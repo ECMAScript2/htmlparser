@@ -431,18 +431,29 @@ goog.scope(
              * @return {boolean | void} true:stopped or error */
             function parseStartTag( stack ){
                 /**
+                 * @param {number} tagEndIndex */
+                function saveTagName( tagEndIndex ){
+                    tagName = unpersedHTML.substring( 1, tagEndIndex );
+
+                    if( htmlparser.DEFINE.USE_XML_IN_HTML && !lastXMLInHTML ){
+                        isXMLInHTML = htmlparser.isXMLRootElement( tagName );
+                    };
+
+                    isXMLOrVML = isXMLInHTML || htmlparser.isNamespacedTag( tagName );
+                };
+                /**
                  * @param {number=} attrValEndIndexOrVoid */
                 function saveAttr( attrValEndIndexOrVoid ){
                     var name  = unpersedHTML.substring( attrNameStartIndex, attrNameEndIndex );
                     var value = attrValEndIndexOrVoid != null ? unpersedHTML.substring( attrValStartIndex, attrValEndIndexOrVoid ) : true;
 
                     attrs[ name ] = value === true
-                                      ? ( isXMLInHTML
+                                      ? ( isXHTMLDocument || isXMLOrVML
                                             ? name
                                             : value
                                         )
                                   : htmlparser.BOOLEAN_ATTRIBUTES[ name.toLowerCase() ]
-                                      ? ( isXMLInHTML
+                                      ? ( isXHTMLDocument || isXMLOrVML
                                             ? htmlparser.unescapeAttrValue( /** @type {string} */ (value) || name )
                                             : true
                                         )
@@ -458,25 +469,26 @@ goog.scope(
                     return empty;
                 };
 
-                var phase    = 1,
-                    l        = unpersedHTML.length,
-                    i        = 2,
-                    attrs    = {},
-                    numAttrs = 0,
-                    empty    = false,
-                    chr, tagEndIndex, attrNameStartIndex, attrNameEndIndex, attrValStartIndex,
-                    tagName, quot, escape, isXMLOrVML, tagUpper, lastXMLInHTML;
+                var phase         = 1,
+                    l             = unpersedHTML.length,
+                    i             = 2,
+                    attrs         = {},
+                    numAttrs      = 0,
+                    empty         = false,
+                    lastXMLInHTML = isXMLInHTML,
+                    chr, attrNameStartIndex, attrNameEndIndex, attrValStartIndex,
+                    tagName, quot, isEscaped, isXMLOrVML, tagUpper;
 
                 for( ; i < l && phase < 9; ++i ){
                     chr = unpersedHTML.charAt( i );
                     switch( phase ){
                         case 1 : // タグ名の終わりの空白文字を待つ
                             if( htmlparser.isWhitespace( chr ) ){
-                                phase = 2, tagEndIndex = i;
+                                phase = 2, saveTagName( i );
                             } else if( chr === '>' ){
-                                phase = 9, tagEndIndex = i;
+                                phase = 9, saveTagName( i );
                             } else if( isEmpty() ){
-                                phase = 9, tagEndIndex = i - 1;
+                                phase = 9, saveTagName( i - 1 );
                             };
                             break;
                         case 2 : // 属性名の開始を待つ
@@ -512,13 +524,13 @@ goog.scope(
                             } else if( !htmlparser.isWhitespace( chr ) ){
                                 phase = 7, attrValStartIndex = i; // no quote
                             };
-                            escape = false;
+                            isEscaped = false;
                             break;
                         case 6 : //属性値の閉じ quot を待つ
-                            if( !escape && chr === quot ){
+                            if( !isEscaped && chr === quot ){
                                 phase = 2, saveAttr( i );
                             };
-                            escape = chr === '\\' && !escape; // \\\\ is not escape for "
+                            isEscaped = chr === '\\' && !isEscaped; // \\\\ is not escape for "
                             break;
                         case 7 : //閉じ quot のない属性の値
                             if( htmlparser.isWhitespace( chr ) ){
@@ -530,14 +542,9 @@ goog.scope(
                     };
                 };
                 if( phase === 9 ){
-                    tagName = unpersedHTML.substring( 1, tagEndIndex );
+                    tagName = /** @type {string} */ (tagName);
 
-                    if( htmlparser.DEFINE.USE_XML_IN_HTML && !( lastXMLInHTML = isXMLInHTML ) ){
-                        isXMLInHTML = htmlparser.isXMLRootElement( tagName );
-                    };
-
-                    if( isXMLInHTML || htmlparser.isNamespacedTag( tagName ) ){
-                        isXMLOrVML = true;
+                    if( isXMLOrVML ){
                         if( !empty ){
                             saveLastTagName( tagName );
                         } else {

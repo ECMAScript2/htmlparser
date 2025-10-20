@@ -48,7 +48,7 @@ var handler =
 
             for( name in attrs ){
                 value = attrs[ name ];
-                handler._result += ' ' + name + ( value !== true ? '="' + htmlparser.escapeHTML( value ).split( '"' ).join( '\\"' ).split( '\\\\"' ).join( '\\"' ) + '"' : '="' + name + '"' );
+                handler._result += ' ' + name + ( value !== true ? '="' + htmlparser.escapeHTML( value ).split( '"' ).join( '\\"' ).split( '\\\\"' ).join( '\\"' ) + '"' : '' );
             };
             handler._result += ( empty ? '/' : '' ) + '>';
 

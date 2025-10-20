@@ -24,7 +24,7 @@ test('<data:a checked/>',
 <data:a checked/>
 `
             ),
-            [ 9, "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html>", [ 'data:a', { checked : true } ] ]
+            [ 9, "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html>", [ 'data:a', { checked : 'checked' } ] ]
         );
     }
 );
