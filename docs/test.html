@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<title>
+    URI Attribute value <&gt; Raw Text Elements
+</title>
+<style>
+a[title] {background : #fcf}
+pre, listing, xmp, plaintext {border : 2px solid #ccc}
+</style>
+<body>
+<nav><a href="https://github.com/">github</a> / <a href="https://github.com/ECMAScript2/htmlparser">ES2 HTML Parser</a> / <a href="./">Blogger Templete Cleaner</a> | Test: URI Attribute value & Raw Text Elements</nav>
+
+<h1>Test: URI Attribute value & Raw Text Elements</h1>
+
+<h2>1. URI Attribute value</h2>
+
+<h3>Unquoted attribute value syntax + URI</h3>
+
+<a title=http://example.com/>&lt;a title=http://example.com/&gt;</a>
+
+<h2>2. Raw Text Elements and Escapable Raw Text Elements</h2>
+
+<table cellspacing="0" border="1">
+<thead>
+<tr><th><th>Escapable<th>Raw Text Elements<th>Newlines ignored
+<tbody>
+<tr><th>&lt;title&gt;<th>✓<th>✓<th>start and end
+<tr><th>&lt;pre&gt;<th>✓<th><th>start and end
+<tr><th>&lt;listing&gt;<th>✓<th><th>start and end
+<tr><th>&lt;textarea&gt;<th>✓<th>✓<th>start
+<tr><th>&lt;xmp&gt;<th><th>✓<th>end
+<tr><th>&lt;plaintext&gt;<th><th>✓<th>end
+</table>
+
+<h3>2.1. &lt;pre&gt;, &lt;listing&gt;</h3>
+
+<p>Newlines at the beginning and end of the content are treated like optional newline, and ignored.
+
+<pre>
+    This is &lt;pre&gt;.
+    This is &lt;pre&gt;.
+</pre>
+
+<listing>
+    <b>This</b> is &lt;listing&gt;.
+    <b>This</b> is &lt;listing&gt;.
+</listing>
+
+<h3>2.2. &lt;textarea&gt;</h3>
+
+<p>The leading newline in the contents would be treated like the optional newline, and ignored.
+
+<p>@see <a href="https://html.spec.whatwg.org/multipage/syntax.html#element-restrictions">13.1.2.5 Restrictions on content models</a></p>
+
+<textarea>
+    This is <textarea>. This is &lt;textarea&gt;.
+</textarea>
+
+<h3>2.3. &lt;xmp&gt;, &lt;plaintext&gt;</h3>
+
+<p>Newlines at the end are ignored
+
+<xmp>
+    <b>This</b> is <xmp>. This is &lt;xmp&gt;.
+</xmp>
+
+<plaintext>
+    <b>This</b> is <plaintext>. This is &lt;plaintext&gt;.
+</body>
+</html>

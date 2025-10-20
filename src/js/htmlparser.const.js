@@ -75,30 +75,23 @@ htmlparser.NON_TEXT_CHILD_ELEMENTS =
  * 
  * @see https://html.spec.whatwg.org/multipage/syntax.html#escapable-raw-text-elements
  *   Escapable raw text elements
- *     textarea, title, listing
+ *     textarea, title
  * 
  * @const {!Object.<string, boolean>} */
 htmlparser.RAW_TEXT_ELEMENTS =
     htmlparser.DEFINE.USE_TRADITIONAL_TAGS
     ? {
-          SCRIPT  : true, STYLE     : true, TEXTAREA : true, TITLE : true,
+          SCRIPT    : true, STYLE : true, TEXTAREA : true, TITLE : true,
           // legacy
-          LISTING : true, PLAINTEXT : true, XMP      : true
+          PLAINTEXT : true, XMP   : true
       }
     : {
-          SCRIPT  : true, STYLE     : true, TEXTAREA : true, TITLE : true
+          SCRIPT    : true, STYLE : true, TEXTAREA : true, TITLE : true
       };
 
 /**
  * @const {!Object.<string, boolean>} */
-htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS =
-    htmlparser.DEFINE.USE_TRADITIONAL_TAGS
-    ? {
-          TEXTAREA : true, TITLE : true, LISTING : true
-      }
-    : {
-          TEXTAREA : true, TITLE : true
-      };
+htmlparser.ESCAPABLE_RAW_TEXT_ELEMENTS = { TEXTAREA : true, TITLE : true };
 
 /**
  * @see https://html.spec.whatwg.org/multipage/syntax.html#optional-tags
