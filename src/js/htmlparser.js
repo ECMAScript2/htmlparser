@@ -432,7 +432,7 @@ goog.scope(
             function parseStartTag( stack ){
                 /**
                  * @param {number} tagEndIndex */
-                function saveTagName( tagEndIndex ){
+                function saveTag( tagEndIndex ){
                     tagName = unparsedHTML.substring( 1, tagEndIndex );
 
                     if( htmlparser.DEFINE.USE_XML_IN_HTML && !lastXMLInHTML ){
@@ -484,11 +484,11 @@ goog.scope(
                     switch( phase ){
                         case 1 : // タグ名の終わりの空白文字を待つ
                             if( htmlparser.isWhitespace( chr ) ){
-                                phase = 2, saveTagName( i );
+                                phase = 2, saveTag( i );
                             } else if( chr === '>' ){
-                                phase = 9, saveTagName( i );
+                                phase = 9, saveTag( i );
                             } else if( isEmpty() ){
-                                phase = 9, saveTagName( i - 1 );
+                                phase = 9, saveTag( i - 1 );
                             };
                             break;
                         case 2 : // 属性名の開始を待つ
@@ -548,7 +548,6 @@ goog.scope(
                         if( !empty ){
                             saveLastTagName( tagName );
                         } else {
-                            /** @suppress {checkTypes} */
                             isXMLInHTML = lastXMLInHTML;
                         };
                     } else {
