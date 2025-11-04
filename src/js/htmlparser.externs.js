@@ -13,43 +13,57 @@ var __avoidRenamingTagNamesAndAttributes__ = [
         xml : true, svg : true, math : true
     },
     {
-          AREA     : true, BASE    : true, COL     : true, EMBED : true, BR      : true,
-          HR       : true, IMG     : true, INPUT   : true, LINK  : true, META    : true,
-          SOURCE   : true, TRACK   : true, WBR     : true,
-          BASEFONT : true, BGSOUND : true, COMMAND : true, FRAME : true, ISINDEX : true,
-          KEYGEN   : true, PARAM   : true, SPACER  : true
+          area     : true, base    : true, col     : true, embed : true, br      : true,
+          hr       : true, img     : true, input   : true, link  : true, meta    : true,
+          source   : true, track   : true, wbr     : true,
+          basefont : true, bgsound : true, command : true, frame : true, isindex : true,
+          keygen   : true, param   : true, spacer  : true
     },
     {
-        MAP      : true, DATALIST : true, DL    : true, OL    : true, UL    : true,
-        SELECT   : true, OPTGROUP : true, TABLE : true, THEAD : true, TFOOT : true,
-        TBODY    : true, COLGROUP : true, TR    : true, HEAD  : true,
-        DIR      : true, FRAMESET : true, MENU  : true
+          map      : true, datalist : true, dl    : true, ol    : true, ul    : true,
+          select   : true, optgroup : true, table : true, thead : true, tfoot : true,
+          tbody    : true, colgroup : true, tr    : true, // head  : true,
+          dir      : true, frameset : true, menu  : true
     },
     {
-        SCRIPT  : true, STYLE     : true, TEXTAREA : true, TITLE : true,
-        LISTING : true, PLAINTEXT : true, XMP      : true
+          script    : true, style : true, textarea : true, title : true,
+          plaintext : true, xmp   : true
     },
     {
-        CAPTION  : {ARTICLE:!0,SECTION:!0,NAV:!0,ASIDE:!0,H1:!0,H2:!0,H3:!0,H4:!0,H5:!0,H6:!0,HEADER:!0,FOOTER:!0,ADDRESS:!0,P:!0,HR:!0,PRE:!0,BLOCKQUOTE:!0,OL:!0,UL:!0,DL:!0,FIGURE:!0,DIV:!0,A:!0,EM:!0,STRONG:!0,SMALL:!0,S:!0,CITE:!0,Q:!0,DFN:!0,ABBR:!0,DATA:!0,TIME:!0,CODE:!0,VAR:!0,SAMP:!0,KBD:!0,SUB:!0,SUP:!0,I:!0,B:!0,U:!0,MARK:!0,RUBY:!0,BDI:!0,BDO:!0,SPAN:!0,BR:!0,WBR:!0,INS:!0,DEL:!0,PICTURE:!0,IMG:!0,IFRAME:!0,EMBED:!0,OBJECT:!0,VIDEO:!0,AUDIO:!0,MAP:!0,AREA:!0,math:!0,svg:!0,         FORM:!0,LABEL:!0,INPUT:!0,BUTTON:!0,SELECT:!0,DATALIST:!0,TEXTAREA:!0,KEYGEN:!0,OUTPUT:!0,PROGRESS:!0,METER:!0,FIELDSET:!0,DETAILS:!0,DIALOG:!0,SCRIPT:!0,NOSCRIPT:!0,TEMPLATE:!0,CANVAS:!0},
-        DD       : {ARTICLE:!0,SECTION:!0,NAV:!0,ASIDE:!0,H1:!0,H2:!0,H3:!0,H4:!0,H5:!0,H6:!0,HEADER:!0,FOOTER:!0,ADDRESS:!0,P:!0,HR:!0,PRE:!0,BLOCKQUOTE:!0,OL:!0,UL:!0,DL:!0,FIGURE:!0,DIV:!0,A:!0,EM:!0,STRONG:!0,SMALL:!0,S:!0,CITE:!0,Q:!0,DFN:!0,ABBR:!0,DATA:!0,TIME:!0,CODE:!0,VAR:!0,SAMP:!0,KBD:!0,SUB:!0,SUP:!0,I:!0,B:!0,U:!0,MARK:!0,RUBY:!0,BDI:!0,BDO:!0,SPAN:!0,BR:!0,WBR:!0,INS:!0,DEL:!0,PICTURE:!0,IMG:!0,IFRAME:!0,EMBED:!0,OBJECT:!0,VIDEO:!0,AUDIO:!0,MAP:!0,AREA:!0,math:!0,svg:!0,TABLE:!0,FORM:!0,LABEL:!0,INPUT:!0,BUTTON:!0,SELECT:!0,DATALIST:!0,TEXTAREA:!0,KEYGEN:!0,OUTPUT:!0,PROGRESS:!0,METER:!0,FIELDSET:!0,DETAILS:!0,DIALOG:!0,SCRIPT:!0,NOSCRIPT:!0,TEMPLATE:!0,CANVAS:!0},
-                // => LI, TD
-        DT       : {                                                                                              ADDRESS:!0,P:!0,HR:!0,PRE:!0,BLOCKQUOTE:!0,OL:!0,UL:!0,DL:!0,FIGURE:!0,DIV:!0,A:!0,EM:!0,STRONG:!0,SMALL:!0,S:!0,CITE:!0,Q:!0,DFN:!0,ABBR:!0,DATA:!0,TIME:!0,CODE:!0,VAR:!0,SAMP:!0,KBD:!0,SUB:!0,SUP:!0,I:!0,B:!0,U:!0,MARK:!0,RUBY:!0,BDI:!0,BDO:!0,SPAN:!0,BR:!0,WBR:!0,INS:!0,DEL:!0,PICTURE:!0,IMG:!0,IFRAME:!0,EMBED:!0,OBJECT:!0,VIDEO:!0,AUDIO:!0,MAP:!0,AREA:!0,math:!0,svg:!0,TABLE:!0,FORM:!0,LABEL:!0,INPUT:!0,BUTTON:!0,SELECT:!0,DATALIST:!0,TEXTAREA:!0,KEYGEN:!0,OUTPUT:!0,PROGRESS:!0,METER:!0,FIELDSET:!0,DETAILS:!0,DIALOG:!0,SCRIPT:!0,NOSCRIPT:!0,TEMPLATE:!0,CANVAS:!0},
-                // => TH
-        P        : {                                                                                                                                                                            A:!0,EM:!0,STRONG:!0,SMALL:!0,S:!0,CITE:!0,Q:!0,DFN:!0,ABBR:!0,DATA:!0,TIME:!0,CODE:!0,VAR:!0,SAMP:!0,KBD:!0,SUB:!0,SUP:!0,I:!0,B:!0,U:!0,MARK:!0,RUBY:!0,BDI:!0,BDO:!0,SPAN:!0,BR:!0,WBR:!0,INS:!0,DEL:!0,PICTURE:!0,IMG:!0,IFRAME:!0,EMBED:!0,OBJECT:!0,VIDEO:!0,AUDIO:!0,MAP:!0,AREA:!0,math:!0,svg:!0,                 LABEL:!0,INPUT:!0,BUTTON:!0,SELECT:!0,DATALIST:!0,TEXTAREA:!0,KEYGEN:!0,OUTPUT:!0,PROGRESS:!0,METER:!0,                                 SCRIPT:!0,NOSCRIPT:!0,TEMPLATE:!0,CANVAS:!0},
-                // => RB, RP, RT 
-        HTML     : {HEAD:!0,BODY:!0,FRAMESET:!0},
-        HEAD     : {TITLE:!0,BASE:!0,BGSOUND:!0,LINK:!0,META:!0,STYLE:!0,SCRIPT:!0,NOSCRIPT:!0,TEMPLATE:!0},
-        COLGROUP : {COL:!0},
-        OPTGROUP : {OPTION:!0},
-        OPTION   : {},
-        TBODY    : {TR:!0},            // => THEAD, TFOOT
-        TR       : {TH:!0,TD:!0},
-        RBC      : {RB:!0,RP:!0,RT:!0} // => RTC
+        caption  : true
+                    ? {article:!0,section:!0,nav:!0,aside:!0,h1:!0,h2:!0,h3:!0,h4:!0,h5:!0,h6:!0,header:!0,footer:!0,address:!0,p:!0,hr:!0,pre:!0,blockquote:!0,ol:!0,ul:!0,dl:!0,figure:!0,div:!0,a:!0,em:!0,strong:!0,small:!0,s:!0,cite:!0,q:!0,dfn:!0,abbr:!0,data:!0,time:!0,code:!0,'var':!0,samp:!0,kbd:!0,sub:!0,sup:!0,i:!0,b:!0,u:!0,mark:!0,ruby:!0,bdi:!0,bdo:!0,span:!0,br:!0,wbr:!0,ins:!0,del:!0,picture:!0,img:!0,iframe:!0,embed:!0,object:!0,video:!0,audio:!0,map:!0,area:!0,math:!0,svg:!0,         form:!0,label:!0,input:!0,button:!0,select:!0,datalist:!0,textarea:!0,keygen:!0,output:!0,progress:!0,meter:!0,fieldset:!0,details:!0,dialog:!0,script:!0,noscript:!0,template:!0,canvas:!0}
+                    : {article:!0,section:!0,nav:!0,aside:!0,h1:!0,h2:!0,h3:!0,h4:!0,h5:!0,h6:!0,header:!0,footer:!0,address:!0,p:!0,hr:!0,pre:!0,blockquote:!0,ol:!0,ul:!0,dl:!0,figure:!0,div:!0,a:!0,em:!0,strong:!0,small:!0,s:!0,cite:!0,q:!0,dfn:!0,abbr:!0,data:!0,time:!0,code:!0,'var':!0,samp:!0,kbd:!0,sub:!0,sup:!0,i:!0,b:!0,u:!0,mark:!0,ruby:!0,bdi:!0,bdo:!0,span:!0,br:!0,wbr:!0,ins:!0,del:!0,picture:!0,img:!0,iframe:!0,embed:!0,object:!0,video:!0,audio:!0,map:!0,area:!0,math:!0,svg:!0,         form:!0,label:!0,input:!0,button:!0,select:!0,datalist:!0,textarea:!0,          output:!0,progress:!0,meter:!0,fieldset:!0,details:!0,dialog:!0,script:!0,noscript:!0,template:!0,canvas:!0},
+        dd       : true
+                    ? {article:!0,section:!0,nav:!0,aside:!0,h1:!0,h2:!0,h3:!0,h4:!0,h5:!0,h6:!0,header:!0,footer:!0,address:!0,p:!0,hr:!0,pre:!0,blockquote:!0,ol:!0,ul:!0,dl:!0,figure:!0,div:!0,a:!0,em:!0,strong:!0,small:!0,s:!0,cite:!0,q:!0,dfn:!0,abbr:!0,data:!0,time:!0,code:!0,'var':!0,samp:!0,kbd:!0,sub:!0,sup:!0,i:!0,b:!0,u:!0,mark:!0,ruby:!0,bdi:!0,bdo:!0,span:!0,br:!0,wbr:!0,ins:!0,del:!0,picture:!0,img:!0,iframe:!0,embed:!0,object:!0,video:!0,audio:!0,map:!0,area:!0,math:!0,svg:!0,table:!0,form:!0,label:!0,input:!0,button:!0,select:!0,datalist:!0,textarea:!0,keygen:!0,output:!0,progress:!0,meter:!0,fieldset:!0,details:!0,dialog:!0,script:!0,noscript:!0,template:!0,canvas:!0}
+                    : {article:!0,section:!0,nav:!0,aside:!0,h1:!0,h2:!0,h3:!0,h4:!0,h5:!0,h6:!0,header:!0,footer:!0,address:!0,p:!0,hr:!0,pre:!0,blockquote:!0,ol:!0,ul:!0,dl:!0,figure:!0,div:!0,a:!0,em:!0,strong:!0,small:!0,s:!0,cite:!0,q:!0,dfn:!0,abbr:!0,data:!0,time:!0,code:!0,'var':!0,samp:!0,kbd:!0,sub:!0,sup:!0,i:!0,b:!0,u:!0,mark:!0,ruby:!0,bdi:!0,bdo:!0,span:!0,br:!0,wbr:!0,ins:!0,del:!0,picture:!0,img:!0,iframe:!0,embed:!0,object:!0,video:!0,audio:!0,map:!0,area:!0,math:!0,svg:!0,table:!0,form:!0,label:!0,input:!0,button:!0,select:!0,datalist:!0,textarea:!0,          output:!0,progress:!0,meter:!0,fieldset:!0,details:!0,dialog:!0,script:!0,noscript:!0,template:!0,canvas:!0},
+                // => li, td
+        dt       : true
+                    ? {                                                                                              address:!0,p:!0,hr:!0,pre:!0,blockquote:!0,ol:!0,ul:!0,dl:!0,figure:!0,div:!0,a:!0,em:!0,strong:!0,small:!0,s:!0,cite:!0,q:!0,dfn:!0,abbr:!0,data:!0,time:!0,code:!0,'var':!0,samp:!0,kbd:!0,sub:!0,sup:!0,i:!0,b:!0,u:!0,mark:!0,ruby:!0,bdi:!0,bdo:!0,span:!0,br:!0,wbr:!0,ins:!0,del:!0,picture:!0,img:!0,iframe:!0,embed:!0,object:!0,video:!0,audio:!0,map:!0,area:!0,math:!0,svg:!0,table:!0,form:!0,label:!0,input:!0,button:!0,select:!0,datalist:!0,textarea:!0,keygen:!0,output:!0,progress:!0,meter:!0,fieldset:!0,details:!0,dialog:!0,script:!0,noscript:!0,template:!0,canvas:!0}
+                    : {                                                                                              address:!0,p:!0,hr:!0,pre:!0,blockquote:!0,ol:!0,ul:!0,dl:!0,figure:!0,div:!0,a:!0,em:!0,strong:!0,small:!0,s:!0,cite:!0,q:!0,dfn:!0,abbr:!0,data:!0,time:!0,code:!0,'var':!0,samp:!0,kbd:!0,sub:!0,sup:!0,i:!0,b:!0,u:!0,mark:!0,ruby:!0,bdi:!0,bdo:!0,span:!0,br:!0,wbr:!0,ins:!0,del:!0,picture:!0,img:!0,iframe:!0,embed:!0,object:!0,video:!0,audio:!0,map:!0,area:!0,math:!0,svg:!0,table:!0,form:!0,label:!0,input:!0,button:!0,select:!0,datalist:!0,textarea:!0,          output:!0,progress:!0,meter:!0,fieldset:!0,details:!0,dialog:!0,script:!0,noscript:!0,template:!0,canvas:!0},
+                // => th
+        p        : true
+                    ? {                                                                                                                                                                            a:!0,em:!0,strong:!0,small:!0,s:!0,cite:!0,q:!0,dfn:!0,abbr:!0,data:!0,time:!0,code:!0,'var':!0,samp:!0,kbd:!0,sub:!0,sup:!0,i:!0,b:!0,u:!0,mark:!0,ruby:!0,bdi:!0,bdo:!0,span:!0,br:!0,wbr:!0,ins:!0,del:!0,picture:!0,img:!0,iframe:!0,embed:!0,object:!0,video:!0,audio:!0,map:!0,area:!0,math:!0,svg:!0,                 label:!0,input:!0,button:!0,select:!0,datalist:!0,textarea:!0,keygen:!0,output:!0,progress:!0,meter:!0,                                 script:!0,noscript:!0,template:!0,canvas:!0}
+                    : {                                                                                                                                                                            a:!0,em:!0,strong:!0,small:!0,s:!0,cite:!0,q:!0,dfn:!0,abbr:!0,data:!0,time:!0,code:!0,'var':!0,samp:!0,kbd:!0,sub:!0,sup:!0,i:!0,b:!0,u:!0,mark:!0,ruby:!0,bdi:!0,bdo:!0,span:!0,br:!0,wbr:!0,ins:!0,del:!0,picture:!0,img:!0,iframe:!0,embed:!0,object:!0,video:!0,audio:!0,map:!0,area:!0,math:!0,svg:!0,                 label:!0,input:!0,button:!0,select:!0,datalist:!0,textarea:!0,          output:!0,progress:!0,meter:!0,                                 script:!0,noscript:!0,template:!0,canvas:!0},
+                // => rb, rp, rt 
+        html     : true
+                    ? {head:!0,body:!0,frameset:!0}
+                    : {head:!0,body:!0},
+        head     : true
+                    ? {title:!0,base:!0,link:!0,meta:!0,style:!0,script:!0,noscript:!0,template:!0,bgsound:!0,isindex:!0}
+                    : {title:!0,base:!0,link:!0,meta:!0,style:!0,script:!0,noscript:!0,template:!0},
+        colgroup : {col:!0},
+        optgroup : {option:!0},
+        option   : {},
+        tbody    : {tr:!0}, // => thead, tfoot
+        tr       : {th:!0,td:!0}
     }
 ];
 
-__avoidRenamingTagNamesAndAttributes__.LI    = __avoidRenamingTagNamesAndAttributes__.TD    = __avoidRenamingTagNamesAndAttributes__.DD;
-__avoidRenamingTagNamesAndAttributes__.TH    = __avoidRenamingTagNamesAndAttributes__.DT;
-__avoidRenamingTagNamesAndAttributes__.RB    = __avoidRenamingTagNamesAndAttributes__.RP    = __avoidRenamingTagNamesAndAttributes__.RT = __avoidRenamingTagNamesAndAttributes__.P;
-__avoidRenamingTagNamesAndAttributes__.TFOOT = __avoidRenamingTagNamesAndAttributes__.THEAD = __avoidRenamingTagNamesAndAttributes__.TBODY;
-__avoidRenamingTagNamesAndAttributes__.RTC   = __avoidRenamingTagNamesAndAttributes__.RBC;
+__avoidRenamingTagNamesAndAttributes__.li = __avoidRenamingTagNamesAndAttributes__.td = __avoidRenamingTagNamesAndAttributes__.dd;
+__avoidRenamingTagNamesAndAttributes__.th = __avoidRenamingTagNamesAndAttributes__.dt;
+__avoidRenamingTagNamesAndAttributes__.rp = __avoidRenamingTagNamesAndAttributes__.rt = __avoidRenamingTagNamesAndAttributes__.p;
+
+    __avoidRenamingTagNamesAndAttributes__.rb = __avoidRenamingTagNamesAndAttributes__.rp;
+    __avoidRenamingTagNamesAndAttributes__.rtc = __avoidRenamingTagNamesAndAttributes__.rbc = {rb:!0,rp:!0,rt:!0};
+
+__avoidRenamingTagNamesAndAttributes__.tfoot = __avoidRenamingTagNamesAndAttributes__.thead = __avoidRenamingTagNamesAndAttributes__.tbody;

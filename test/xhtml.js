@@ -24,7 +24,7 @@ test('<data:a checked/>',
 <data:a checked/>
 `
             ),
-            [ 9, "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html>", [ 'data:a', { checked : 'checked' } ] ]
+            [ 9, "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html>", [ 'data:a', { checked : true } ] ]
         );
     }
 );
@@ -42,7 +42,7 @@ test('RawTextElement under Namespaced Element',
     }
 );
 
-test('Blogger templete',
+test('Blogger template',
     (t) => {
         t.deepEqual(
             parser(

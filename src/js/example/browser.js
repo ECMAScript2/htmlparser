@@ -30,7 +30,7 @@ window.onload = function(){
                 handler._startTime = + new Date;
 
                 if( isIE5 ){
-                    exec( args[ 0 ], args[ 1 ], args[ 2 ], args[ 3 ], args[ 4 ], args[ 5 ], args[ 6 ] );
+                    exec( args[ 0 ], args[ 1 ], args[ 2 ], args[ 3 ], args[ 4 ] );
                 } else {
                     exec.apply( null, args );
                 };

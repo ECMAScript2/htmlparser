@@ -12,7 +12,7 @@ const pkg             = require('../package.json'),
 
 let minify       = false;
 let fileName     = 'htmlparser.js';
-let outputDir    = '../dist';
+let outputDir    = './dist';
 let formatting   = 'PRETTY_PRINT';
 
 module.exports = series(
@@ -28,7 +28,6 @@ module.exports = series(
                         compilation_level : 'ADVANCED',
                         define            : [
                             'htmlparser.DEFINE.USE_XHTML='                  + true,
-                            'htmlparser.DEFINE.USE_XML_IN_HTML='            + true,
                             'htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE='     + true,
                             'htmlparser.DEFINE.USE_CDATA_SECTION='          + true,
                             'htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION=' + true,
@@ -58,10 +57,10 @@ module.exports = series(
                         compilation_level : 'ADVANCED',
                         define            : [
                             'htmlparser.DEFINE.USE_XHTML='                  + true,
-                            'htmlparser.DEFINE.USE_XML_IN_HTML='            + true,
                             'htmlparser.DEFINE.USE_DOCUMENT_TYPE_NODE='     + true,
                             'htmlparser.DEFINE.USE_CDATA_SECTION='          + true,
                             'htmlparser.DEFINE.USE_PROCESSING_INSTRUCTION=' + true,
+                            'htmlparser.DEFINE.USE_TRADITIONAL_TAGS='       + false,
                             'htmlparser.DEFINE.USE_PAUSE='                  + true
                         ],
                         warning_level     : 'VERBOSE',

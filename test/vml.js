@@ -7,9 +7,9 @@ test('VML',
             parser(
                 `<html xmlns:v="urn:schemas-microsoft-com:vml"><head><style>v:*{behavior:url(#default#VML)}</style><body><v:line from="0,100" to="300,100" strokecolor="black" />`
             ),
-            [ 11, [ 'HTML', { 'xmlns:v' : 'urn:schemas-microsoft-com:vml' },
-                [ 'HEAD', [ 'STYLE', 'v:*{behavior:url(#default#VML)}' ] ],
-                [ 'BODY', [ 'v:line', { from: '0,100', to: '300,100', strokecolor: 'black' } ] ]
+            [ 11, [ 'html', { 'xmlns:v' : 'urn:schemas-microsoft-com:vml' },
+                [ 'head', [ 'style', 'v:*{behavior:url(#default#VML)}' ] ],
+                [ 'body', [ 'v:line', { from: '0,100', to: '300,100', strokecolor: 'black' } ] ]
             ] ]
         );
     }
@@ -35,7 +35,7 @@ test('VML - textbox',
                 `<v:roundrect style="width:90; height:27;" fillcolor="#ffcccc"><v:textbox><a href="xxx.htm">Click me!!</a></v:textbox></v:roundrect>`
             ),
             [ 11, [ 'v:roundrect', { style : 'width:90; height:27;', fillcolor: '#ffcccc' },
-                [ 'v:textbox', [ 'A', { href: 'xxx.htm' }, 'Click me!!' ] ]
+                [ 'v:textbox', [ 'a', { href: 'xxx.htm' }, 'Click me!!' ] ]
             ] ]
         );
     }

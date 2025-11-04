@@ -7,7 +7,7 @@ test('</close>',
             parser(
                 '</close><p>Hello, world!'
             ),
-            [ 11, '</CLOSE>', [ 'P', 'Hello, world!' ] ]
+            [ 11, '</close>', [ 'p', 'Hello, world!' ] ]
         );
     }
 );
@@ -18,7 +18,7 @@ test('</void element>',
             parser(
                 '</img><p>Hello, world!'
             ),
-            [ 11, [ 'P', 'Hello, world!' ] ]
+            [ 11, [ 'p', 'Hello, world!' ] ]
         );
     }
 );

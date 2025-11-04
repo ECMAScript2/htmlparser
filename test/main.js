@@ -8,7 +8,7 @@ test('Template content',
             parser(
                 '<body><template>Some <div>content</div></template></body>'
             ),
-            [ 11, [ 'BODY', [ 'TEMPLATE', 'Some ', [ 'DIV', 'content' ] ] ] ]
+            [ 11, [ 'body', [ 'template', 'Some ', [ 'div', 'content' ] ] ] ]
         );
     }
 );
@@ -19,7 +19,7 @@ test('Attributes',
             parser(
                 '<head><meta http-equiv=\"refresh\" content=\"30\"></head><body><div style=\"background-color:red; padding: 0 25px 32px;\"></body>'
             ),
-            [ 11, [ 'HEAD', [ 'META', { 'http-equiv' : 'refresh', content : '30' } ] ], [ 'BODY', [ 'DIV', { style : 'background-color:red; padding: 0 25px 32px;' } ] ] ]
+            [ 11, [ 'head', [ 'meta', { 'http-equiv' : 'refresh', content : '30' } ] ], [ 'body', [ 'div', { style : 'background-color:red; padding: 0 25px 32px;' } ] ] ]
         );
     }
 );
@@ -41,7 +41,7 @@ test('Attribute serialized name - XLink namespace',
             parser(
                 '<div><svg xlink:title=\"Hey!\"></svg></div>'
             ),
-            [ 11, [ 'DIV', [ 'svg', { 'xlink:title' : 'Hey!' } ] ] ]
+            [ 11, [ 'div', [ 'svg', { 'xlink:title' : 'Hey!' } ] ] ]
         );
     }
 );
@@ -52,7 +52,7 @@ test('Attribute value escaping - &amp;',
             parser(
                 '<div data-foo=\"& 42 &\"></div>'
             ),
-            [ 11, [ 'DIV', { 'data-foo' : '& 42 &' } ] ]
+            [ 11, [ 'div', { 'data-foo' : '& 42 &' } ] ]
         );
     }
 );
@@ -63,7 +63,7 @@ test('Attribute value escaping - &nbsp;',
             parser(
                 '<div data-foo=\"\u00A0 bar\u00A0\"></div>'
             ),
-            [ 11, [ 'DIV', { 'data-foo' : '\u00A0 bar\u00A0' } ] ]
+            [ 11, [ 'div', { 'data-foo' : '\u00A0 bar\u00A0' } ] ]
         );
     }
 );
@@ -74,19 +74,19 @@ test('Attribute value escaping - quotes',
             parser(
                 "<div data-foo=\"&quot;\" id=test1\" class='test2\"'></div>"
             ),
-            [ 11, [ 'DIV', { 'data-foo' : '&quot;', id : 'test1"', class : 'test2"' } ] ]
+            [ 11, [ 'div', { 'data-foo' : '&quot;', id : 'test1"', class : 'test2"' } ] ]
         );
         t.deepEqual(
             parser(
                 "<div data-foo=\"'\"></div>"
             ),
-            [ 11, [ 'DIV', { 'data-foo' : "'" } ] ]
+            [ 11, [ 'div', { 'data-foo' : "'" } ] ]
         );
         t.deepEqual(
             parser(
                 "<div data-foo='\"'></div>"
             ),
-            [ 11, [ 'DIV', { 'data-foo' : '"' } ] ]
+            [ 11, [ 'div', { 'data-foo' : '"' } ] ]
         );
     }
 );
@@ -97,7 +97,7 @@ test('Attribute value escaping - < and >',
             parser(
                 "<div data-foo=\"<span>\"></div>"
             ),
-            [ 11, [ 'DIV', { 'data-foo' : '<span>' } ] ]
+            [ 11, [ 'div', { 'data-foo' : '<span>' } ] ]
         );
     }
 );
@@ -108,7 +108,7 @@ test('Attributes value escaping - other entities',
             parser(
                 "<div data-foo='&raquo;&phone;'>"
             ),
-            [ 11, [ 'DIV', { 'data-foo' : '&raquo;&phone;' } ] ]
+            [ 11, [ 'div', { 'data-foo' : '&raquo;&phone;' } ] ]
         );
     }
 );
@@ -119,7 +119,7 @@ test('Void elements',
             parser(
                 "<area><base><basefont><bgsound><br><embed><hr><img><input><keygen><link><meta><param><source><track><wbr>"
             ),
-            [ 11, [ 'AREA' ], [ 'BASE' ], [ 'BASEFONT' ], [ 'BGSOUND' ], [ 'BR' ], [ 'EMBED' ], [ 'HR' ], [ 'IMG' ], [ 'INPUT' ], [ 'KEYGEN' ], [ 'LINK' ], [ 'META' ], [ 'PARAM' ], [ 'SOURCE' ], [ 'TRACK' ], [ 'WBR' ] ]
+            [ 11, [ 'area' ], [ 'base' ], [ 'basefont' ], [ 'bgsound' ], [ 'br' ], [ 'embed' ], [ 'hr' ], [ 'img' ], [ 'input' ], [ 'keygen' ], [ 'link' ], [ 'meta' ], [ 'param' ], [ 'source' ], [ 'track' ], [ 'wbr' ] ]
         );
     }
 );
@@ -130,7 +130,7 @@ test('Void elements - <col>',
             parser(
                 "<table><col></table>"
             ),
-            [ 11, [ 'TABLE', [ 'COL' ] ] ]
+            [ 11, [ 'table', [ 'col' ] ] ]
         );
     }
 );
@@ -141,7 +141,7 @@ test('Void elements - <frame>',
             parser(
                 "<frameset><frame></frameset>"
             ),
-            [ 11, [ 'FRAMESET', [ 'FRAME' ] ] ]
+            [ 11, [ 'frameset', [ 'frame' ] ] ]
         );
     }
 );
@@ -152,7 +152,7 @@ test('Text nodes',
             parser(
                 "<title>foo</title><body>foo<div>bar</div>baz</body>"
             ),
-            [ 11, [ 'TITLE', 'foo' ], [ 'BODY', 'foo', [ 'DIV', 'bar' ], 'baz' ] ]
+            [ 11, [ 'title', 'foo' ], [ 'body', 'foo', [ 'div', 'bar' ], 'baz' ] ]
         );
     }
 );
@@ -163,7 +163,7 @@ test('Text nodes escaping - &amp;',
             parser(
                 "<title>Mac&Cheese</title><div>&&&</div>"
             ),
-            [ 11, [ 'TITLE', 'Mac&Cheese' ], [ 'DIV', '&&&' ] ]
+            [ 11, [ 'title', 'Mac&Cheese' ], [ 'div', '&&&' ] ]
         );
     }
 );
@@ -174,7 +174,7 @@ test('Text nodes escaping - &nbsp;',
             parser(
                 "<title>\u00A0foo\u00A0bar\u00A0</title><div>\u00A0baz\u00A0</div>"
             ),
-            [ 11, [ 'TITLE', '\u00A0foo\u00A0bar\u00A0' ], [ 'DIV', '\u00A0baz\u00A0' ] ]
+            [ 11, [ 'title', '\u00A0foo\u00A0bar\u00A0' ], [ 'div', '\u00A0baz\u00A0' ] ]
         );
     }
 );
@@ -185,7 +185,7 @@ test('Text nodes escaping - < and >',
             parser(
                 "<title>< foo ></title><div>> bar <</div>"
             ),
-            [ 11, [ 'TITLE', '< foo >' ], [ 'DIV', '> bar <' ] ]
+            [ 11, [ 'title', '< foo >' ], [ 'div', '> bar <' ] ]
         );
     }
 );
@@ -196,7 +196,7 @@ test('Text nodes escaping - quotes',
             parser(
                 "<title>\"foo\"</title><div>\"bar\"</div>"
             ),
-            [ 11, [ 'TITLE', '"foo"' ], [ 'DIV', '"bar"' ] ]
+            [ 11, [ 'title', '"foo"' ], [ 'div', '"bar"' ] ]
         );
     }
 );
@@ -207,7 +207,7 @@ test('Text nodes escaping - non-escapable tags',
             parser(
                 "<body><style>&\u00A0><</style><script>&\u00A0><</script><xmp>&\u00A0><</xmp><iframe>&\u00A0><</iframe><noembed>&\u00A0><</noembed><noframes>&\u00A0><</noframes><plaintext>&\u00A0><"
             ),
-            [ 11, [ 'BODY', [ 'STYLE', '&\u00A0><' ], [ 'SCRIPT', '&\u00A0><' ], [ 'XMP', '&\u00A0><' ], [ 'IFRAME', '&\u00A0><' ], [ 'NOEMBED', '&\u00A0><' ], [ 'NOFRAMES', '&\u00A0><' ], [ 'PLAINTEXT', '&\u00A0><' ] ] ]
+            [ 11, [ 'body', [ 'style', '&\u00A0><' ], [ 'script', '&\u00A0><' ], [ 'xmp', '&\u00A0><' ], [ 'iframe', '&\u00A0><' ], [ 'noembed', '&\u00A0><' ], [ 'noframes', '&\u00A0><' ], [ 'plaintext', '&\u00A0><' ] ] ]
         );
     }
 );
@@ -218,7 +218,7 @@ test('Text nodes escaping - <noscript> with scripting enabled',
             parser(
                 "<body><noscript>& ><</noscript></body>"
             ),
-            [ 11, [ 'BODY', [ 'NOSCRIPT', '& ><' ] ] ]
+            [ 11, [ 'body', [ 'noscript', '& ><' ] ] ]
         );
     }
 );
@@ -229,7 +229,7 @@ test('Comment nodes',
             parser(
                 "<!-- Hey --><html><head></head><!-- &\u00A0>< --><body><!-- 42 --></body></html>"
             ),
-            [ 11, [ 8, ' Hey ' ], [ 'HTML', [ 'HEAD' ], [ 8, ' &\u00A0>< ' ], [ 'BODY', [ 8, ' 42 ' ] ] ] ]
+            [ 11, [ 8, ' Hey ' ], [ 'html', [ 'head' ], [ 8, ' &\u00A0>< ' ], [ 'body', [ 8, ' 42 ' ] ] ] ]
         );
     }
 );
@@ -297,7 +297,7 @@ test('Child nodes',
             parser(
                 "<span><a><b><c></c></b><d>e</d><f><g>h</g></f></a></span>"
             ),
-            [ 11, [ 'SPAN', [ 'A', [ 'B', [ 'C' ] ], [ 'D', 'e' ], [ 'F', [ 'G', 'h' ] ] ] ] ]
+            [ 11, [ 'span', [ 'a', [ 'b', [ 'c' ] ], [ 'd', 'e' ], [ 'f', [ 'g', 'h' ] ] ] ] ]
         );
     }
 );
@@ -308,7 +308,7 @@ test('<pre>, <textarea>, <listing> with initial LF (see: https://github.com/what
             parser(
                 "<pre>\n1</pre><pre>\n\n2</pre><textarea>\n3</textarea><textarea>\n\n4</textarea><listing>\n5</listing><listing>\n\n6</listing>"
             ),
-            [ 11, [ 'PRE', '\n1' ], [ 'PRE', '\n\n2' ], [ 'TEXTAREA', '\n3' ], [ 'TEXTAREA', '\n\n4' ], [ 'LISTING', '\n5' ], [ 'LISTING', '\n\n6' ] ]
+            [ 11, [ 'pre', '\n1' ], [ 'pre', '\n\n2' ], [ 'textarea', '\n3' ], [ 'textarea', '\n\n4' ], [ 'listing', '\n5' ], [ 'listing', '\n\n6' ] ]
         );
     }
 );
@@ -319,7 +319,7 @@ test('Mixed content (GH-333)',
             parser(
                 "<svg><span>&lt;</span></svg><style><</style><svg><script><</script></svg><script><</script>"
             ),
-            [ 11, [ 'svg', [ 'span', '<' ] ], [ 'STYLE', '<' ], [ 'svg', [ 'script', '<' ] ], [ 'SCRIPT', '<' ] ]
+            [ 11, [ 'svg', [ 'span', '<' ] ], [ 'style', '<' ], [ 'svg', [ 'script', '<' ] ], [ 'script', '<' ] ]
         );
     }
 );
@@ -330,7 +330,7 @@ test('<dl>',
             parser(
                 "<dl><dt>1<dd>2<dd>3</dl>"
             ),
-            [ 11, [ 'DL', [ 'DT', '1' ], [ 'DD', '2' ], [ 'DD', '3' ] ] ]
+            [ 11, [ 'dl', [ 'dt', '1' ], [ 'dd', '2' ], [ 'dd', '3' ] ] ]
         );
     }
 );
@@ -341,7 +341,7 @@ test('<li>',
             parser(
                 "<ol><li>1<li>2<li>3</ol>"
             ),
-            [ 11, [ 'OL', [ 'LI', '1' ], [ 'LI', '2' ], [ 'LI', '3' ] ] ]
+            [ 11, [ 'ol', [ 'li', '1' ], [ 'li', '2' ], [ 'li', '3' ] ] ]
         );
     }
 );
@@ -352,13 +352,13 @@ test('<p>',
             parser(
                 "<p>1<p>2<p>3"
             ),
-            [ 11, [ 'P', '1' ], [ 'P', '2' ], [ 'P', '3' ] ]
+            [ 11, [ 'p', '1' ], [ 'p', '2' ], [ 'p', '3' ] ]
         );
         t.deepEqual(
             parser(
                 '<p>Some <div>content</div>'
             ),
-            [ 11, [ 'P', 'Some ' ], [ 'DIV', 'content' ] ]
+            [ 11, [ 'p', 'Some ' ], [ 'div', 'content' ] ]
         );
     }
 );
@@ -369,25 +369,25 @@ test('<ruby>',
             parser(
                 "<ruby>漢<rp>(<rt>kan<rp>)</rp>字<rp>(<rt>ji<rp>)</ruby>"
             ),
-            [ 11, [ 'RUBY', '漢', [ 'RP', '(' ], [ 'RT', 'kan' ], [ 'RP', ')' ], '字', [ 'RP', '(' ], [ 'RT', 'ji' ], [ 'RP', ')' ] ] ]
+            [ 11, [ 'ruby', '漢', [ 'rp', '(' ], [ 'rt', 'kan' ], [ 'rp', ')' ], '字', [ 'rp', '(' ], [ 'rt', 'ji' ], [ 'rp', ')' ] ] ]
         );
         t.deepEqual(
             parser(
                 "<ruby><rb>漢<rp>(<rt>kan<rp>)<rb>字<rp>(<rt>ji<rp>)</ruby>"
             ),
-            [ 11, [ 'RUBY', [ 'RB', '漢' ], [ 'RP', '(' ], [ 'RT', 'kan' ], [ 'RP', ')' ], [ 'RB', '字' ], [ 'RP', '(' ], [ 'RT', 'ji' ], [ 'RP', ')' ] ] ]
+            [ 11, [ 'ruby', [ 'rb', '漢' ], [ 'rp', '(' ], [ 'rt', 'kan' ], [ 'rp', ')' ], [ 'rb', '字' ], [ 'rp', '(' ], [ 'rt', 'ji' ], [ 'rp', ')' ] ] ]
         );
         t.deepEqual(
             parser(
                 "<ruby><rbc><rb>馬<rp>(<rt>mǎ<rp>)<rb>來<rp>(<rt>lái<rp>)<rb>西<rp>(<rt>xī<rp>)<rb>亞<rp>(<rt>yà<rp>)<rtc><rp>(<rt>Malaysia<rp>)</ruby>"
             ),
-            [ 11, [ 'RUBY',
-                      [ 'RBC', [ 'RB', '馬' ], [ 'RP', '(' ], [ 'RT', 'mǎ' ], [ 'RP', ')' ], 
-                               [ 'RB', '來' ], [ 'RP', '(' ], [ 'RT', 'lái' ], [ 'RP', ')' ], 
-                               [ 'RB', '西' ], [ 'RP', '(' ], [ 'RT', 'xī'  ], [ 'RP', ')' ], 
-                               [ 'RB', '亞' ], [ 'RP', '(' ], [ 'RT', 'yà'  ], [ 'RP', ')' ]
+            [ 11, [ 'ruby',
+                      [ 'rbc', [ 'rb', '馬' ], [ 'rp', '(' ], [ 'rt', 'mǎ' ], [ 'rp', ')' ], 
+                               [ 'rb', '來' ], [ 'rp', '(' ], [ 'rt', 'lái' ], [ 'rp', ')' ], 
+                               [ 'rb', '西' ], [ 'rp', '(' ], [ 'rt', 'xī'  ], [ 'rp', ')' ], 
+                               [ 'rb', '亞' ], [ 'rp', '(' ], [ 'rt', 'yà'  ], [ 'rp', ')' ]
                       ],
-                      [ 'RTC', [ 'RP', '(' ], [ 'RT', 'Malaysia' ], [ 'RP', ')' ] ]
+                      [ 'rtc', [ 'rp', '(' ], [ 'rt', 'Malaysia' ], [ 'rp', ')' ] ]
                   ]
             ]
         );
@@ -400,19 +400,19 @@ test('<table>',
             parser(
                 "<table><tr><th>1<td>2<td>3<th>4</table>"
             ),
-            [ 11, [ 'TABLE', [ 'TR', [ 'TH', '1' ], [ 'TD', '2' ], [ 'TD', '3' ], [ 'TH', '4' ] ] ] ]
+            [ 11, [ 'table', [ 'tr', [ 'th', '1' ], [ 'td', '2' ], [ 'td', '3' ], [ 'th', '4' ] ] ] ]
         );
         t.deepEqual(
             parser(
                 "<table><caption>aaa<tr><th>1<td>2<td>3<th>4</table>"
             ),
-            [ 11, [ 'TABLE', [ 'CAPTION', 'aaa' ], [ 'TR', [ 'TH', '1' ], [ 'TD', '2' ], [ 'TD', '3' ], [ 'TH', '4' ] ] ] ]
+            [ 11, [ 'table', [ 'caption', 'aaa' ], [ 'tr', [ 'th', '1' ], [ 'td', '2' ], [ 'td', '3' ], [ 'th', '4' ] ] ] ]
         );
         t.deepEqual(
             parser(
                 "<table><thead><tr><th>1<td>2<td>3<th>4<tbody><tr><th>1<td>2<td>3<th>4<tr></table>"
             ),
-            [ 11, [ 'TABLE', [ 'THEAD', [ 'TR', [ 'TH', '1' ], [ 'TD', '2' ], [ 'TD', '3' ], [ 'TH', '4' ] ] ], [ 'TBODY', [ 'TR', [ 'TH', '1' ], [ 'TD', '2' ], [ 'TD', '3' ], [ 'TH', '4' ] ], [ 'TR' ] ] ] ]
+            [ 11, [ 'table', [ 'thead', [ 'tr', [ 'th', '1' ], [ 'td', '2' ], [ 'td', '3' ], [ 'th', '4' ] ] ], [ 'tbody', [ 'tr', [ 'th', '1' ], [ 'td', '2' ], [ 'td', '3' ], [ 'th', '4' ] ], [ 'tr' ] ] ] ]
         );
     }
 );
@@ -423,7 +423,7 @@ test('<html ⚡ amp>',
             parser(
                 '<html ⚡ amp>'
             ),
-            [ 11, [ 'HTML', { '⚡' : true, amp : true } ] ]
+            [ 11, [ 'html', { '⚡' : true, amp : true } ] ]
         );
     }
 );
@@ -434,7 +434,7 @@ test('/>',
             parser(
                 '<a href=//example.com/>example.com</a>'
             ),
-            [ 11, [ 'A', { 'href' : '//example.com/' }, 'example.com' ] ]
+            [ 11, [ 'a', { 'href' : '//example.com/' }, 'example.com' ] ]
         );
     }
 );
@@ -445,19 +445,19 @@ test('quotes',
             parser(
                 "<div data-foo='\\\"'></div>"
             ),
-            [ 11, [ 'DIV', { 'data-foo' : '"' } ] ]
+            [ 11, [ 'div', { 'data-foo' : '"' } ] ]
         );
         t.deepEqual(
             parser(
                 "<div data-foo='&quot;&apos;'></div>"
             ),
-            [ 11, [ 'DIV', { 'data-foo' : '&quot;&apos;' } ] ]
+            [ 11, [ 'div', { 'data-foo' : '&quot;&apos;' } ] ]
         );
         t.deepEqual(
             parser(
                 "<div data-foo=''></div>"
             ),
-            [ 11, [ 'DIV', { 'data-foo' : '' } ] ]
+            [ 11, [ 'div', { 'data-foo' : '' } ] ]
         );
     }
 );
@@ -468,7 +468,7 @@ test('0',
             parser(
                 '<a>0</a>'
             ),
-            [ 11, [ 'A', '0' ] ]
+            [ 11, [ 'a', '0' ] ]
         );
     }
 );
@@ -479,7 +479,7 @@ test('#1 RAW_TEXT_ELEMENTS can contain PROCESSING_INSTRUCTION',
             parser(
                 "<script>var time=<?now?>;</script>"
             ),
-            [ 11, [ 'SCRIPT', 'var time=', [ 7, 'now' ], ';' ] ]
+            [ 11, [ 'script', 'var time=', [ 7, 'now' ], ';' ] ]
         );
     }
 );
@@ -490,7 +490,7 @@ test('json',
             parser(
                 "<script>{ a:\"</span>\" }</script>"
             ),
-            [ 11, [ 'SCRIPT', '{ a:"</span>" }' ] ]
+            [ 11, [ 'script', '{ a:"</span>" }' ] ]
         );
     }
 );
