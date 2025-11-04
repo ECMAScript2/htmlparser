@@ -1,6 +1,6 @@
 {
   "name": "es2-html-parser",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "Compact JavaScript HTML parser. Regexp free.",
   "main": "dist/index.js",
   "scripts": {
