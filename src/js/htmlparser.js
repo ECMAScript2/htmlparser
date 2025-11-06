@@ -368,8 +368,11 @@ goog.scope(
                     };
                 };
                 if( phase === 2 ){
-                    tagName      = unparsedHTML.substring( 2, tagEndIndex ).toLowerCase();
+                    tagName      = unparsedHTML.substring( 2, tagEndIndex );
                     unparsedHTML = unparsedHTML.substr( i );
+                    if( !htmlparser.DEFINE.USE_XHTML || !htmlparser.isNamespacedTag( tagName ) ){
+                        tagName = tagName.toLowerCase();
+                    };
                     if( !htmlparser.VOID_ELEMENTS[ tagName ] ){
                         closeTag( stack, tagName, false );
                     };
@@ -419,12 +422,19 @@ goog.scope(
                 /**
                  * @param {number} tagEndIndex */
                 function saveTag( tagEndIndex ){
-                    tagName = unparsedHTML.substring( 1, tagEndIndex ).toLowerCase();
+                    tagName = unparsedHTML.substring( 1, tagEndIndex );
+                    if( !htmlparser.DEFINE.USE_XHTML || !htmlparser.isNamespacedTag( tagName ) ){
+                        tagName = tagName.toLowerCase();
+                    };
                 };
                 /**
                  * @param {number=} opt_attrValEndIndex */
                 function saveAttr( opt_attrValEndIndex ){
-                    var name  = unparsedHTML.substring( attrNameStartIndex, attrNameEndIndex ).toLowerCase();
+                    var name = unparsedHTML.substring( attrNameStartIndex, attrNameEndIndex );
+
+                    if( !htmlparser.DEFINE.USE_XHTML || !htmlparser.isNamespacedTag( tagName ) ){
+                        name = name.toLowerCase();
+                    };
 
                     attrs = attrs || {};
                     attrs[ name ] = opt_attrValEndIndex != null
