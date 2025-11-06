@@ -34,7 +34,7 @@ HTML document fragments written by web designers generally work correctly.
      * `isMissingStartTag` flag is true (`onParseEndTag`)
 3. `<html><head><body>` is not a supplement to create a complete HTML document like [parse5](https://www.npmjs.com/package/parse5).
 4. ⚠️ `<table><p>` and other invalid documents, the structure of the tree created from them differs from the specification.
-5. ⚠️ Do not remove newline characters in `<script>, <style>, <textarea>, <title>, <plaintext>, <xmp>, <listing>`.
+5. ⚠️ Do not remove newline characters in `<script>, <style>, <textarea>, <title>, <plaintext>, <xmp>, <listing>`. [Test page](https://ecmascript2.github.io/htmlparser/test.html)
 6. [RawTextElements](https://github.com/ECMAScript2/htmlparser/blob/8051886c29c94b23a2fa9ac2fc528c712349c5e9/src/js/htmlparser.const.js#L55)(`<script>, <style>, <textarea>, <title>, <plaintext>, <xmp>, <listing>`) can contain ProcessingInstruction. ([#1](https://github.com/ECMAScript2/htmlparser/issues/1))
 7. Pause parsing and Resume
 8. XHTML
