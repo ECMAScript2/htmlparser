@@ -13,7 +13,7 @@ Compact JavaScript HTML parser.
 
 1. Works in a wide range of environments (but is slow) because it does not use `RegExp`
 2. Written in Closure Script
-   * About 7KB including handler
+   * Now about 6KB (was ~7KB), including handler —([since version 2.0.0](https://github.com/ECMAScript2/htmlparser/issues/2))
 
 ## 2. Demo
 
