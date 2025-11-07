@@ -51,6 +51,17 @@ window.onload = function(){
         textlen.value = originalHTMLLength + ' => ' + html.length;
     };
 
+    h.onParseError = function( unparsedHTML ){
+        var html = unparsedHTML;
+
+        if( isIE5 ){
+            output.firstChild.data = html;
+        } else {
+            output.value = html;
+        };
+        textlen.value = 'PARSE ERROR!';
+    };
+
     form.onsubmit = function(e){
         if (e) e.preventDefault();
         if (typeof event != 'undefined') event.returnValue = false;

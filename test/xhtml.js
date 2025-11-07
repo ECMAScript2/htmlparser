@@ -51,6 +51,12 @@ test('Blogger template',
             ),
             [ 9, "<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html>", [ 'html', [ 'head', '<style> <!-- /*', [ 'b:skin', ' */' ], '<!-- ' ], ' --></head>', [ 'body' ] ] ]
         );
+        t.deepEqual(
+            parser(
+                `<title><data:CONFIG.ASSET_PATH /></title>`
+            ),
+            [ 11, [ 'title', [ 'data:CONFIG.ASSET_PATH' ] ] ]
+        );
     }
 );
 
