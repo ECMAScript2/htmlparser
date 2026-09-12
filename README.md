@@ -23,22 +23,23 @@ Compact JavaScript HTML parser.
 
 HTML document fragments written by web designers generally work correctly.
 
-1. The document tree can be constructed correctly even if the optional closing tag is omitted.
+1. XHTML is parsed in the same way as HTML.([#2](https://github.com/ECMAScript2/htmlparser/issues/2))
+2. The document tree can be constructed correctly even if the optional closing tag is omitted.
    * `caption,dd,li,td,dt,th,p,rb,rp,rt,html,head,colgroup,optgroup,option,tbody,thead,tfoot,tr,rbc,rtc`
-2. Broken document fragments in conditional comments can also be parsed.
+3. Broken document fragments in conditional comments can also be parsed.
    * `<!--[if IE 8]> </div><br clear=both><div> <![endif]-->`
      * Retrieve and parse the comment text [@see](https://github.com/itozyun/html.json/blob/a8b395e34676e0594fd9421f13bfe674997e544c/src/js/html2json/html2json.js#L240)
    * Element missing end tag
-     * An“auto-closing end tag”that is not present in the document, cannot omit the end tag, and is not closed by another starting tag is identified by the `isInvalidEndTagOmission` flag. (`onParseEndTag`)
+     * An“auto-closing end tag”that is not present in the document, cannot omit the end tag, and is not closed by another starting tag is identified by the `isInvalidEndTagOmission` flag. (`onParseEndTag` [@see](https://github.com/ECMAScript2/htmlparser/blob/cb1d79b9cccb3fe0337aa82172be8106873e468e/src/js/example/html2.json.handler.js#L50))
    * Element missing start tag
      * `isMissingStartTag` flag is true (`onParseEndTag`)
-3. `<html><head><body>` is not a supplement to create a complete HTML document like [parse5](https://www.npmjs.com/package/parse5).
-4. ⚠️ `<table><p>` and other invalid documents, the structure of the tree created from them differs from the specification.
-5. ⚠️ Do not remove newline characters in `<script>, <style>, <textarea>, <title>, <plaintext>, <xmp>, <listing>`. [Test page](https://ecmascript2.github.io/htmlparser/test.html)
-6. [RawTextElements](https://github.com/ECMAScript2/htmlparser/blob/8051886c29c94b23a2fa9ac2fc528c712349c5e9/src/js/htmlparser.const.js#L55)(`<script>, <style>, <textarea>, <title>, <plaintext>, <xmp>, <listing>`) can contain ProcessingInstruction. ([#1](https://github.com/ECMAScript2/htmlparser/issues/1))
-7. Pause parsing and Resume
-8. XHTML
-9. ⚠️ In a complete document, the `<body>` tag must not be omitted.
+4. `<html><head><body>` is not a supplement to create a complete HTML document like [parse5](https://www.npmjs.com/package/parse5).
+5. ⚠️ In a complete document, the `<body>` tag must not be omitted.
+6. ⚠️ `<table><p>` and other invalid documents, the structure of the tree created from them differs from the specification.
+7. ⚠️ Do not remove newline characters in `<script>, <style>, <textarea>, <title>, <plaintext>, <xmp>, <listing>`. [Test page](https://ecmascript2.github.io/htmlparser/test.html)
+8. [RawTextElements](https://github.com/ECMAScript2/htmlparser/blob/8051886c29c94b23a2fa9ac2fc528c712349c5e9/src/js/htmlparser.const.js#L55)(`<script>, <style>, <textarea>, <title>, <plaintext>, <xmp>, <listing>`) can contain ProcessingInstruction. ([#1](https://github.com/ECMAScript2/htmlparser/issues/1))
+9. For information on how to pause and resume, [please see here](https://github.com/ECMAScript2/htmlparser/blob/cb1d79b9cccb3fe0337aa82172be8106873e468e/src/js/example/browser.js#L28).
+10. For information on how to handle Blogger templates that contain tags within `<title>`, [please see here](https://github.com/ECMAScript2/htmlparser/blob/cb1d79b9cccb3fe0337aa82172be8106873e468e/src/js/example/handler.js#L83).
 
 ## 4. Development and test
 
@@ -67,4 +68,4 @@ See [test/*.js](./test/) for how to use the parser.
 
 [ES2 HTML Parser](https://github.com/ECMAScript2/es2-html-parser) is licensed under MIT license.
 
-(C) 2024-2025 [itozyun](https://github.com/itozyun)([blog](//outcloud.blogspot.com/))
+(C) 2024-2026 [itozyun](https://github.com/itozyun)([blog](//outcloud.blogspot.com/))
