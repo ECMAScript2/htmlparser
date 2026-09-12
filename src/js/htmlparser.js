@@ -355,14 +355,14 @@ goog.scope(
                 for( ; i < l && phase !== 2; ++i ){
                     chr = unparsedHTML.charAt( i );
                     switch( phase ){
-                        case 0 : // タグ名の終わりの空白文字を待つ
+                        case 0 : // タグ名の終わりの空白文字を待つ </a >
                             if( htmlparser.isWhitespace( chr ) ){
                                 phase = 1, tagEndIndex = i;
                                 break;
                             };
                         case 1 : // タグの終了を待つ
                             if( chr === '>' ){
-                                phase = 2, tagEndIndex = i;
+                                phase = 2, tagEndIndex = tagEndIndex || i;
                             };
                             break;
                     };
@@ -382,7 +382,6 @@ goog.scope(
                 };
             };
             /**
-             * If return true:Parsing Stop
              * @param {!Array.<string>} stack 
              * @param {string} tagName
              * @param {boolean} isClosingAutomatically */

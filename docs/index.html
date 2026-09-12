@@ -15,8 +15,8 @@
 <!--[if lt IE 5.5000]><script>window.__isIE5=true</script><![endif]-->
 <script>
 /* es2-html-parser@2.0.0
-(c) 2024-2025 itozyun <itozyun@gmail.com>(https://outcloud.blogspot.com/), MIT. */
-(function(E, F, C) {
+(c) 2024-2026 itozyun <itozyun@gmail.com>(https://outcloud.blogspot.com/), MIT. */
+(function(E, G, C) {
   function N(a) {
     return a.split("&lt;").join("<").split("&gt;").join(">").split("&amp;lt;").join("&lt;").split("&amp;gt;").join("&gt;");
   }
@@ -48,20 +48,20 @@
       c.ea && c.ea(q);
     }
     function D(q) {
-      for (var k = 0, v = a.length, n = 3, d, G; n < v && k !== 2; ++n) {
+      for (var k = 0, v = a.length, n = 3, d, F; n < v && k !== 2; ++n) {
         switch(d = a.charAt(n), k) {
           case 0:
             if (A[d] & 4) {
               k = 1;
-              G = n;
+              F = n;
               break;
             }
           case 1:
-            d === ">" && (k = 2, G = n);
+            d === ">" && (k = 2, F = F || n);
         }
       }
       if (k === 2) {
-        k = a.substring(2, G), a = a.substr(n), 0 < k.indexOf(":") || (k = k.toLowerCase()), W[k] || Q(q, k, !1);
+        k = a.substring(2, F), a = a.substr(n), 0 < k.indexOf(":") || (k = k.toLowerCase()), W[k] || Q(q, k, !1);
       } else {
         return w(a), !0;
       }
@@ -97,7 +97,7 @@
         (I = a.substr(h, 2) === "/>") && ++h;
         return I;
       }
-      for (var d = 1, G = a.length, h = 2, L = null, I = !1, l, R, H, T, x, X, M; h < G && d < 9; ++h) {
+      for (var d = 1, F = a.length, h = 2, L = null, I = !1, l, R, H, T, x, X, M; h < F && d < 9; ++h) {
         switch(l = a.charAt(h), d) {
           case 1:
             A[l] & 4 ? (d = 2, k(h)) : l === ">" ? (d = 9, k(h)) : n() && (d = 9, k(h - 1));
@@ -323,7 +323,7 @@
   }, fa:function() {
   }};
   E.onload = function() {
-    var a = !!E.__isIE5, c = E.input || F.all("input"), f = E.output || F.all("output"), u = E.form || F.all("form"), p = E.progress || F.all("progress"), y = E.textlen || F.all("textlen"), z;
+    var a = !!E.__isIE5, c = E.input || G.all("input"), f = E.output || G.all("output"), u = E.form || G.all("form"), p = E.progress || G.all("progress"), y = E.textlen || G.all("textlen"), z;
     a ? f.firstChild.data = "" : f.value = "";
     y.value = "";
     p.style.width = "0";

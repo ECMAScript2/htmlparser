@@ -473,6 +473,29 @@ test('0',
     }
 );
 
+test('</a >',
+    (t) => {
+        t.deepEqual(
+            parser(
+                '<a>0</a >'
+            ),
+            [ 11, [ 'a', '0' ] ]
+        );
+        t.deepEqual(
+            parser(
+                '<a>0</a href="../">'
+            ),
+            [ 11, [ 'a', '0' ] ]
+        );
+        t.deepEqual(
+            parser(
+                '<a>0</a href="../" -->'
+            ),
+            [ 11, [ 'a', '0' ] ]
+        );
+    }
+);
+
 test('#1 RAW_TEXT_ELEMENTS can contain PROCESSING_INSTRUCTION',
     (t) => {
         t.deepEqual(
