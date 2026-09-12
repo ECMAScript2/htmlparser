@@ -53,9 +53,9 @@ test('Blogger template',
         );
         t.deepEqual(
             parser(
-                `<title><data:CONFIG.ASSET_PATH /></title>`
+                `<tt><data:CONFIG.ASSET_PATH /></tt>`
             ),
-            [ 11, [ 'title', [ 'data:CONFIG.ASSET_PATH' ] ] ]
+            [ 11, [ 'tt', [ 'data:CONFIG.ASSET_PATH' ] ] ]
         );
     }
 );
