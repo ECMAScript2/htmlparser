@@ -123,7 +123,12 @@ module.exports = series(
 
                         const js = buffer.toString().split( '<?' ).join( '\\x3c?' );//.split( '>' ).join( '\\x3e' );
 
-                        fs.writeFile( 'docs/index.html', html.split( '<script></script>' ).join( '<script>' + js + '</script>' ), cb );
+                        fs.writeFile(
+                            'docs/index.html',
+                            html.split( '<script></script>' ).join( '<script>' + js + '</script>' )
+                                .split( '<year>' ).join( new Date().getFullYear() ),
+                            cb
+                        );
                     }
                 );
             }

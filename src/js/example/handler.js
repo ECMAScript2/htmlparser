@@ -16,14 +16,12 @@ var handler =
     {
         _result         : '',
 
-        _xmlDeclaration : '',
-
         _stack          : [],
 
         _startTime      : 0,
 
         _init : function( usePause ){
-            handler._result = handler._xmlDeclaration = '';
+            handler._result = '';
             handler._stack.length = 0;
             if( usePause ){
                 handler._startTime = + new Date;
@@ -35,8 +33,7 @@ var handler =
             handler._result = msg;
         },
         onParseDocType : function( doctype ){
-            handler._result = handler._xmlDeclaration + doctype;
-            handler._xmlDeclaration = '';
+            handler._result += doctype;
 
             if( handler._startTime ){
                 if( handler._startTime + 16 < + new Date ){
@@ -118,9 +115,8 @@ var handler =
             };
         },
         onParseProcessingInstruction : function( data ){
-            if( data.indexOf( 'xml ' ) === 0 ){
-                handler._xmlDeclaration = '<?' + data + '?>\n';
-            };
+            handler._result = '<?' + data + '?>\n';
+
             if( handler._startTime ){
                 if( handler._startTime + 16 < + new Date ){
                     return true;
