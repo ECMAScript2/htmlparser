@@ -117,8 +117,10 @@ htmlparser.escapeHTML = function ( str ){
  * @param {string} str 
  * @return {string} */
 htmlparser.unescapeAttrValue = function normalize( str ){
-    return htmlparser.unescapeHTML( str ).split( '\\"' ).join( '"' )
-                                         .split( "\\'" ).join( "'" );
+    return htmlparser.unescapeHTML( str ).split( '\\"'    ).join( '"' )
+                                         .split( "&quot;" ).join( '"' ) 
+                                         .split( "\\'"    ).join( "'" )
+                                         .split( "&apos;" ).join( "'" );
 };
 
 goog.scope(

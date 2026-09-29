@@ -48,7 +48,17 @@ var handler =
 
             for( name in attrs ){
                 value = attrs[ name ];
-                handler._result += ' ' + name + ( value !== true ? '="' + htmlparser.escapeHTML( value ).split( '"' ).join( '\\"' ).split( '\\\\"' ).join( '\\"' ) + '"' : '' );
+                handler._result += ' ' + name;
+                if( value !== true ){
+                    value = htmlparser.escapeHTML( value );
+                    if( value.indexOf( "'" ) === -1 ){
+                        handler._result += "='" + value + "'";
+                    } else if( value.indexOf( '"' ) === -1 ){
+                        handler._result += '="' + value + '"';
+                    } else {
+                        handler._result += '="' + value.split( '"' ).join( '&quot;' ) + '"';
+                    };
+                };
             };
             handler._result += ( empty ? '/' : '' ) + '>';
 

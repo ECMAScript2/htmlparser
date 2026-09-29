@@ -77,7 +77,7 @@ function R(a, z) {
       var O = a.substring(N, C);
       0 < r.indexOf(":") || (O = O.toLowerCase());
       G = G || {};
-      G[O] = F != null ? Q(a.substring(P, F)).split('\\"').join('"').split("\\'").join("'") : !0;
+      G[O] = F != null ? Q(a.substring(P, F)).split('\\"').join('"').split("&quot;").join('"').split("\\'").join("'").split("&apos;").join("'") : !0;
     }
     function k() {
       (D = a.substr(d, 2) === "/>") && ++d;
