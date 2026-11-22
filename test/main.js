@@ -449,6 +449,12 @@ test('quotes',
         );
         t.deepEqual(
             parser(
+                "<div data-foo='\"'></div>"
+            ),
+            [ 11, [ 'div', { 'data-foo' : '"' } ] ]
+        );
+        t.deepEqual(
+            parser(
                 "<div data-foo='&quot;&apos;'></div>"
             ),
             [ 11, [ 'div', { 'data-foo' : '"\'' } ] ]
@@ -458,6 +464,18 @@ test('quotes',
                 "<div data-foo=''></div>"
             ),
             [ 11, [ 'div', { 'data-foo' : '' } ] ]
+        );
+        t.deepEqual(
+            parser(
+                '<div quot=\\"></div>'
+            ),
+            [ 11, [ 'div', { 'quot' : '"' } ] ]
+        );
+        t.deepEqual(
+            parser(
+                '<div quot=\\\'></div>'
+            ),
+            [ 11, [ 'div', { 'quot' : "'" } ] ]
         );
     }
 );
