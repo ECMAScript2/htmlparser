@@ -1,6 +1,6 @@
-/* es2-html-parser@2.0.0
+/* es2-html-parser@2.1.0
 (c) 2024-2026 itozyun <itozyun@gmail.com>(https://outcloud.blogspot.com/), MIT. */
-var h = {area:!0, base:!0, col:!0, embed:!0, br:!0, hr:!0, img:!0, input:!0, link:!0, meta:!0, source:!0, track:!0, wbr:!0, basefont:!0, bgsound:!0, command:!0, frame:!0, isindex:!0, keygen:!0, param:!0, spacer:!0}, q = {map:!0, datalist:!0, dl:!0, ol:!0, ul:!0, select:!0, optgroup:!0, table:!0, thead:!0, tfoot:!0, tbody:!0, colgroup:!0, tr:!0, dir:!0, frameset:!0, menu:!0}, t = {script:!0, style:!0, textarea:!0, title:!0, plaintext:!0, xmp:!0}, y = {textarea:!0, title:!0}, J = {caption:{article:!0, 
+var k = {area:!0, base:!0, col:!0, embed:!0, br:!0, hr:!0, img:!0, input:!0, link:!0, meta:!0, source:!0, track:!0, wbr:!0, basefont:!0, bgsound:!0, command:!0, frame:!0, isindex:!0, keygen:!0, param:!0, spacer:!0}, q = {map:!0, datalist:!0, dl:!0, ol:!0, ul:!0, select:!0, optgroup:!0, table:!0, thead:!0, tfoot:!0, tbody:!0, colgroup:!0, tr:!0, dir:!0, frameset:!0, menu:!0}, t = {script:!0, style:!0, textarea:!0, title:!0, plaintext:!0, xmp:!0}, y = {textarea:!0, title:!0}, J = {caption:{article:!0, 
 section:!0, nav:!0, aside:!0, h1:!0, h2:!0, h3:!0, h4:!0, h5:!0, h6:!0, header:!0, footer:!0, address:!0, p:!0, hr:!0, pre:!0, blockquote:!0, ol:!0, ul:!0, dl:!0, figure:!0, div:!0, a:!0, em:!0, strong:!0, small:!0, s:!0, cite:!0, q:!0, dfn:!0, abbr:!0, data:!0, time:!0, code:!0, "var":!0, samp:!0, kbd:!0, sub:!0, sup:!0, i:!0, b:!0, u:!0, mark:!0, ruby:!0, bdi:!0, bdo:!0, span:!0, br:!0, wbr:!0, ins:!0, del:!0, picture:!0, img:!0, iframe:!0, embed:!0, object:!0, video:!0, audio:!0, map:!0, area:!0, 
 math:!0, svg:!0, form:!0, label:!0, input:!0, button:!0, select:!0, datalist:!0, textarea:!0, keygen:!0, output:!0, progress:!0, meter:!0, fieldset:!0, details:!0, dialog:!0, script:!0, noscript:!0, template:!0, canvas:!0}, dd:{article:!0, section:!0, nav:!0, aside:!0, h1:!0, h2:!0, h3:!0, h4:!0, h5:!0, h6:!0, header:!0, footer:!0, address:!0, p:!0, hr:!0, pre:!0, blockquote:!0, ol:!0, ul:!0, dl:!0, figure:!0, div:!0, a:!0, em:!0, strong:!0, small:!0, s:!0, cite:!0, q:!0, dfn:!0, abbr:!0, data:!0, 
 time:!0, code:!0, "var":!0, samp:!0, kbd:!0, sub:!0, sup:!0, i:!0, b:!0, u:!0, mark:!0, ruby:!0, bdi:!0, bdo:!0, span:!0, br:!0, wbr:!0, ins:!0, del:!0, picture:!0, img:!0, iframe:!0, embed:!0, object:!0, video:!0, audio:!0, map:!0, area:!0, math:!0, svg:!0, table:!0, form:!0, label:!0, input:!0, button:!0, select:!0, datalist:!0, textarea:!0, keygen:!0, output:!0, progress:!0, meter:!0, fieldset:!0, details:!0, dialog:!0, script:!0, noscript:!0, template:!0, canvas:!0}, dt:{address:!0, p:!0, hr:!0, 
@@ -34,35 +34,35 @@ function R(a, z) {
     n.aa && n.aa(l);
   }
   function Y(l) {
-    for (var e = 0, p = a.length, k = 3, b, B; k < p && e !== 2; ++k) {
-      switch(b = a.charAt(k), e) {
+    for (var e = 0, p = a.length, h = 3, b, B; h < p && e !== 2; ++h) {
+      switch(b = a.charAt(h), e) {
         case 0:
           if (K[b] & 4) {
             e = 1;
-            B = k;
+            B = h;
             break;
           }
         case 1:
-          b === ">" && (e = 2, B = B || k);
+          b === ">" && (e = 2, B = B || h);
       }
     }
     if (e === 2) {
-      e = a.substring(2, B), a = a.substr(k), 0 < e.indexOf(":") || (e = e.toLowerCase()), h[e] || M(l, e, !1);
+      e = a.substring(2, B), a = a.substr(h), 0 < e.indexOf(":") || (e = e.toLowerCase()), k[e] || M(l, e, !1);
     } else {
       return w(a), !0;
     }
   }
   function M(l, e, p) {
-    var k = 0, b = l.length;
+    var h = 0, b = l.length;
     if (e) {
-      for (k = b; 0 <= k && l[--k] !== e;) {
+      for (h = b; 0 <= h && l[--h] !== e;) {
       }
     }
-    if (0 <= k) {
-      for (; k < b;) {
+    if (0 <= h) {
+      for (; h < b;) {
         n.$(l[--b], p && !J[l[b]], !1);
       }
-      l.length = k;
+      l.length = h;
     } else {
       n.$(e, !1, !0);
     }
@@ -79,23 +79,23 @@ function R(a, z) {
       G = G || {};
       G[O] = F != null ? Q(a.substring(P, F)).split('\\"').join('"').split("&quot;").join('"').split("\\'").join("'").split("&apos;").join("'") : !0;
     }
-    function k() {
+    function h() {
       (D = a.substr(d, 2) === "/>") && ++d;
       return D;
     }
     for (var b = 1, B = a.length, d = 2, G = null, D = !1, f, N, C, P, r, T, H; d < B && b < 9; ++d) {
       switch(f = a.charAt(d), b) {
         case 1:
-          K[f] & 4 ? (b = 2, e(d)) : f === ">" ? (b = 9, e(d)) : k() && (b = 9, e(d - 1));
+          K[f] & 4 ? (b = 2, e(d)) : f === ">" ? (b = 9, e(d)) : h() && (b = 9, e(d - 1));
           break;
         case 2:
-          f === ">" || k() ? b = 9 : K[f] & 4 || (b = 3, N = d);
+          f === ">" || h() ? b = 9 : K[f] & 4 || (b = 3, N = d);
           break;
         case 3:
-          f === "=" ? (b = 5, C = d) : K[f] & 4 ? (b = 4, C = d) : f === ">" ? (b = 9, C = d, p()) : k() && (b = 9, C = d - 1, p());
+          f === "=" ? (b = 5, C = d) : K[f] & 4 ? (b = 4, C = d) : f === ">" ? (b = 9, C = d, p()) : h() && (b = 9, C = d - 1, p());
           break;
         case 4:
-          f === "=" ? b = 5 : f === ">" || k() ? (b = 9, p()) : K[f] & 4 || (b = 3, p(), N = d);
+          f === "=" ? b = 5 : f === ">" || h() ? (b = 9, p()) : K[f] & 4 || (b = 3, p(), N = d);
           break;
         case 5:
           f === '"' || f === "'" ? (b = 6, T = f, H = !1, P = d + 1) : K[f] & 4 || (b = 7, P = d);
@@ -111,14 +111,14 @@ function R(a, z) {
     if (b === 9) {
       if (!(0 < r.indexOf(":"))) {
         for (; m;) {
-          if (J[m] && !J[m][r]) {
+          if ((b = J[m]) && !b[r]) {
             M(l, m, !1);
           } else {
             break;
           }
         }
       }
-      (D = D || !!h[r]) || (m = x[x.length] = r);
+      (D = D || !!k[r]) || (m = x[x.length] = r);
       a = a.substr(d);
       n.ia(r, G, D, d);
     } else {

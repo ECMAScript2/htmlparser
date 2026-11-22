@@ -56,16 +56,16 @@ htmlparser.VOID_ELEMENTS =
 htmlparser.NON_TEXT_CHILD_ELEMENTS =
     htmlparser.DEFINE.USE_TRADITIONAL_TAGS
     ? {
-          map      : true, datalist : true, dl    : true, ol    : true, ul    : true,
-          select   : true, optgroup : true, table : true, thead : true, tfoot : true,
-          tbody    : true, colgroup : true, tr    : true, // head  : true,
+          map    : true, datalist : true, dl    : true, ol    : true, ul    : true,
+          select : true, optgroup : true, table : true, thead : true, tfoot : true,
+          tbody  : true, colgroup : true, tr    : true, // head  : true,
           // legacy
-          dir      : true, frameset : true, menu  : true
+          dir    : true, frameset : true, menu  : true
       }
     : {
-          map      : true, datalist : true, dl    : true, ol    : true, ul    : true,
-          select   : true, optgroup : true, table : true, thead : true, tfoot : true,
-          tbody    : true, colgroup : true, tr    : true // , head  : true
+          map    : true, datalist : true, dl    : true, ol    : true, ul    : true,
+          select : true, optgroup : true, table : true, thead : true, tfoot : true,
+          tbody  : true, colgroup : true, tr    : true // , head  : true
       };
 
 /**

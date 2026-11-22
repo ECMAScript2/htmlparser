@@ -457,7 +457,7 @@ goog.scope(
                     attrs = null,
                     empty = false,
                     chr, attrNameStartIndex, attrNameEndIndex, attrValStartIndex,
-                    tagName, chrQuote, isEscaped;
+                    tagName, chrQuote, isEscaped, childTags;
 
                 for( ; i < l && phase < 9; ++i ){
                     chr = unparsedHTML.charAt( i );
@@ -525,7 +525,8 @@ goog.scope(
 
                     if( !htmlparser.DEFINE.USE_XHTML || !htmlparser.isNamespacedTag( tagName ) ){
                         while( lastTagName ){
-                            if( htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ] && !htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ][ tagName ] ){
+                            childTags = htmlparser.OMITTABLE_END_TAG_ELEMENTS_WITH_CHILDREN[ lastTagName ];
+                            if( childTags && !childTags[ tagName ] ){
                                 closeTag( stack, lastTagName, false );
                             } else {
                                 break;

@@ -14,7 +14,7 @@
 </style>
 <!--[if lt IE 5.5000]><script>window.__isIE5=true</script><![endif]-->
 <script>
-/* es2-html-parser@2.0.0
+/* es2-html-parser@2.1.0
 (c) 2024-2026 itozyun <itozyun@gmail.com>(https://outcloud.blogspot.com/), MIT. */
 (function(E, G, C) {
   function N(a) {
@@ -23,7 +23,7 @@
   function J(a) {
     return a.split("&lt;").join("&amp;lt;").split("&gt;").join("&amp;gt;").split("<").join("&lt;").split(">").join("&gt;");
   }
-  function O(a, c, f, u, g) {
+  function O(a, c, f, t, g) {
     function y() {
       e = a.indexOf("<", e + 1);
       if (e === -1 && (e = a.length, z())) {
@@ -36,13 +36,13 @@
         q = a.substr(0, e);
         a = a.substr(e);
         e = 0;
-        if ((g || t && !Z[t]) && c.ka(P && !V[t] ? q : N(q)) === !0) {
+        if ((g || u && !Z[u]) && c.ka(P && !V[u] ? q : N(q)) === !0) {
           return h(), !0;
         }
       }
     }
     function h() {
-      c.ia && c.ia(1 - a.length / u, O, [a, c, f, u, g]);
+      c.ia && c.ia(1 - a.length / t, O, [a, c, f, t, g]);
     }
     function w(q) {
       c.da && c.da(q);
@@ -80,7 +80,7 @@
       } else {
         c.ca(l, !1, !0);
       }
-      t = f[f.length - 1] || "";
+      u = f[f.length - 1] || "";
     }
     function aa(q) {
       function l(K) {
@@ -124,15 +124,15 @@
       }
       if (d === 9) {
         if (!(0 < x.indexOf(":"))) {
-          for (; t;) {
-            if (r[t] && !r[t][x]) {
-              Q(q, t, !1);
+          for (; u;) {
+            if ((d = r[u]) && !d[x]) {
+              Q(q, u, !1);
             } else {
               break;
             }
           }
         }
-        (I = I || !!W[x]) || (t = f[f.length] = x);
+        (I = I || !!W[x]) || (u = f[f.length] = x);
         a = a.substr(k);
         if (c.ja(x, L, I, k) === !0) {
           return h(), !0;
@@ -141,12 +141,12 @@
         return w(a), !0;
       }
     }
-    var e = -1, t = "", U, P, n, B;
-    t = f[f.length - 1] || "";
+    var e = -1, u = "", U, P, n, B;
+    u = f[f.length - 1] || "";
     if (!y()) {
       for (; a;) {
-        P = Y[t];
-        if (g && a.length === u && a.indexOf("\x3c?xml ") === e) {
+        P = Y[u];
+        if (g && a.length === t && a.indexOf("\x3c?xml ") === e) {
           a = a.substr(e);
           e = 0;
           n = a.indexOf("?>");
@@ -177,7 +177,7 @@
             return;
           }
         } else if (a.indexOf("</", e) === e && A[a.charAt(e + 2)] & 3) {
-          if (P && a.indexOf(t, e) !== e + 2 && a.indexOf(t.toUpperCase(), e) !== e + 2 && (U = !0), U) {
+          if (P && a.indexOf(u, e) !== e + 2 && a.indexOf(u.toUpperCase(), e) !== e + 2 && (U = !0), U) {
             if (y()) {
               return;
             }
@@ -265,11 +265,11 @@
       return !0;
     }
   }, ja:function(a, c, f) {
-    var u, g;
+    var t, g;
     b.$ += "<" + a;
-    for (u in c) {
-      g = c[u];
-      b.$ += " " + u;
+    for (t in c) {
+      g = c[t];
+      b.$ += " " + t;
       g !== !0 && (g = J(g), b.$ = g.indexOf("'") === -1 ? b.$ + ("='" + g + "'") : g.indexOf('"') === -1 ? b.$ + ('="' + g + '"') : b.$ + ('="' + g.split('"').join("&quot;") + '"'));
     }
     b.$ += (f ? "/" : "") + ">";
@@ -308,12 +308,12 @@
     }
   }};
   ba = {ja:function(a, c, f) {
-    var u = 0 < a.indexOf(":"), g;
-    b.$ += (u ? "<" : "&gt;") + a;
+    var t = 0 < a.indexOf(":"), g;
+    b.$ += (t ? "<" : "&gt;") + a;
     for (g in c) {
       a = c[g], b.$ += " " + g + (a !== !0 ? '="' + J(a).split('"').join('\\"').split('\\\\"').join('\\"') + '"' : "");
     }
-    b.$ += (f ? "/" : "") + (u ? ">" : "&lt;");
+    b.$ += (f ? "/" : "") + (t ? ">" : "&lt;");
   }, ca:function(a) {
     var c = 0 < a.indexOf(":");
     b.$ += (c ? "</" : "&gt;/") + a + (c ? ">" : "&lt;");
@@ -323,7 +323,7 @@
   }, ea:function() {
   }};
   E.onload = function() {
-    var a = !!E.__isIE5, c = E.input || G.all("input"), f = E.output || G.all("output"), u = E.form || G.all("form"), g = E.progress || G.all("progress"), y = E.textlen || G.all("textlen"), z;
+    var a = !!E.__isIE5, c = E.input || G.all("input"), f = E.output || G.all("output"), t = E.form || G.all("form"), g = E.progress || G.all("progress"), y = E.textlen || G.all("textlen"), z;
     a ? f.firstChild.data = "" : f.value = "";
     y.value = "";
     g.style.width = "0";
@@ -338,7 +338,7 @@
       a ? f.firstChild.data = h : f.value = h;
       y.value = "PARSE ERROR!";
     };
-    u.onsubmit = function(h) {
+    t.onsubmit = function(h) {
       h && h.preventDefault();
       typeof event != "undefined" && (event.returnValue = !1);
       h = c.value.split("\r\n").join("\n").split("\n\r").join("\n").split("\r").join("\n");
